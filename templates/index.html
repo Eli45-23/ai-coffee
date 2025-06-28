@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>AI Coffee Demo</title>
+  <style>
+    body { font-family: sans-serif; margin: 2rem; }
+    .chat { margin-top: 1rem; }
+    .answer { margin-top: 1rem; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>AI Coffee Menu Bot</h1>
+  <form action="/ask" method="post">
+    <input type="text" name="question" placeholder="Ask about the menu…" size="50"/>
+    <button type="submit">Ask</button>
+  </form>
+  {% if answer %}
+    <div class="chat">
+<div><strong>You asked:</strong> {{ question }}</div>
+      <div class="answer">{{ answer }}</div>
+    </div>
+  {% endif %}
+</body>
+</html>
