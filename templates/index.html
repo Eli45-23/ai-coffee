@@ -1,95 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AI Coffee — 24/7 AI Menu Assistant + Social Media</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
 <body>
-  <!-- Hero Section -->
-  <section id="hero" style="text-align:center; margin-bottom:2rem;">
-    <h1>Automate Your Instagram DMs with AI</h1>
-    <p>24/7 friendly, on-brand replies to menu questions, hours, pricing, FAQs—and anything else your customers ask.</p>
-    <a href="/signup" style="display:inline-block; padding:0.75rem 1.5rem; background:#333; color:#fff; text-decoration:none; border-radius:4px; margin-top:1rem;">Get Started →</a>
-  </section>
+  <!-- Hero -->
+  <header class="hero">
+    <div class="container">
+      <h1>AI Coffee</h1>
+      <p>Your 24/7 AI Menu Assistant + Weekly Social Media Posts</p>
+      <a href="#demo" class="btn">Try the Live Demo</a>
+    </div>
+  </header>
 
-  <!-- Benefits -->
-  <section id="benefits" style="display:flex; justify-content:space-around; margin-bottom:2rem;">
-    <div style="max-width:30%;">
-      <h3>Instant Answers</h3>
-      <p>AI-powered replies to every DM—no more late-night notifications.</p>
-    </div>
-    <div style="max-width:30%;">
-      <h3>Fully Branded</h3>
-      <p>Your menu, pricing, hours, loyalty perks—all in one place.</p>
-    </div>
-    <div style="max-width:30%;">
-      <h3>Easy Setup & Support</h3>
-      <p>We handle installation, training, and monthly tweaks.</p>
+  <!-- Live Demo -->
+  <section id="demo" class="demo">
+    <div class="container">
+      <h2>Live Demo</h2>
+      <div class="chatbot">
+        <form id="demo-form" onsubmit="return false;">
+          <input type="text" id="user-input" placeholder="Ask about the menu…" autocomplete="off"/>
+          <button id="ask-btn">Ask</button>
+        </form>
+        <div id="chat-log"></div>
+      </div>
     </div>
   </section>
 
   <!-- How It Works -->
-  <section id="how-it-works" style="margin-bottom:2rem;">
-    <h2 style="text-align:center;">How It Works</h2>
-    <ol style="max-width:600px; margin:1rem auto; line-height:1.5;">
-      <li><strong>Sign Up & Integrate:</strong> Connect your Instagram account in minutes.</li>
-      <li><strong>We Customize Your Bot:</strong> We load your hours, menu, pricing, FAQs & branding.</li>
-      <li><strong>Go Live & Relax:</strong> Your new AI barista handles customer DMs 24/7.</li>
-    </ol>
+  <section id="how-it-works" class="features">
+    <div class="container">
+      <h2>How It Works</h2>
+      <div class="cards">
+        <div class="card">
+          <h3>Instant Menu Help</h3>
+          <p>AI Chatbot answers every question—ingredients, allergies, specials—any time, any device.</p>
+        </div>
+        <div class="card">
+          <h3>Social-Media Magic</h3>
+          <p>Three bespoke Instagram posts weekly, designed to spotlight specials and maximize engagement.</p>
+        </div>
+        <div class="card">
+          <h3>Seamless Setup</h3>
+          <p>No coding, no maintenance—point us at your menu and you’re live within minutes.</p>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <!-- Pricing Table -->
-  <section id="pricing" style="margin-bottom:2rem;">
-    <h2 style="text-align:center;">Pricing Plans</h2>
-    <table border="1" cellpadding="10" cellspacing="0" style="width:100%; max-width:800px; margin:1rem auto; border-collapse:collapse;">
-      <thead>
-        <tr>
-          <th>Tier</th>
-          <th>Setup Fee</th>
-          <th>Monthly</th>
-          <th>Includes</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Basic</td>
-          <td>$199 one-time</td>
-          <td>$99 / month</td>
-          <td>ManyChat + ChatGPT AI, standard menu/hours/FAQs, email support</td>
-        </tr>
-        <tr>
-          <td>Pro</td>
-          <td>$249 one-time</td>
-          <td>$149 / month</td>
-          <td>Everything in Basic, plus priority edits & monthly usage reports</td>
-        </tr>
-        <tr>
-          <td>Enterprise</td>
-          <td>$299 one-time</td>
-          <td>$249 / month</td>
-          <td>All Pro features, custom integrations, SLA & multi-channel support</td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- Cost Comparison -->
+  <section id="cost-comparison" class="comparison">
+    <div class="container">
+      <h2>Cost Comparison</h2>
+      <div class="cards">
+        <div class="card">
+          <h3>AI Coffee Pro</h3>
+          <p>$99/mo</p>
+          <p>$1,188/yr</p>
+        </div>
+        <div class="card">
+          <h3>Full-Time Employee</h3>
+          <p>≈$35,000/yr</p>
+        </div>
+        <div class="card">
+          <h3>You Save</h3>
+          <p>≈$33,800/yr</p>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <!-- Testimonial -->
-  <section id="testimonial" style="text-align:center; margin-bottom:2rem;">
-    <blockquote style="font-style:italic; max-width:600px; margin:0 auto;">
-      “Since we launched the AI bot, 95% of our customer questions get instant answers—and our staff is freed up for in-store service.”
-      <footer>— Jamie L., Café Owner</footer>
-    </blockquote>
+  <!-- Pricing -->
+  <section id="pricing" class="pricing">
+    <div class="container">
+      <h2>Start Your 30-Day Pilot</h2>
+      <div class="cards">
+        <div class="card">
+          <h3>Basic</h3>
+          <p><strong>Setup:</strong> $199</p>
+          <p><strong>Monthly:</strong> $99/mo</p>
+          <ul>
+            <li>ManyChat automation & GPT integration</li>
+            <li>Email support</li>
+          </ul>
+          <a href="#contact" class="btn">Get Started</a>
+        </div>
+        <div class="card popular">
+          <h3>Pro</h3>
+          <p><strong>Setup:</strong> $249</p>
+          <p><strong>Monthly:</strong> $149/mo</p>
+          <ul>
+            <li>Everything in Basic</li>
+            <li>Priority edits & SLA</li>
+            <li>Monthly usage reports</li>
+          </ul>
+          <a href="#contact" class="btn">Get Started</a>
+        </div>
+        <div class="card">
+          <h3>Enterprise</h3>
+          <p><strong>Setup:</strong> $299</p>
+          <p><strong>Monthly:</strong> $249/mo</p>
+          <ul>
+            <li>Custom integrations & multi-channel support</li>
+            <li>Dedicated SLA & onboarding</li>
+            <li>All Pro features + more</li>
+          </ul>
+          <a href="#contact" class="btn">Get Started</a>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <!-- FAQ -->
-  <section id="faq" style="max-width:600px; margin:0 auto 2rem;">
-    <h2>Frequently Asked Questions</h2>
-    <h4>How long does setup take?</h4>
-    <p>We’ll have you live in 48 hours or less.</p>
-    <h4>What if I need menu changes?</h4>
-    <p>Send us your updates; we’ll tweak the AI context within 24 hours.</p>
-    <h4>What if I exceed my token usage?</h4>
-    <p>We monitor your usage and bill only overages at $0.0004/token.</p>
-  </section>
+  <!-- Footer / Contact -->
+  <footer id="contact" class="footer">
+    <div class="container">
+      <p>Ready to automate your menu and engagement? <a href="mailto:hello@aicoffee.com">Contact us</a></p>
+    </div>
+  </footer>
 
-  <!-- Final CTA -->
-  <section id="final-cta" style="text-align:center; margin-bottom:2rem;">
-    <p>Ready to stop missing DMs and start delighting customers?</p>
-    <a href="/signup" style="display:inline-block; padding:0.75rem 1.5rem; background:#333; color:#fff; text-decoration:none; border-radius:4px;">Get Started Today →</a>
-  </section>
-
+  <script src="/static/app.js"></script>
 </body>
+</html>
