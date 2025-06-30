@@ -4,123 +4,262 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>AI Coffee — 24/7 AI Menu Assistant + Social Media</title>
-  <link rel="stylesheet" href="/static/style.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;500;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* Variables & Reset */
+    :root {
+      --clr-dark: #1b1f24;
+      --clr-light: #f4f7fa;
+      --clr-primary: #ff6f3c;
+      --clr-secondary: #2c3e50;
+      --ff-sans: 'DM Sans', sans-serif;
+      --ff-heading: 'Montserrat', sans-serif;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: var(--ff-sans); color: var(--clr-secondary); background: var(--clr-light); }
+    .container { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      background: url('/static/hero-coffee.jpg') center/cover no-repeat;
+      height: 80vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-overlay {
+      position: absolute; top:0; right:0; bottom:0; left:0;
+      background: rgba(0,0,0,0.5);
+    }
+    .hero-content {
+      position: relative; text-align: center; color: #fff; z-index:1;
+    }
+    .hero-content h1 {
+      font-family: var(--ff-heading); font-size: 3rem; line-height:1.2;
+    }
+    .hero-content h1 span { color: var(--clr-primary); }
+    .hero-content p {
+      font-size: 1.25rem; margin:1rem 0 2rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      font-family: var(--ff-heading);
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    .btn-primary {
+      background: var(--clr-primary);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #e55b2a; }
+    .btn-outline {
+      border: 2px solid var(--clr-primary);
+      color: var(--clr-primary);
+    }
+    .btn-outline:hover {
+      background: var(--clr-primary);
+      color: #fff;
+    }
+
+    /* Features */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem; text-align: center;
+      margin-top: -4rem;
+    }
+    .feature img {
+      width: 60px; height: auto; margin-bottom:1rem;
+    }
+    .feature h3 {
+      font-family: var(--ff-heading);
+      margin-bottom:0.5rem;
+    }
+
+    /* How It Works */
+    .how-it-works h2 {
+      font-family: var(--ff-heading);
+      text-align: center; margin-bottom:1.5rem;
+    }
+    .steps {
+      display: flex; flex-wrap: wrap; justify-content: space-between;
+    }
+    .step {
+      flex: 1; min-width: 200px; margin:1rem;
+      background: #fff; padding:1.5rem; border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .step h4 { margin-bottom:0.5rem; font-family: var(--ff-heading); }
+
+    /* Pricing */
+    .pricing h2 {
+      font-family: var(--ff-heading);
+      text-align: center; margin-bottom:1.5rem;
+    }
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+      gap:2rem;
+    }
+    .plan {
+      background: #fff;
+      padding:2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+    .plan.featured {
+      border: 2px solid var(--clr-primary);
+    }
+    .plan h3 {
+      font-family: var(--ff-heading);
+      margin-bottom:1rem;
+    }
+    .plan .setup,
+    .plan .monthly {
+      font-weight: bold;
+      margin-bottom:1rem;
+    }
+    .plan ul {
+      list-style: none;
+      margin-bottom:2rem;
+    }
+    .plan ul li::before {
+      content: '✓';
+      margin-right:0.5rem;
+      color:var(--clr-primary);
+    }
+    .plan .btn { margin-top:auto; }
+
+    /* Footer */
+    .footer {
+      background: var(--clr-secondary);
+      color:#fff;
+      text-align:center;
+      padding:2rem 0;
+    }
+    .footer h4 {
+      font-family: var(--ff-heading);
+      margin-bottom:0.5rem;
+    }
+    .footer a {
+      color: var(--clr-primary);
+      text-decoration:none;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .hero-content h1 { font-size:2.25rem; }
+      .features, .plans, .steps { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
-  <!-- Hero -->
+
+  <!-- HERO -->
   <header class="hero">
-    <div class="container">
-      <h1>AI Coffee</h1>
-      <p>Your 24/7 AI Menu Assistant + Weekly Social Media Posts</p>
-      <a href="#demo" class="btn">Try the Live Demo</a>
+    <div class="hero-overlay"></div>
+    <div class="hero-content container">
+      <h1>Automate Your Instagram DMs<br><span>with AI</span></h1>
+      <p>24/7 on-brand answers to menus, hours, pricing &amp; more—instantly.</p>
+      <a href="#pricing" class="btn btn-primary">View Pricing</a>
     </div>
   </header>
 
-  <!-- Live Demo -->
-  <section id="demo" class="demo">
-    <div class="container">
-      <h2>Live Demo</h2>
-      <div class="chatbot">
-        <form id="demo-form" onsubmit="return false;">
-          <input type="text" id="user-input" placeholder="Ask about the menu…" autocomplete="off"/>
-          <button id="ask-btn">Ask</button>
-        </form>
-        <div id="chat-log"></div>
+  <!-- FEATURES -->
+  <section class="features container">
+    <div class="feature">
+      <img src="/static/icons/robot.svg" alt="Instant Answers">
+      <h3>Instant Answers</h3>
+      <p>AI-powered replies to every DM—no more late nights.</p>
+    </div>
+    <div class="feature">
+      <img src="/static/icons/paintbrush.svg" alt="Branded Design">
+      <h3>Fully Branded</h3>
+      <p>Your menu, colors &amp; tone—seamlessly integrated.</p>
+    </div>
+    <div class="feature">
+      <img src="/static/icons/rocket.svg" alt="Easy Setup">
+      <h3>Lightning-Fast Setup</h3>
+      <p>Live in minutes—no coding required.</p>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-it-works container">
+    <h2>How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <h4>1. Connect</h4>
+        <p>Link your Instagram in two clicks.</p>
+      </div>
+      <div class="step">
+        <h4>2. Customize</h4>
+        <p>We load your menu, hours &amp; FAQs.</p>
+      </div>
+      <div class="step">
+        <h4>3. Launch</h4>
+        <p>Your 24/7 AI barista is live.</p>
       </div>
     </div>
   </section>
 
-  <!-- How It Works -->
-  <section id="how-it-works" class="features">
-    <div class="container">
-      <h2>How It Works</h2>
-      <div class="cards">
-        <div class="card">
-          <h3>Instant Menu Help</h3>
-          <p>AI Chatbot answers every question—ingredients, allergies, specials—any time, any device.</p>
-        </div>
-        <div class="card">
-          <h3>Social-Media Magic</h3>
-          <p>Three bespoke Instagram posts weekly, designed to spotlight specials and maximize engagement.</p>
-        </div>
-        <div class="card">
-          <h3>Seamless Setup</h3>
-          <p>No coding, no maintenance—point us at your menu and you’re live within minutes.</p>
-        </div>
+  <!-- PRICING -->
+  <section id="pricing" class="pricing container">
+    <h2>Pricing Plans</h2>
+    <div class="plans">
+      <div class="plan">
+        <h3>Basic</h3>
+        <p class="setup">Setup: $199</p>
+        <p class="monthly">Monthly: $99/mo</p>
+        <ul>
+          <li>1 IG channel</li>
+          <li>AI Q&amp;A bot</li>
+          <li>Email support</li>
+        </ul>
+        <a href="#contact" class="btn btn-outline">Get Started</a>
+      </div>
+      <div class="plan featured">
+        <h3>Pro</h3>
+        <p class="setup">Setup: $249</p>
+        <p class="monthly">Monthly: $149/mo</p>
+        <ul>
+          <li>Everything in Basic</li>
+          <li>Priority edits &amp; SLA</li>
+          <li>Usage reports</li>
+        </ul>
+        <a href="#contact" class="btn btn-primary">Get Started</a>
+      </div>
+      <div class="plan">
+        <h3>Enterprise</h3>
+        <p class="setup">Setup: $299</p>
+        <p class="monthly">Monthly: $249/mo</p>
+        <ul>
+          <li>Custom integrations</li>
+          <li>Multi-channel support</li>
+          <li>Dedicated SLA</li>
+        </ul>
+        <a href="#contact" class="btn btn-outline">Get Started</a>
       </div>
     </div>
   </section>
 
-  <!-- Cost Comparison -->
-  <section id="cost-comparison" class="comparison">
-    <div class="container">
-      <h2>Cost Comparison</h2>
-      <div class="cards">
-        <div class="card">
-          <h3>AI Coffee Pro</h3>
-          <p>$99/mo</p>
-          <p>$1,188/yr</p>
-        </div>
-        <div class="card">
-          <h3>Full-Time Employee</h3>
-          <p>≈$35,000/yr</p>
-        </div>
-        <div class="card">
-          <h3>You Save</h3>
-          <p>≈$33,800/yr</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Pricing -->
-  <section id="pricing" class="pricing">
-    <div class="container">
-      <h2>Start Your 30-Day Pilot</h2>
-      <div class="cards">
-        <div class="card">
-          <h3>Basic</h3>
-          <p><strong>Setup:</strong> $199</p>
-          <p><strong>Monthly:</strong> $99/mo</p>
-          <ul>
-            <li>ManyChat automation & GPT integration</li>
-            <li>Email support</li>
-          </ul>
-          <a href="#contact" class="btn">Get Started</a>
-        </div>
-        <div class="card popular">
-          <h3>Pro</h3>
-          <p><strong>Setup:</strong> $249</p>
-          <p><strong>Monthly:</strong> $149/mo</p>
-          <ul>
-            <li>Everything in Basic</li>
-            <li>Priority edits & SLA</li>
-            <li>Monthly usage reports</li>
-          </ul>
-          <a href="#contact" class="btn">Get Started</a>
-        </div>
-        <div class="card">
-          <h3>Enterprise</h3>
-          <p><strong>Setup:</strong> $299</p>
-          <p><strong>Monthly:</strong> $249/mo</p>
-          <ul>
-            <li>Custom integrations & multi-channel support</li>
-            <li>Dedicated SLA & onboarding</li>
-            <li>All Pro features + more</li>
-          </ul>
-          <a href="#contact" class="btn">Get Started</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer / Contact -->
+  <!-- FOOTER -->
   <footer id="contact" class="footer">
     <div class="container">
-      <p>Ready to automate your menu and engagement? <a href="mailto:hello@aicoffee.com">Contact us</a></p>
+      <h4>Ready to delight your customers?</h4>
+      <p><a href="mailto:hello@aicoffee.com">hello@aicoffee.com</a></p>
     </div>
   </footer>
 
-  <script src="/static/app.js"></script>
 </body>
 </html>
