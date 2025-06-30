@@ -1,25 +1,95 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>AI Coffee Demo</title>
-  <style>
-    body { font-family: sans-serif; margin: 2rem; }
-    .chat { margin-top: 1rem; }
-    .answer { margin-top: 1rem; font-weight: bold; }
-  </style>
-</head>
 <body>
-  <h1>AI Coffee Menu Bot</h1>
-  <form action="/ask" method="post">
-    <input type="text" name="question" placeholder="Ask about the menu…" size="50"/>
-    <button type="submit">Ask</button>
-  </form>
-  {% if answer %}
-    <div class="chat">
-<div><strong>You asked:</strong> {{ question }}</div>
-      <div class="answer">{{ answer }}</div>
+  <!-- Hero Section -->
+  <section id="hero" style="text-align:center; margin-bottom:2rem;">
+    <h1>Automate Your Instagram DMs with AI</h1>
+    <p>24/7 friendly, on-brand replies to menu questions, hours, pricing, FAQs—and anything else your customers ask.</p>
+    <a href="/signup" style="display:inline-block; padding:0.75rem 1.5rem; background:#333; color:#fff; text-decoration:none; border-radius:4px; margin-top:1rem;">Get Started →</a>
+  </section>
+
+  <!-- Benefits -->
+  <section id="benefits" style="display:flex; justify-content:space-around; margin-bottom:2rem;">
+    <div style="max-width:30%;">
+      <h3>Instant Answers</h3>
+      <p>AI-powered replies to every DM—no more late-night notifications.</p>
     </div>
-  {% endif %}
+    <div style="max-width:30%;">
+      <h3>Fully Branded</h3>
+      <p>Your menu, pricing, hours, loyalty perks—all in one place.</p>
+    </div>
+    <div style="max-width:30%;">
+      <h3>Easy Setup & Support</h3>
+      <p>We handle installation, training, and monthly tweaks.</p>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section id="how-it-works" style="margin-bottom:2rem;">
+    <h2 style="text-align:center;">How It Works</h2>
+    <ol style="max-width:600px; margin:1rem auto; line-height:1.5;">
+      <li><strong>Sign Up & Integrate:</strong> Connect your Instagram account in minutes.</li>
+      <li><strong>We Customize Your Bot:</strong> We load your hours, menu, pricing, FAQs & branding.</li>
+      <li><strong>Go Live & Relax:</strong> Your new AI barista handles customer DMs 24/7.</li>
+    </ol>
+  </section>
+
+  <!-- Pricing Table -->
+  <section id="pricing" style="margin-bottom:2rem;">
+    <h2 style="text-align:center;">Pricing Plans</h2>
+    <table border="1" cellpadding="10" cellspacing="0" style="width:100%; max-width:800px; margin:1rem auto; border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th>Tier</th>
+          <th>Setup Fee</th>
+          <th>Monthly</th>
+          <th>Includes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Basic</td>
+          <td>$199 one-time</td>
+          <td>$99 / month</td>
+          <td>ManyChat + ChatGPT AI, standard menu/hours/FAQs, email support</td>
+        </tr>
+        <tr>
+          <td>Pro</td>
+          <td>$249 one-time</td>
+          <td>$149 / month</td>
+          <td>Everything in Basic, plus priority edits & monthly usage reports</td>
+        </tr>
+        <tr>
+          <td>Enterprise</td>
+          <td>$299 one-time</td>
+          <td>$249 / month</td>
+          <td>All Pro features, custom integrations, SLA & multi-channel support</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Testimonial -->
+  <section id="testimonial" style="text-align:center; margin-bottom:2rem;">
+    <blockquote style="font-style:italic; max-width:600px; margin:0 auto;">
+      “Since we launched the AI bot, 95% of our customer questions get instant answers—and our staff is freed up for in-store service.”
+      <footer>— Jamie L., Café Owner</footer>
+    </blockquote>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" style="max-width:600px; margin:0 auto 2rem;">
+    <h2>Frequently Asked Questions</h2>
+    <h4>How long does setup take?</h4>
+    <p>We’ll have you live in 48 hours or less.</p>
+    <h4>What if I need menu changes?</h4>
+    <p>Send us your updates; we’ll tweak the AI context within 24 hours.</p>
+    <h4>What if I exceed my token usage?</h4>
+    <p>We monitor your usage and bill only overages at $0.0004/token.</p>
+  </section>
+
+  <!-- Final CTA -->
+  <section id="final-cta" style="text-align:center; margin-bottom:2rem;">
+    <p>Ready to stop missing DMs and start delighting customers?</p>
+    <a href="/signup" style="display:inline-block; padding:0.75rem 1.5rem; background:#333; color:#fff; text-decoration:none; border-radius:4px;">Get Started Today →</a>
+  </section>
+
 </body>
-</html>
