@@ -9,9 +9,9 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;500;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    /* -----------------------------------------
-       Variables & Reset
-    ----------------------------------------- */
+    /* -----------------------
+       Reset & Variables
+    ----------------------- */
     :root {
       --clr-dark: #0d1117;
       --clr-light: #f5f7fa;
@@ -20,224 +20,183 @@
       --ff-sans: 'DM Sans', sans-serif;
       --ff-heading: 'Montserrat', sans-serif;
     }
-    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     html { scroll-behavior: smooth; }
     body {
       font-family: var(--ff-sans);
       color: var(--clr-secondary);
-      line-height: 1.6;
       background: var(--clr-light);
+      line-height:1.6;
     }
-    a { text-decoration: none; color: inherit; }
-    img { max-width: 100%; display: block; }
+    a { text-decoration:none; }
+    .container { width:90%; max-width:1200px; margin:0 auto; }
 
-    /* -----------------------------------------
-       Utility Classes
-    ----------------------------------------- */
-    .container { width: 90%; max-width: 1200px; margin: 0 auto; }
+    /* -----------------------
+       Buttons
+    ----------------------- */
     .btn {
-      display: inline-block;
-      padding: 0.75em 1.5em;
+      display:inline-block;
+      padding:0.75em 1.5em;
       background: var(--clr-primary);
-      color: #fff;
-      border-radius: 4px;
-      font-weight: 600;
-      transition: transform 0.3s ease;
+      color:#fff;
+      border-radius:4px;
+      font-weight:600;
+      transition:transform 0.3s;
     }
-    .btn:hover { transform: scale(1.05); }
+    .btn:hover { transform:scale(1.05); }
 
-    /* -----------------------------------------
-       Hero Section
-    ----------------------------------------- */
+    /* -----------------------
+       Hero
+    ----------------------- */
     header.hero {
-      position: relative;
-      height: 100vh;
-      background: linear-gradient(-45deg, #0d1117, #1e293b, #0d1117, #1e293b);
-      background-size: 400% 400%;
-      animation: gradientBG 12s ease infinite;
-      display: flex;
-      align-items: center;
-      color: #fff;
-      text-align: center;
+      position:relative;
+      height:100vh;
+      background:linear-gradient(-45deg,#0d1117,#1e293b,#0d1117,#1e293b);
+      background-size:400% 400%;
+      animation:gradientBG 12s ease infinite;
+      display:flex;align-items:center;justify-content:center;
+      color:#fff; text-align:center;
     }
-    header.hero .container {
-      z-index: 1;
-    }
+    header.hero .container { z-index:1; }
     header.hero h1 {
-      font-family: var(--ff-heading);
-      font-size: 3rem; 
-      margin-bottom: 0.5em;
-      animation: fadeInUp 1s ease forwards;
+      font-family:var(--ff-heading);
+      font-size:3rem;
+      margin-bottom:0.5em;
+      animation:fadeInUp 1s ease forwards;
     }
     header.hero p {
-      font-size: 1.2rem;
-      margin-bottom: 1.5em;
-      animation: fadeInUp 1.2s ease forwards;
-      opacity: 0;
+      font-size:1.2rem;
+      margin-bottom:1.5em;
+      opacity:0;
+      animation:fadeInUp 1.2s ease forwards;
     }
     header.hero .btn {
-      animation: fadeInUp 1.4s ease forwards;
-      opacity: 0;
+      opacity:0;
+      animation:fadeInUp 1.4s ease forwards;
     }
     header.hero::after {
-      content: '';
-      position: absolute;
-      top:0; left:0; right:0; bottom:0;
-      background:
-        url('data:image/svg+xml;utf8,<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg"><circle fill="%23ffffff22" cx="200" cy="200" r="200"/></svg>') no-repeat center;
-      mix-blend-mode: overlay;
-      opacity: 0.2;
+      content:'';
+      position:absolute;top:0;right:0;bottom:0;left:0;
+      background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><circle fill="%23ffffff22" cx="200" cy="200" r="200"/></svg>') no-repeat center;
+      mix-blend-mode:overlay;opacity:0.2;
     }
 
-    /* -----------------------------------------
-       Keyframe Animations
-    ----------------------------------------- */
     @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
     }
     @keyframes fadeInUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to   { transform: translateY(0);    opacity: 1; }
+      from{transform:translateY(20px);opacity:0}
+      to{transform:translateY(0);opacity:1}
     }
 
-    /* -----------------------------------------
-       Features Section
-    ----------------------------------------- */
+    /* -----------------------
+       Features
+    ----------------------- */
     .features {
-      padding: 4em 0;
-      background: #fff;
+      padding:4em 0; background:#fff;
     }
     .features h2 {
-      text-align: center;
-      font-family: var(--ff-heading);
-      margin-bottom: 1.5em;
-      position: relative;
-    }
-    .features h2::after {
-      content: '';
-      width: 60px;
-      height: 4px;
-      background: var(--clr-primary);
-      display: block;
-      margin: 0.5em auto;
+      font-family:var(--ff-heading);
+      text-align:center;
+      margin-bottom:1.5em;
     }
     .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
-      gap: 1.5em;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:1.5em;
     }
     .card {
-      background: var(--clr-light);
-      border-radius: 8px;
-      padding: 2em;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeInUp 0.8s ease forwards;
+      background:var(--clr-light);
+      padding:2em;
+      border-radius:8px;
+      text-align:center;
+      box-shadow:0 4px 12px rgba(0,0,0,0.05);
+      transform:translateY(20px);
+      opacity:0;
+      animation:fadeInUp 0.8s ease forwards;
     }
-    .card:nth-child(1) { animation-delay: 0.3s; }
-    .card:nth-child(2) { animation-delay: 0.5s; }
-    .card:nth-child(3) { animation-delay: 0.7s; }
+    .card:nth-child(1){animation-delay:0.3s}
+    .card:nth-child(2){animation-delay:0.5s}
+    .card:nth-child(3){animation-delay:0.7s}
     .card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      transform:translateY(-8px);
+      box-shadow:0 8px 20px rgba(0,0,0,0.1);
     }
-    .card h3 {
-      margin-bottom: 0.75em;
-      font-family: var(--ff-heading);
-    }
+    .card h3 {font-family:var(--ff-heading);margin-bottom:0.75em;}
 
-    /* -----------------------------------------
-       Pricing Section
-    ----------------------------------------- */
+    /* -----------------------
+       Pricing
+    ----------------------- */
     .pricing {
-      padding: 4em 0;
-      background: #f0f4f8;
+      padding:4em 0;
+      background:#f0f4f8;
     }
     .pricing h2 {
-      text-align: center;
-      font-family: var(--ff-heading);
-      margin-bottom: 1.5em;
-      position: relative;
-    }
-    .pricing h2::after {
-      content: '';
-      width: 60px;
-      height: 4px;
-      background: var(--clr-primary);
-      display: block;
-      margin: 0.5em auto;
+      font-family:var(--ff-heading);
+      text-align:center;
+      margin-bottom:1.5em;
     }
     .plans {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1.5em;
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:1.5em;
     }
     .plan {
-      background: #fff;
-      border-radius: 8px;
-      padding: 2em;
-      width: 260px;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background:#fff;
+      padding:2em;
+      border-radius:8px;
+      width:260px;
+      text-align:center;
+      box-shadow:0 4px 12px rgba(0,0,0,0.05);
+      transition:transform 0.3s,box-shadow 0.3s;
     }
     .plan.popular {
-      border: 2px solid var(--clr-primary);
-      position: relative;
+      border:2px solid var(--clr-primary);
+      position:relative;
     }
     .plan.popular::before {
-      content: 'Most Popular';
-      position: absolute;
-      top: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--clr-primary);
-      color: #fff;
-      padding: 0.25em 0.75em;
-      border-radius: 4px;
-      font-size: 0.75rem;
+      content:'Most Popular';
+      position:absolute;
+      top:-10px;left:50%;
+      transform:translateX(-50%);
+      background:var(--clr-primary);
+      color:#fff;
+      padding:0.25em 0.75em;
+      border-radius:4px;
+      font-size:0.75rem;
     }
     .plan:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      transform:translateY(-8px);
+      box-shadow:0 8px 20px rgba(0,0,0,0.1);
     }
-    .plan h3 {
-      font-family: var(--ff-heading);
-      margin-bottom: 0.5em;
+    .plan h3 {font-family:var(--ff-heading);margin-bottom:0.5em;}
+    .plan .setup,
+    .plan .price {margin:0.5em 0;font-weight:600;color:var(--clr-primary);}
+    .plan ul {list-style:none;text-align:left;margin:1em 0;}
+    .plan ul li {margin:0.5em 0;}
+
+    /* -----------------------
+       Footer
+    ----------------------- */
+    footer {
+      background:var(--clr-secondary);
+      color:#fff;
+      text-align:center;
+      padding:2em 0;
     }
-    .plan .price {
-      font-size: 2rem;
-      color: var(--clr-primary);
-      margin: 0.5em 0;
-    }
-    .plan ul {
-      list-style: none;
-      margin: 1em 0;
-      text-align: left;
-    }
-    .plan ul li {
-      margin: 0.5em 0;
+    footer p {margin-bottom:1em;}
+    footer a.btn {
+      background:#fff;
+      color:var(--clr-secondary);
     }
 
-    /* -----------------------------------------
-       Footer / Contact Section
-    ----------------------------------------- */
-    footer {
-      background: var(--clr-secondary);
-      color: #fff;
-      padding: 2em 0;
-      text-align: center;
-    }
-    footer p { margin-bottom: 1em; }
-    footer a.btn {
-      background: #fff;
-      color: var(--clr-secondary);
+    /* Responsive */
+    @media(max-width:600px){
+      header.hero h1{font-size:2.5rem;}
+      .cards,.plans{grid-template-columns:1fr;flex-direction:column;}
     }
   </style>
 </head>
@@ -277,31 +236,34 @@
       <h2>Pricing Plans</h2>
       <div class="plans">
         <div class="plan">
-          <h3>Starter</h3>
-          <p class="price">$29<span>/mo</span></p>
+          <h3>Basic</h3>
+          <p class="setup">Setup: $199</p>
+          <p class="price">$99<span>/mo</span></p>
           <ul>
-            <li>Up to 500 chats</li>
-            <li>Email support</li>
+            <li>1 IG channel • AI Q&amp;A bot</li>
+            <li>Email support & token budget</li>
           </ul>
           <a href="mailto:hello@aichatflows.com" class="btn">Get Started</a>
         </div>
         <div class="plan popular">
           <h3>Pro</h3>
-          <p class="price">$99<span>/mo</span></p>
+          <p class="setup">Setup: $249</p>
+          <p class="price">$149<span>/mo</span></p>
           <ul>
-            <li>Unlimited chats</li>
-            <li>Priority support</li>
-            <li>3 social posts/week</li>
+            <li>Everything in Basic</li>
+            <li>Priority edits & SLA guarantee</li>
+            <li>Monthly usage reports</li>
           </ul>
           <a href="mailto:hello@aichatflows.com" class="btn">Get Started</a>
         </div>
         <div class="plan">
           <h3>Enterprise</h3>
+          <p class="setup">Setup: $299</p>
           <p class="price">$249<span>/mo</span></p>
           <ul>
-            <li>Custom integrations</li>
-            <li>SLA & dedicated support</li>
-            <li>Multi-channel bots</li>
+            <li>All Pro features</li>
+            <li>Custom integrations & multi-channel support</li>
+            <li>Dedicated SLA & onboarding</li>
           </ul>
           <a href="mailto:hello@aichatflows.com" class="btn">Contact Sales</a>
         </div>
