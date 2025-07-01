@@ -279,6 +279,57 @@
       <p style="margin-top:.5em;font-size:.85rem;">© 2025 AIChatFlows</p>
     </div>
   </footer>
+  <!-- Chat Widget -->
+  <div id="chat-widget">
+    <div id="chat-log"></div>
+    <div id="chat-input-wrap">
+      <input id="chat-input" placeholder="Ask me anything…" autocomplete="off"/>
+      <button id="chat-send">➤</button>
+    </div>
+  </div>
 
+  <style>
+    /* Widget styles */
+    #chat-widget {
+      position: fixed;
+      bottom: 20px; right: 20px;
+      width: 280px; background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 8px; overflow: hidden;
+    }
+    #chat-log { max-height:300px; overflow-y:auto; padding:12px; background:#f9f9f9; }
+    #chat-log .user { text-align:right; color:var(--clr-primary); margin:6px 0; }
+    #chat-log .bot  { text-align:left;  color:var(--clr-secondary); margin:6px 0; }
+    #chat-input-wrap { display:flex; border-top:1px solid #ddd; }
+    #chat-input { flex:1; border:none; padding:8px; font-size:14px; }
+    #chat-send { border:none; padding:0 16px; background:var(--clr-primary); color:#fff; cursor:pointer; }
+    #chat-input:focus { outline:none; }
+  </style>
+
+  <script>
+    const logEl   = document.getElementById("chat-log");
+    const inpEl   = document.getElementById("chat-input");
+    const sendBtn = document.getElementById("chat-send");
+
+    async function sendMessage() {
+      const msg = inpEl.value.trim();
+      if (!msg) return;
+      logEl.innerHTML += `<div class="user">${msg}</div>`;
+      inpEl.value = "";
+      logEl.scrollTop = logEl.scrollHeight;
+
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: "web_"+Date.now(), message: msg })
+      });
+      const { reply } = await res.json();
+      logEl.innerHTML += `<div class="bot">${reply}</div>`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    inpEl.addEventListener("keypress", e => { if (e.key === "Enter") sendMessage(); });
+  </script>
 </body>
 </html>
