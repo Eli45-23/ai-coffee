@@ -4,201 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>AIChatFlows — Advanced AI Chatbots & Social Media Automation</title>
-
+  <link rel="stylesheet" href="/static/css/styles.css" />
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;500;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-
-  <style>
-    /* -----------------------
-       Reset & Variables
-    ----------------------- */
-    :root {
-      --clr-dark: #0d1117;
-      --clr-light: #f5f7fa;
-      --clr-primary: #00d1b2;
-      --clr-secondary: #1e293b;
-      --ff-sans: 'DM Sans', sans-serif;
-      --ff-heading: 'Montserrat', sans-serif;
-    }
-    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: var(--ff-sans);
-      color: var(--clr-secondary);
-      background: var(--clr-light);
-      line-height:1.6;
-    }
-    a { text-decoration:none; }
-    .container { width:90%; max-width:1200px; margin:0 auto; }
-
-    /* -----------------------
-       Buttons
-    ----------------------- */
-    .btn {
-      display:inline-block;
-      padding:0.75em 1.5em;
-      background: var(--clr-primary);
-      color:#fff;
-      border-radius:4px;
-      font-weight:600;
-      transition:transform 0.3s;
-    }
-    .btn:hover { transform:scale(1.05); }
-
-    /* -----------------------
-       Hero
-    ----------------------- */
-    header.hero {
-      position:relative;
-      height:100vh;
-      background:linear-gradient(-45deg,#0d1117,#1e293b,#0d1117,#1e293b);
-      background-size:400% 400%;
-      animation:gradientBG 12s ease infinite;
-      display:flex;align-items:center;justify-content:center;
-      color:#fff; text-align:center;
-    }
-    header.hero .container { z-index:1; }
-    header.hero h1 {
-      font-family:var(--ff-heading);
-      font-size:3rem;
-      margin-bottom:0.5em;
-      animation:fadeInUp 1s ease forwards;
-    }
-    header.hero p {
-      font-size:1.2rem;
-      margin-bottom:1.5em;
-      opacity:0;
-      animation:fadeInUp 1.2s ease forwards;
-    }
-    header.hero .btn {
-      opacity:0;
-      animation:fadeInUp 1.4s ease forwards;
-    }
-    header.hero::after {
-      content:'';
-      position:absolute;top:0;right:0;bottom:0;left:0;
-      background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><circle fill="%23ffffff22" cx="200" cy="200" r="200"/></svg>') no-repeat center;
-      mix-blend-mode:overlay;opacity:0.2;
-    }
-
-    @keyframes gradientBG {
-      0%{background-position:0% 50%}
-      50%{background-position:100% 50%}
-      100%{background-position:0% 50%}
-    }
-    @keyframes fadeInUp {
-      from{transform:translateY(20px);opacity:0}
-      to{transform:translateY(0);opacity:1}
-    }
-
-    /* -----------------------
-       Features
-    ----------------------- */
-    .features {
-      padding:4em 0; background:#fff;
-    }
-    .features h2 {
-      font-family:var(--ff-heading);
-      text-align:center;
-      margin-bottom:1.5em;
-    }
-    .cards {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-      gap:1.5em;
-    }
-    .card {
-      background:var(--clr-light);
-      padding:2em;
-      border-radius:8px;
-      text-align:center;
-      box-shadow:0 4px 12px rgba(0,0,0,0.05);
-      transform:translateY(20px);
-      opacity:0;
-      animation:fadeInUp 0.8s ease forwards;
-    }
-    .card:nth-child(1){animation-delay:0.3s}
-    .card:nth-child(2){animation-delay:0.5s}
-    .card:nth-child(3){animation-delay:0.7s}
-    .card:hover {
-      transform:translateY(-8px);
-      box-shadow:0 8px 20px rgba(0,0,0,0.1);
-    }
-    .card h3 {font-family:var(--ff-heading);margin-bottom:0.75em;}
-
-    /* -----------------------
-       Pricing
-    ----------------------- */
-    .pricing {
-      padding:4em 0;
-      background:#f0f4f8;
-    }
-    .pricing h2 {
-      font-family:var(--ff-heading);
-      text-align:center;
-      margin-bottom:1.5em;
-    }
-    .plans {
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      gap:1.5em;
-    }
-    .plan {
-      background:#fff;
-      padding:2em;
-      border-radius:8px;
-      width:260px;
-      text-align:center;
-      box-shadow:0 4px 12px rgba(0,0,0,0.05);
-      transition:transform 0.3s,box-shadow 0.3s;
-    }
-    .plan.popular {
-      border:2px solid var(--clr-primary);
-      position:relative;
-    }
-    .plan.popular::before {
-      content:'Most Popular';
-      position:absolute;
-      top:-10px;left:50%;
-      transform:translateX(-50%);
-      background:var(--clr-primary);
-      color:#fff;
-      padding:0.25em 0.75em;
-      border-radius:4px;
-      font-size:0.75rem;
-    }
-    .plan:hover {
-      transform:translateY(-8px);
-      box-shadow:0 8px 20px rgba(0,0,0,0.1);
-    }
-    .plan h3 {font-family:var(--ff-heading);margin-bottom:0.5em;}
-    .plan .setup,
-    .plan .price {margin:0.5em 0;font-weight:600;color:var(--clr-primary);}
-    .plan ul {list-style:none;text-align:left;margin:1em 0;}
-    .plan ul li {margin:0.5em 0;}
-
-    /* -----------------------
-       Footer
-    ----------------------- */
-    footer {
-      background:var(--clr-secondary);
-      color:#fff;
-      text-align:center;
-      padding:2em 0;
-    }
-    footer p {margin-bottom:1em;}
-    footer a.btn {
-      background:#fff;
-      color:var(--clr-secondary);
-    }
-
-    /* Responsive */
-    @media(max-width:600px){
-      header.hero h1{font-size:2.5rem;}
-      .cards,.plans{grid-template-columns:1fr;flex-direction:column;}
-    }
-  </style>
 </head>
 <body>
 
@@ -226,6 +34,30 @@
       <div class="card">
         <h3>Seamless Setup</h3>
         <p>No coding needed—deploy your branded bot in minutes and start automating.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works">
+    <div class="container">
+      <h2>How It Works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="icon">1</div>
+          <h3>Connect Your Accounts</h3>
+          <p>Link your social media and communication platforms securely.</p>
+        </div>
+        <div class="step">
+          <div class="icon">2</div>
+          <h3>Customize Your AI</h3>
+          <p>Tailor responses and content to match your brand's voice and needs.</p>
+        </div>
+        <div class="step">
+          <div class="icon">3</div>
+          <h3>Launch & Automate</h3>
+          <p>Deploy your AI and watch it handle customer interactions and content creation.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -274,62 +106,54 @@
   <!-- Footer / Contact -->
   <footer>
     <div class="container">
-      <p>Ready to automate your customer chats?</p>
-      <a href="mailto:hello@aichatflows.com" class="btn">hello@aichatflows.com</a>
-      <p style="margin-top:.5em;font-size:.85rem;">© 2025 AIChatFlows</p>
+      <div class="footer-content">
+        <div class="footer-section about">
+          <h3>AIChatFlows</h3>
+          <p>Revolutionizing customer interaction and content creation with advanced AI.</p>
+        </div>
+        <div class="footer-section links">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="mailto:hello@aichatflows.com">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-section contact">
+          <h3>Contact Us</h3>
+          <p>Email: <a href="mailto:hello@aichatflows.com">hello@aichatflows.com</a></p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 AIChatFlows. All rights reserved.</p>
+      </div>
     </div>
   </footer>
-  <!-- Chat Widget -->
-  <div id="chat-widget">
-    <div id="chat-log"></div>
-    <div id="chat-input-wrap">
-      <input id="chat-input" placeholder="Ask me anything…" autocomplete="off"/>
-      <button id="chat-send">➤</button>
+
+  <!-- Chat Widget HTML -->
+  <div id="chatWidget" class="chat-widget">
+    <div class="chat-header">
+      <h4>AIChatFlows</h4>
+      <div class="chat-controls">
+        <!-- Demo toggle -->
+        <button id="demoToggle" title="Toggle Demo Mode">
+          <svg viewBox="0 0 24 24"><path d="M11 21h-1l1-7H5l7-12h1l-1 7h6z"/></svg>
+        </button>
+        <!-- Minimize -->
+        <button id="minimizeBtn" title="Minimize Chat">
+          <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+      </div>
     </div>
+    <div id="messages" class="chat-messages"></div>
+    <form id="chatForm" class="chat-input">
+      <textarea id="inputMsg" rows="1" placeholder="Type a message…"></textarea>
+      <button type="submit">Send</button>
+    </form>
   </div>
 
-  <style>
-    /* Widget styles */
-    #chat-widget {
-      position: fixed;
-      bottom: 20px; right: 20px;
-      width: 280px; background: #fff;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      border-radius: 8px; overflow: hidden;
-    }
-    #chat-log { max-height:300px; overflow-y:auto; padding:12px; background:#f9f9f9; }
-    #chat-log .user { text-align:right; color:var(--clr-primary); margin:6px 0; }
-    #chat-log .bot  { text-align:left;  color:var(--clr-secondary); margin:6px 0; }
-    #chat-input-wrap { display:flex; border-top:1px solid #ddd; }
-    #chat-input { flex:1; border:none; padding:8px; font-size:14px; }
-    #chat-send { border:none; padding:0 16px; background:var(--clr-primary); color:#fff; cursor:pointer; }
-    #chat-input:focus { outline:none; }
-  </style>
+  <script src="/static/js/main.js"></script>
 
-  <script>
-    const logEl   = document.getElementById("chat-log");
-    const inpEl   = document.getElementById("chat-input");
-    const sendBtn = document.getElementById("chat-send");
-
-    async function sendMessage() {
-      const msg = inpEl.value.trim();
-      if (!msg) return;
-      logEl.innerHTML += `<div class="user">${msg}</div>`;
-      inpEl.value = "";
-      logEl.scrollTop = logEl.scrollHeight;
-
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: "web_"+Date.now(), message: msg })
-      });
-      const { reply } = await res.json();
-      logEl.innerHTML += `<div class="bot">${reply}</div>`;
-      logEl.scrollTop = logEl.scrollHeight;
-    }
-
-    sendBtn.addEventListener("click", sendMessage);
-    inpEl.addEventListener("keypress", e => { if (e.key === "Enter") sendMessage(); });
-  </script>
 </body>
 </html>
