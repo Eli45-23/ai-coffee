@@ -58,6 +58,7 @@ function addQuickReplies(replies) {
     btn.textContent = reply;
     btn.addEventListener('click', () => {
       input.value = reply;
+      quickRepliesContainer.innerHTML = ''; // Clear quick replies immediately
       form.dispatchEvent(new Event('submit'));
     });
     quickRepliesContainer.appendChild(btn);
