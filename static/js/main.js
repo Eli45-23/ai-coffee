@@ -68,7 +68,7 @@ function addQuickReplies(replies) {
 // Proactive welcome message
 window.addEventListener('load', () => {
   setTimeout(() => {
-    addMessage('bot', 'Hello! How can I assist you today?');
+    addMessage('bot', 'Hello! How can I assist you today? Feel free to ask me anything about AIChatFlows.');
     addQuickReplies([
       'What are your features?',
       'How much does it cost?',
