@@ -90,6 +90,7 @@ minimizeBtn.addEventListener('click', () => {
 // Send message
 form.addEventListener('submit', async e => {
   e.preventDefault();
+  console.log('Form submit event triggered.');
   const text = input.value.trim();
   if (!text) return;
 
@@ -117,8 +118,8 @@ form.addEventListener('submit', async e => {
       ]);
     } else if (text.toLowerCase().includes('cost') || text.toLowerCase().includes('price')) {
       addQuickReplies([
-        'What's included in Basic?',
-        'What's included in Pro?',
+        'What\'s included in Basic?',
+        'What\'s included in Pro?',
         'Contact sales for Enterprise.'
       ]);
     } else {
@@ -135,3 +136,6 @@ form.addEventListener('submit', async e => {
     addMessage('bot', 'Oops! Something went wrong. Please try again later.');
   }
 });
+
+console.log('main.js loaded.');
+console.log('Form element:', form);
