@@ -70,5 +70,5 @@ async def chat(req: ChatRequest):
 @app.post("/api/demo-chat", response_model=ChatResponse)
 async def demo_chat(req: ChatRequest):
     # This is a hardcoded response for demonstration purposes
-    demo_reply = f"Hello {req.user_id}! This is a demo response to your message: "{req.message}". The demo bot is working!"
+    demo_reply = f"Hello {req.user_id}! This is a demo response to your message: '{req.message}'. The demo bot is working!"
     return ChatResponse(reply=demo_reply)
