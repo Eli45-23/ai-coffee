@@ -69,6 +69,10 @@ a:hover {
   letter-spacing: 1px;
   transition: all 0.3s ease;
   box-shadow: 0 5px 15px rgba(0, 230, 118, 0.3);
+  cursor: pointer;
+  pointer-events: auto;
+  position: relative;
+  z-index: 10;
 }
 .btn:hover {
   transform: translateY(-3px);
@@ -197,6 +201,7 @@ header.hero .btn {
   transform: rotate(45deg);
   opacity: 0;
   transition: opacity 0.5s ease;
+  pointer-events: none;
 }
 
 .card:hover::before {
