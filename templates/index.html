@@ -3,45 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>AI Coffee — 24/7 AI Menu Assistant + Social Media</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <title>AIChatFlows — Advanced AI Chatbots & Social Media Automation</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
   <!-- Hero -->
   <header class="hero">
     <div class="container">
-      <h1>AI Coffee</h1>
-      <p>Your 24/7 AI Menu Assistant + Weekly Social Media Posts</p>
-      <a href="#demo" class="btn">Try the Live Demo</a>
+      <h1>AIChatFlows</h1>
+      <p>Advanced AI Chatbots • Customer Service Automation • Social Content</p>
+      <a href="#features" class="btn">Explore Features</a>
     </div>
   </header>
 
-  <!-- Live Demo -->
-  <section id="demo" class="demo">
+  <!-- Features -->
+  <section id="features" class="features">
     <div class="container">
-      <h2>Live Demo</h2>
-      <div class="chatbot">
-        <form id="demo-form" onsubmit="return false;">
-          <input type="text" id="user-input" placeholder="Ask about the menu…" autocomplete="off"/>
-          <button id="ask-btn">Ask</button>
-        </form>
-        <div id="chat-log"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- How It Works -->
-  <section id="how-it-works" class="features">
-    <div class="container">
-      <h2>How It Works</h2>
+      <h2>What We Offer</h2>
       <div class="cards">
         <div class="card">
-          <h3>Instant Menu Help</h3>
-          <p>AI Chatbot answers every question—ingredients, allergies, specials—any time, any device.</p>
+          <h3>24/7 AI Chatbot</h3>
+          <p>Instant answers to customer questions across Instagram, Facebook, SMS & more.</p>
         </div>
         <div class="card">
-          <h3>Social-Media Magic</h3>
-          <p>Three bespoke Instagram posts weekly, designed to spotlight specials and maximize engagement.</p>
+          <h3>Dynamic Content</h3>
+          <p>Weekly bespoke social posts to keep your audience engaged and growing.</p>
         </div>
         <div class="card">
           <h3>Seamless Setup</h3>
@@ -57,9 +43,9 @@
       <h2>Cost Comparison</h2>
       <div class="cards">
         <div class="card">
-          <h3>AI Coffee Pro</h3>
-          <p>$99/mo</p>
-          <p>$1,188/yr</p>
+          <h3>AIChatFlows Pro</h3>
+          <p>$149/mo</p>
+          <p>$1,788/yr</p>
         </div>
         <div class="card">
           <h3>Full-Time Employee</h3>
@@ -67,7 +53,7 @@
         </div>
         <div class="card">
           <h3>You Save</h3>
-          <p>≈$33,800/yr</p>
+          <p>≈$33,200/yr</p>
         </div>
       </div>
     </div>
@@ -78,23 +64,15 @@
     <div class="container">
       <h2>Start Your 30-Day Pilot</h2>
       <div class="cards">
-        <div class="card">
-          <h3>Basic</h3>
-          <p><strong>Setup:</strong> $199</p>
-          <p><strong>Monthly:</strong> $99/mo</p>
-          <ul>
-            <li>ManyChat automation & GPT integration</li>
-            <li>Email support</li>
-          </ul>
-          <a href="#contact" class="btn">Get Started</a>
-        </div>
         <div class="card popular">
           <h3>Pro</h3>
           <p><strong>Setup:</strong> $249</p>
           <p><strong>Monthly:</strong> $149/mo</p>
           <ul>
-            <li>Everything in Basic</li>
-            <li>Priority edits & SLA</li>
+            <li>24/7 AI chatbot automation</li>
+            <li>Social media content creation</li>
+            <li>Multi-platform integration</li>
+            <li>Priority support & SLA</li>
             <li>Monthly usage reports</li>
           </ul>
           <a href="#contact" class="btn">Get Started</a>
@@ -104,9 +82,12 @@
           <p><strong>Setup:</strong> $299</p>
           <p><strong>Monthly:</strong> $249/mo</p>
           <ul>
-            <li>Custom integrations & multi-channel support</li>
-            <li>Dedicated SLA & onboarding</li>
-            <li>All Pro features + more</li>
+            <li>Everything in Pro</li>
+            <li>Custom integrations & workflows</li>
+            <li>Multi-channel support</li>
+            <li>Dedicated account manager</li>
+            <li>Advanced analytics & reporting</li>
+            <li>White-label solutions</li>
           </ul>
           <a href="#contact" class="btn">Get Started</a>
         </div>
@@ -117,10 +98,30 @@
   <!-- Footer / Contact -->
   <footer id="contact" class="footer">
     <div class="container">
-      <p>Ready to automate your menu and engagement? <a href="mailto:hello@aicoffee.com">Contact us</a></p>
+      <p>Ready to automate your customer chats? <a href="mailto:hello@aichatflows.com">Contact us</a></p>
     </div>
   </footer>
 
-  <script src="/static/app.js"></script>
+  <!-- Chat Widget -->
+  <div id="chatWidget" class="chat-widget">
+    <div class="chat-header">
+      <span>AIChatFlows Assistant</span>
+      <div class="chat-controls">
+        <button id="demoToggle" type="button" title="Toggle Demo Mode" class="demo-toggle">
+          <span class="demo-text">DEMO</span>
+        </button>
+        <button id="minimizeBtn" type="button" title="Minimize Chat">
+          <svg viewBox="0 0 16 16"><path d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="messages" class="chat-messages"></div>
+    <form id="chatForm" class="chat-input">
+      <textarea id="inputMsg" placeholder="Type your message..." rows="1"></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script src="/static/js/main.js"></script>
 </body>
 </html>

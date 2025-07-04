@@ -80,7 +80,21 @@ window.addEventListener('load', () => {
 // Toggle demo mode
 demoBtn.addEventListener('click', () => {
   isDemo = !isDemo;
-  widget.classList.toggle('chat-demo-active', isDemo);
+  
+  // Update visual feedback
+  if (isDemo) {
+    demoBtn.classList.add('active');
+    demoBtn.querySelector('.demo-text').textContent = 'DEMO ON';
+    demoBtn.title = 'Demo Mode: ON (Click to use live AI)';
+    widget.classList.add('chat-demo-active');
+    addMessage('bot', '🔄 Demo mode activated! I\'ll respond with demo answers. Click DEMO ON again to switch to live AI.');
+  } else {
+    demoBtn.classList.remove('active');
+    demoBtn.querySelector('.demo-text').textContent = 'DEMO';
+    demoBtn.title = 'Demo Mode: OFF (Click to enable demo)';
+    widget.classList.remove('chat-demo-active');
+    addMessage('bot', '✨ Live AI mode activated! I\'ll now use real AI responses.');
+  }
 });
 
 // Minimize / restore
@@ -107,35 +121,51 @@ form.addEventListener('submit', async e => {
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({user_id:'web_user',message:text})
     });
-    const {reply} = await res.json();
+    
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    }
+    
+    const data = await res.json();
     showTypingIndicator(false);
-    addMessage('bot', reply);
-    // Offer new quick replies based on context (example)
-    if (text.toLowerCase().includes('feature')) {
-      addQuickReplies([
-        'Tell me more about chatbots',
-        'What about social media automation?',
-        'How easy is setup?',
-      ]);
-    } else if (text.toLowerCase().includes('cost') || text.toLowerCase().includes('price')) {
-      addQuickReplies([
-        'What\'s included in Basic?',
-        'What\'s included in Pro?',
-        'Contact sales for Enterprise.'
-      ]);
+    
+    if (data.reply) {
+      addMessage('bot', data.reply);
     } else {
-      addQuickReplies([
-        'What are your features?',
-        'How much does it cost?',
-        'Tell me about automation.'
-      ]);
+      addMessage('bot', 'I received your message but couldn\'t generate a response. Please try again.');
     }
 
   } catch(err) {
-    console.error(err);
+    console.error('Chat error:', err);
     showTypingIndicator(false);
-    addMessage('bot', 'Oops! Something went wrong. Please try again later.');
+    
+    let errorMessage;
+    if (err.message.includes('NetworkError') || err.message.includes('Failed to fetch')) {
+      errorMessage = 'Connection error. Please check your internet connection and try again.';
+    } else if (err.message.includes('HTTP 5')) {
+      errorMessage = 'Server error. Our AI assistant is temporarily unavailable. Please try again in a few minutes.';
+    } else if (err.message.includes('HTTP 4')) {
+      errorMessage = 'Request error. Please try rephrasing your message.';
+    } else {
+      errorMessage = 'Oops! Something went wrong. Please try again later.';
+    }
+    
+    addMessage('bot', errorMessage);
   }
+});
+
+// Keyboard shortcuts
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    form.dispatchEvent(new Event('submit'));
+  }
+});
+
+// Auto-resize textarea
+input.addEventListener('input', () => {
+  input.style.height = 'auto';
+  input.style.height = Math.min(input.scrollHeight, 120) + 'px';
 });
 
 console.log('main.js loaded.');
