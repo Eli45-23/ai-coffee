@@ -3,108 +3,199 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Get Started — AIChatFlows</title>
+  <title>Welcome to AIChatFlows Setup</title>
   <link rel="stylesheet" href="/static/css/styles.css">
   <style>
-    .start-container {
+    .setup-container {
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2em;
+      background: var(--clr-dark);
+      padding-top: 3em;
+      padding-bottom: 3em;
     }
-    .start-box {
+    
+    .setup-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 2em;
+      text-align: center;
+    }
+    
+    .setup-header h1 {
+      font-family: var(--ff-heading);
+      font-size: 3.5rem;
+      color: var(--clr-primary);
+      margin-bottom: 0.5em;
+      line-height: 1.2;
+    }
+    
+    .welcome-text {
+      font-family: var(--ff-sans);
+      font-size: 1.2rem;
+      color: var(--clr-light);
+      margin-bottom: 3em;
+      line-height: 1.6;
+      opacity: 0.9;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .progress-indicator {
+      font-family: var(--ff-sans);
+      font-size: 0.9rem;
+      color: var(--clr-primary);
+      margin-bottom: 2em;
+      opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .form-container {
       background: var(--clr-secondary);
       padding: 3em;
       border-radius: 16px;
-      max-width: 600px;
-      width: 100%;
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
       border: 1px solid rgba(0, 230, 118, 0.2);
-      text-align: center;
-    }
-    .start-box h1 {
-      font-family: var(--ff-heading);
-      font-size: 2.5rem;
-      margin-bottom: 0.5em;
-      background: linear-gradient(45deg, var(--clr-primary), var(--clr-accent-blue));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .start-box p {
-      font-size: 1.2rem;
       margin-bottom: 2em;
-      color: var(--clr-light);
-      opacity: 0.9;
     }
-    .start-options {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5em;
-      margin-top: 2em;
-    }
-    .option-card {
+    
+    .form-placeholder {
+      min-height: 500px;
       background: var(--clr-dark);
-      padding: 2em;
+      border: 2px dashed rgba(0, 230, 118, 0.3);
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2em;
+      padding: 2em;
     }
-    .option-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 25px rgba(0, 230, 118, 0.3);
-      border-color: var(--clr-primary);
+    
+    .form-placeholder-text {
+      color: var(--clr-light);
+      opacity: 0.5;
+      font-size: 1.2rem;
     }
-    .option-card h3 {
-      color: var(--clr-primary);
-      margin-bottom: 0.5em;
-      font-size: 1.5rem;
-    }
-    .option-card p {
-      font-size: 1rem;
-      margin-bottom: 1em;
-    }
-    .back-link {
-      margin-top: 2em;
+    
+    .fallback-button {
       display: inline-block;
+      padding: 1em 2.5em;
+      background: linear-gradient(45deg, var(--clr-primary), var(--clr-accent-blue));
+      color: #fff;
+      border-radius: 50px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 230, 118, 0.3);
+      text-decoration: none;
+    }
+    
+    .fallback-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 230, 118, 0.4);
+      background: linear-gradient(45deg, var(--clr-accent-blue), var(--clr-primary));
+    }
+    
+    .privacy-text {
+      font-size: 0.85rem;
       color: var(--clr-light);
       opacity: 0.7;
-      transition: opacity 0.3s ease;
+      margin-top: 2em;
+      margin-bottom: 3em;
+      line-height: 1.5;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
-    .back-link:hover {
-      opacity: 1;
+    
+    .contact-section {
+      margin-bottom: 4em;
+    }
+    
+    .contact-section p {
+      color: var(--clr-light);
+      margin-bottom: 1em;
+    }
+    
+    .contact-section a {
       color: var(--clr-primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    
+    .contact-section a:hover {
+      color: var(--clr-accent-blue);
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+      .setup-header h1 {
+        font-size: 2.5rem;
+      }
+      
+      .welcome-text {
+        font-size: 1rem;
+      }
+      
+      .form-container {
+        padding: 2em 1.5em;
+      }
+      
+      .form-placeholder {
+        min-height: 400px;
+      }
+      
+      .fallback-button {
+        padding: 0.8em 2em;
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="start-container">
-    <div class="start-box">
-      <h1>Let's Get Started!</h1>
-      <p>Choose how you'd like to begin your AI chatbot journey</p>
-      
-      <div class="start-options">
-        <div class="option-card">
-          <h3>📞 Schedule a Call</h3>
-          <p>Book a 15-minute consultation to discuss your specific needs</p>
-          <a href="mailto:hello@aichatflows.com?subject=Schedule a Consultation&body=Hi! I'd like to schedule a call to discuss setting up an AI chatbot for my business." class="btn">Schedule Call</a>
-        </div>
-        
-        <div class="option-card">
-          <h3>📝 Fill Out Onboarding Form</h3>
-          <p>Provide your business details and we'll create a custom proposal</p>
-          <a href="mailto:hello@aichatflows.com?subject=Onboarding Form Request&body=Hi! I'm interested in getting started with AIChatFlows. Please send me the onboarding form." class="btn">Request Form</a>
-        </div>
-        
-        <div class="option-card">
-          <h3>💬 Chat With Us</h3>
-          <p>Have questions? Start a conversation with our team</p>
-          <a href="mailto:hello@aichatflows.com?subject=Quick Question&body=Hi! I have a quick question about AIChatFlows..." class="btn">Start Chat</a>
-        </div>
+  <div class="setup-container">
+    <div class="setup-content">
+      <div class="setup-header">
+        <h1>Welcome to AIChatFlows</h1>
       </div>
       
-      <a href="/" class="back-link">← Back to Homepage</a>
+      <p class="welcome-text">
+        Thank you for joining AIChatFlows! This short onboarding step will help us connect your social platforms and personalize your automation setup.
+      </p>
+      
+      <div class="form-container">
+        <p class="progress-indicator">Step 1 of 2: Complete this short onboarding form.</p>
+        
+        <div class="form-placeholder">
+          <p class="form-placeholder-text"><!-- GOOGLE FORM HERE --></p>
+        </div>
+        
+        <a href="https://your-form-link.com" class="fallback-button">Complete Setup Form</a>
+        
+        <p class="privacy-text">
+          Your information is encrypted and only used to securely onboard your AI system. We do not store login credentials. All platform logins are handled via Meta's official authorization.
+        </p>
+      </div>
+      
+      <div class="contact-section">
+        <p>Need help? Contact us at</p>
+        <a href="mailto:eliascolon23@gmail.com">eliascolon23@gmail.com</a>
+      </div>
     </div>
   </div>
+  
+  <!-- Footer / Contact -->
+  <footer id="contact" class="footer">
+    <div class="container">
+      <p>Ready to automate your customer chats? <a href="mailto:hello@aichatflows.com?subject=General Inquiry&body=Hi! I'm interested in learning more about AIChatFlows services. Please contact me." class="btn">Contact Us</a></p>
+      <div style="margin-top: 2em; padding-top: 2em; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+        <p style="font-size: 0.9em; color: rgba(255, 255, 255, 0.7); max-width: 800px; margin: 0 auto;">
+          🔐 We take your privacy seriously. All submitted information is secured and encrypted. We never store your passwords or login credentials. All social media integrations are handled through Meta's official platform.
+        </p>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
