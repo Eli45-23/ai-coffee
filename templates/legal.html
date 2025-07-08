@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Legal - Terms of Service & Privacy Policy | AIChatFlows</title>
+  <meta name="description" content="Terms of Service and Privacy Policy for AIChatFlows - AI chatbot automation services for Instagram and Facebook DM automation.">
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <style>
+    /* Legal page specific styles */
+    .legal-container {
+      min-height: 100vh;
+      background: var(--clr-dark);
+      padding-top: 2em;
+      padding-bottom: 4em;
+    }
+    
+    .legal-content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2em;
+    }
+    
+    .legal-header {
+      text-align: center;
+      margin-bottom: 3em;
+      padding-bottom: 2em;
+      border-bottom: 2px solid var(--clr-primary);
+    }
+    
+    .legal-header h1 {
+      font-family: var(--ff-heading);
+      font-size: 3rem;
+      color: var(--clr-primary);
+      margin-bottom: 0.5em;
+      line-height: 1.2;
+    }
+    
+    .legal-header p {
+      font-size: 1.1rem;
+      color: var(--clr-light);
+      opacity: 0.9;
+    }
+    
+    .legal-nav {
+      background: var(--clr-secondary);
+      border-radius: 12px;
+      padding: 1.5em;
+      margin-bottom: 3em;
+      text-align: center;
+      border: 1px solid rgba(0, 230, 118, 0.2);
+    }
+    
+    .legal-nav h3 {
+      color: var(--clr-primary);
+      margin-bottom: 1em;
+      font-family: var(--ff-heading);
+    }
+    
+    .legal-nav-links {
+      display: flex;
+      gap: 1.5em;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .legal-nav a {
+      display: inline-block;
+      padding: 0.8em 1.5em;
+      background: linear-gradient(45deg, var(--clr-primary), var(--clr-accent-blue));
+      color: #fff;
+      border-radius: 25px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 230, 118, 0.3);
+      text-decoration: none;
+    }
+    
+    .legal-nav a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 230, 118, 0.4);
+      background: linear-gradient(45deg, var(--clr-accent-blue), var(--clr-primary));
+    }
+    
+    .legal-section {
+      background: var(--clr-secondary);
+      border-radius: 16px;
+      padding: 3em;
+      margin-bottom: 3em;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    
+    .legal-section h2 {
+      font-family: var(--ff-heading);
+      font-size: 2.5rem;
+      color: var(--clr-primary);
+      margin-bottom: 0.5em;
+      padding-bottom: 0.5em;
+      border-bottom: 2px solid var(--clr-primary);
+    }
+    
+    .legal-section h3 {
+      font-family: var(--ff-heading);
+      font-size: 1.8rem;
+      color: var(--clr-light);
+      margin: 2em 0 1em 0;
+      padding-left: 1em;
+      border-left: 4px solid var(--clr-primary);
+    }
+    
+    .legal-section h4 {
+      font-family: var(--ff-heading);
+      font-size: 1.3rem;
+      color: var(--clr-accent-blue);
+      margin: 1.5em 0 0.8em 0;
+    }
+    
+    .legal-section p {
+      color: var(--clr-light);
+      line-height: 1.8;
+      margin-bottom: 1.5em;
+      font-size: 1rem;
+    }
+    
+    .legal-section ul {
+      color: var(--clr-light);
+      margin: 1em 0 1.5em 2em;
+      line-height: 1.8;
+    }
+    
+    .legal-section li {
+      margin-bottom: 0.8em;
+      position: relative;
+    }
+    
+    .legal-section li::marker {
+      color: var(--clr-primary);
+    }
+    
+    .section-divider {
+      text-align: center;
+      margin: 2em 0;
+      color: var(--clr-primary);
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .last-updated {
+      background: rgba(0, 230, 118, 0.1);
+      border: 1px solid var(--clr-primary);
+      border-radius: 8px;
+      padding: 1em;
+      margin-bottom: 2em;
+      text-align: center;
+    }
+    
+    .last-updated p {
+      color: var(--clr-primary);
+      font-weight: 600;
+      margin: 0;
+    }
+    
+    .contact-info {
+      background: linear-gradient(135deg, var(--clr-primary), var(--clr-accent-blue));
+      border-radius: 12px;
+      padding: 2em;
+      text-align: center;
+      margin-top: 3em;
+    }
+    
+    .contact-info h3 {
+      color: #fff;
+      margin-bottom: 1em;
+      font-family: var(--ff-heading);
+    }
+    
+    .contact-info p {
+      color: #fff;
+      margin-bottom: 1em;
+    }
+    
+    .contact-info a {
+      color: #fff;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+    
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: linear-gradient(135deg, var(--clr-primary), var(--clr-accent-blue));
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 230, 118, 0.3);
+      z-index: 1000;
+    }
+    
+    .back-to-top:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0, 230, 118, 0.4);
+    }
+    
+    .home-link {
+      display: inline-block;
+      margin-bottom: 2em;
+      padding: 0.8em 1.5em;
+      background: var(--clr-secondary);
+      color: var(--clr-primary);
+      border: 2px solid var(--clr-primary);
+      border-radius: 25px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    
+    .home-link:hover {
+      background: var(--clr-primary);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      .legal-header h1 {
+        font-size: 2.2rem;
+      }
+      
+      .legal-section {
+        padding: 2em 1.5em;
+      }
+      
+      .legal-section h2 {
+        font-size: 2rem;
+      }
+      
+      .legal-section h3 {
+        font-size: 1.5rem;
+      }
+      
+      .legal-nav-links {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .legal-nav a {
+        width: 200px;
+      }
+      
+      .legal-content {
+        padding: 0 1em;
+      }
+      
+      .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="legal-container">
+    <div class="legal-content">
+      <div class="legal-header">
+        <a href="/" class="home-link">← Back to AIChatFlows</a>
+        <h1>Legal Information</h1>
+        <p>Terms of Service and Privacy Policy for AIChatFlows</p>
+      </div>
+      
+      <div class="legal-nav">
+        <h3>Quick Navigation</h3>
+        <div class="legal-nav-links">
+          <a href="#terms-of-service">Terms of Service</a>
+          <a href="#privacy-policy">Privacy Policy</a>
+        </div>
+      </div>
+      
+      <!-- TERMS OF SERVICE SECTION -->
+      <section id="terms-of-service" class="legal-section">
+        <h2>Terms of Service</h2>
+        
+        <div class="last-updated">
+          <p>Last Updated: July 2025</p>
+        </div>
+        
+        <p>Welcome to AI Chat Flows. These Terms of Service ("Terms") govern your use of our chatbot automation services ("Services"), including any associated onboarding, integrations, and platforms. By signing up, accessing, or using our Services, you agree to be legally bound by these Terms.</p>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>1. Overview of Services</h3>
+        <p>AI Chat Flows provides automation services using platforms such as ManyChat, Instagram, Facebook Messenger, Zapier, and Google Sheets. Clients submit onboarding information through a Google Form and select either a Starter Plan or a Pro Plan, paid through Stripe.</p>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>2. Account Access & Client Responsibilities</h3>
+        <ul>
+          <li>Some services may require temporary access to your business's Instagram or Facebook account.</li>
+          <li>Submitting login credentials is optional, but may be necessary for us to fully complete setup.</li>
+          <li>Clients are responsible for ensuring that any information provided is accurate and authorized.</li>
+        </ul>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>3. Payments & Refund Policy</h3>
+        <ul>
+          <li>Payments are securely processed through Stripe.</li>
+          <li>Once onboarding and setup begin, all sales are final and non-refundable.</li>
+          <li>Clients must choose their plan at the time of form submission.</li>
+        </ul>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>4. Service Limitations</h3>
+        <ul>
+          <li>We do not guarantee any specific increase in business performance or results.</li>
+          <li>AI Chat Flows is not responsible for third-party platform outages (e.g., Meta, Zapier, ManyChat).</li>
+        </ul>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>5. Intellectual Property</h3>
+        <p>All AI flows, chatbot scripts, and templates provided remain the intellectual property of AI Chat Flows unless otherwise agreed in writing.</p>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>6. Limitation of Liability</h3>
+        <p>To the maximum extent permitted by law, AI Chat Flows shall not be liable for any indirect, incidental, or consequential damages arising from the use of our Services.</p>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>7. Termination</h3>
+        <p>We reserve the right to suspend or terminate your access to the Services if you breach these Terms or misuse our systems.</p>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>8. Governing Law</h3>
+        <p>These Terms are governed by and construed in accordance with the laws of New York State, without regard to conflict of laws principles.</p>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>9. Contact</h3>
+        <p>If you have any questions, contact us at: <a href="mailto:eliascolon23@gmail.com">eliascolon23@gmail.com</a></p>
+      </section>
+      
+      <!-- PRIVACY POLICY SECTION -->
+      <section id="privacy-policy" class="legal-section">
+        <h2>Privacy Policy</h2>
+        
+        <div class="last-updated">
+          <p>Last Updated: July 2025</p>
+        </div>
+        
+        <p>This Privacy Policy explains how AI Chat Flows ("we," "our," or "us") collects, uses, and protects your information. By using our Services, you agree to this Privacy Policy.</p>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>1. Information We Collect</h3>
+        <p>We may collect the following:</p>
+        <ul>
+          <li>Name and email address</li>
+          <li>Business Instagram or Facebook handle</li>
+          <li>Business type, service details, and customer FAQ preferences</li>
+          <li>Social media login credentials (if optionally provided)</li>
+          <li>Plan selected (Starter or Pro)</li>
+          <li>Stripe payment confirmation data</li>
+        </ul>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>2. How We Use Your Data</h3>
+        <p>We use your information to:</p>
+        <ul>
+          <li>Set up your AI chatbot and automation flows</li>
+          <li>Communicate with you during onboarding</li>
+          <li>Complete integrations across platforms</li>
+          <li>Send welcome emails and updates</li>
+        </ul>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>3. Data Storage & Protection</h3>
+        <ul>
+          <li>All data is stored securely in Google Sheets and only accessed by authorized team members.</li>
+          <li>We never sell or share your data with advertisers.</li>
+          <li>Social media login credentials, if shared, are only used during setup and are never stored long-term.</li>
+        </ul>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>4. Your Rights</h3>
+        <p>You may request to access, update, or delete your data at any time by emailing <a href="mailto:eliascolon23@gmail.com">eliascolon23@gmail.com</a>.</p>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>5. Payment Processing</h3>
+        <p>All payments are handled by Stripe. We do not store your credit card or payment details.</p>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>6. Children's Privacy</h3>
+        <p>Our services are not intended for individuals under the age of 18.</p>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>7. Changes to This Policy</h3>
+        <p>We may update this Privacy Policy at any time. Continued use of our services after changes means you accept those changes.</p>
+        
+        <div class="section-divider">⸻</div>
+        
+        <h3>8. Contact</h3>
+        <p>For questions, email us at <a href="mailto:eliascolon23@gmail.com">eliascolon23@gmail.com</a></p>
+      </section>
+      
+      <div class="contact-info">
+        <h3>Questions About Our Legal Policies?</h3>
+        <p>We're here to help clarify any questions you may have about our Terms of Service or Privacy Policy.</p>
+        <p>Contact us: <a href="mailto:eliascolon23@gmail.com">eliascolon23@gmail.com</a></p>
+      </div>
+    </div>
+  </div>
+  
+  <button class="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Back to top">↑</button>
+  
+  <script>
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+    
+    // Show/hide back to top button
+    window.addEventListener('scroll', function() {
+      const backToTop = document.querySelector('.back-to-top');
+      if (window.pageYOffset > 300) {
+        backToTop.style.opacity = '1';
+        backToTop.style.visibility = 'visible';
+      } else {
+        backToTop.style.opacity = '0';
+        backToTop.style.visibility = 'hidden';
+      }
+    });
+    
+    // Initially hide back to top button
+    document.querySelector('.back-to-top').style.opacity = '0';
+    document.querySelector('.back-to-top').style.visibility = 'hidden';
+    document.querySelector('.back-to-top').style.transition = 'opacity 0.3s, visibility 0.3s';
+  </script>
+</body>
+</html>

@@ -37,6 +37,11 @@ async def read_index(request: Request):
 async def start(request: Request):
     return templates.TemplateResponse("start.html", {"request": request})
 
+# Legal page route
+@app.get("/legal", response_class=HTMLResponse)
+async def legal(request: Request):
+    return templates.TemplateResponse("legal.html", {"request": request})
+
 # 5) CORS (allow your front-end fetch)
 app.add_middleware(
     CORSMiddleware,
