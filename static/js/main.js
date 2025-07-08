@@ -3,6 +3,11 @@ const minimizeBtn = document.getElementById('minimizeBtn');
 const form = document.getElementById('chatForm');
 const input = document.getElementById('inputMsg');
 const messages = document.getElementById('messages');
+
+// Debug logging
+console.log('Widget element:', widget);
+console.log('Minimize button element:', minimizeBtn);
+console.log('Form element:', form);
 const quickRepliesContainer = document.createElement('div');
 quickRepliesContainer.className = 'quick-replies';
 messages.parentNode.insertBefore(quickRepliesContainer, form);
@@ -76,8 +81,11 @@ window.addEventListener('load', () => {
 });
 
 // Minimize / restore
-minimizeBtn.addEventListener('click', () => {
+minimizeBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
   widget.classList.toggle('minimized');
+  console.log('Minimize button clicked, widget minimized:', widget.classList.contains('minimized'));
 });
 
 // Send message
