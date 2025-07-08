@@ -1,6 +1,4 @@
-let isDemo = false;
 const widget = document.getElementById('chatWidget');
-const demoBtn = document.getElementById('demoToggle');
 const minimizeBtn = document.getElementById('minimizeBtn');
 const form = document.getElementById('chatForm');
 const input = document.getElementById('inputMsg');
@@ -77,26 +75,6 @@ window.addEventListener('load', () => {
   }, 1000);
 });
 
-// Toggle demo mode
-demoBtn.addEventListener('click', () => {
-  isDemo = !isDemo;
-  
-  // Update visual feedback
-  if (isDemo) {
-    demoBtn.classList.add('active');
-    demoBtn.querySelector('.demo-text').textContent = 'DEMO ON';
-    demoBtn.title = 'Demo Mode: ON (Click to use live AI)';
-    widget.classList.add('chat-demo-active');
-    addMessage('bot', '🔄 Demo mode activated! I\'ll respond with demo answers. Click DEMO ON again to switch to live AI.');
-  } else {
-    demoBtn.classList.remove('active');
-    demoBtn.querySelector('.demo-text').textContent = 'DEMO';
-    demoBtn.title = 'Demo Mode: OFF (Click to enable demo)';
-    widget.classList.remove('chat-demo-active');
-    addMessage('bot', '✨ Live AI mode activated! I\'ll now use real AI responses.');
-  }
-});
-
 // Minimize / restore
 minimizeBtn.addEventListener('click', () => {
   widget.classList.toggle('minimized');
@@ -114,9 +92,8 @@ form.addEventListener('submit', async e => {
   quickRepliesContainer.innerHTML = ''; // Clear quick replies after sending
   showTypingIndicator(true);
 
-  const url = isDemo ? '/api/demo-chat' : '/api/chat';
   try {
-    const res = await fetch(url, {
+    const res = await fetch('/api/chat', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({user_id:'web_user',message:text})
