@@ -13,10 +13,10 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
 
-  // Create quick replies container
+  // Create quick replies container - append to messages instead of inserting before form
   const quickRepliesContainer = document.createElement('div');
   quickRepliesContainer.className = 'quick-replies';
-  messages.parentNode.insertBefore(quickRepliesContainer, form);
+  // Don't insert it yet - we'll append it to messages when needed
 
   // Create typing indicator
   const typingIndicator = document.createElement('div');
@@ -61,6 +61,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Function to add quick replies
   function addQuickReplies(replies) {
+    // Remove existing quick replies if present
+    if (quickRepliesContainer.parentNode) {
+      quickRepliesContainer.parentNode.removeChild(quickRepliesContainer);
+    }
+    
     quickRepliesContainer.innerHTML = '';
     replies.forEach(reply => {
       const btn = document.createElement('button');
@@ -68,11 +73,18 @@ document.addEventListener('DOMContentLoaded', function() {
       btn.textContent = reply;
       btn.addEventListener('click', () => {
         input.value = reply;
-        quickRepliesContainer.innerHTML = '';
+        // Remove quick replies after click
+        if (quickRepliesContainer.parentNode) {
+          quickRepliesContainer.parentNode.removeChild(quickRepliesContainer);
+        }
         form.dispatchEvent(new Event('submit'));
       });
       quickRepliesContainer.appendChild(btn);
     });
+    
+    // Append to messages container
+    messages.appendChild(quickRepliesContainer);
+    messages.scrollTop = messages.scrollHeight;
   }
 
   // Minimize / restore functionality
@@ -88,7 +100,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     addMessage('user', text);
     input.value = '';
-    quickRepliesContainer.innerHTML = '';
+    // Remove quick replies when sending a message
+    if (quickRepliesContainer.parentNode) {
+      quickRepliesContainer.parentNode.removeChild(quickRepliesContainer);
+    }
     showTypingIndicator(true);
 
     try {
