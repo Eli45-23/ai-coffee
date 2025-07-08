@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Get Started — AIChatFlows</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <style>
+    .start-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2em;
+    }
+    .start-box {
+      background: var(--clr-secondary);
+      padding: 3em;
+      border-radius: 16px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(0, 230, 118, 0.2);
+      text-align: center;
+    }
+    .start-box h1 {
+      font-family: var(--ff-heading);
+      font-size: 2.5rem;
+      margin-bottom: 0.5em;
+      background: linear-gradient(45deg, var(--clr-primary), var(--clr-accent-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .start-box p {
+      font-size: 1.2rem;
+      margin-bottom: 2em;
+      color: var(--clr-light);
+      opacity: 0.9;
+    }
+    .start-options {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5em;
+      margin-top: 2em;
+    }
+    .option-card {
+      background: var(--clr-dark);
+      padding: 2em;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .option-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 230, 118, 0.3);
+      border-color: var(--clr-primary);
+    }
+    .option-card h3 {
+      color: var(--clr-primary);
+      margin-bottom: 0.5em;
+      font-size: 1.5rem;
+    }
+    .option-card p {
+      font-size: 1rem;
+      margin-bottom: 1em;
+    }
+    .back-link {
+      margin-top: 2em;
+      display: inline-block;
+      color: var(--clr-light);
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+    }
+    .back-link:hover {
+      opacity: 1;
+      color: var(--clr-primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="start-container">
+    <div class="start-box">
+      <h1>Let's Get Started!</h1>
+      <p>Choose how you'd like to begin your AI chatbot journey</p>
+      
+      <div class="start-options">
+        <div class="option-card">
+          <h3>📞 Schedule a Call</h3>
+          <p>Book a 15-minute consultation to discuss your specific needs</p>
+          <a href="mailto:hello@aichatflows.com?subject=Schedule a Consultation&body=Hi! I'd like to schedule a call to discuss setting up an AI chatbot for my business." class="btn">Schedule Call</a>
+        </div>
+        
+        <div class="option-card">
+          <h3>📝 Fill Out Onboarding Form</h3>
+          <p>Provide your business details and we'll create a custom proposal</p>
+          <a href="mailto:hello@aichatflows.com?subject=Onboarding Form Request&body=Hi! I'm interested in getting started with AIChatFlows. Please send me the onboarding form." class="btn">Request Form</a>
+        </div>
+        
+        <div class="option-card">
+          <h3>💬 Chat With Us</h3>
+          <p>Have questions? Start a conversation with our team</p>
+          <a href="mailto:hello@aichatflows.com?subject=Quick Question&body=Hi! I have a quick question about AIChatFlows..." class="btn">Start Chat</a>
+        </div>
+      </div>
+      
+      <a href="/" class="back-link">← Back to Homepage</a>
+    </div>
+  </div>
+</body>
+</html>

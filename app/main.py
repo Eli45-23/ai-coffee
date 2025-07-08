@@ -32,6 +32,11 @@ templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 async def read_index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+# Start/onboarding route
+@app.get("/start", response_class=HTMLResponse)
+async def start(request: Request):
+    return templates.TemplateResponse("start.html", {"request": request})
+
 # 5) CORS (allow your front-end fetch)
 app.add_middleware(
     CORSMiddleware,
