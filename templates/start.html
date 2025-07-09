@@ -166,6 +166,24 @@
       to { opacity: 1; transform: translateY(0); }
     }
     
+    .conditional-message {
+      margin-top: 1.5em;
+    }
+    
+    .info-message {
+      padding: 1.2em;
+      background: linear-gradient(135deg, rgba(0, 230, 118, 0.1), rgba(0, 123, 255, 0.1));
+      border: 1px solid rgba(0, 230, 118, 0.3);
+      border-radius: 8px;
+      color: var(--clr-light);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    
+    .info-message strong {
+      color: var(--clr-primary);
+    }
+    
     .other-input {
       margin-top: 0.5em;
     }
@@ -575,6 +593,13 @@
               </div>
             </div>
             
+            <!-- SendSecure.ly Message -->
+            <div id="sendSecurelyMessage" class="conditional-message" style="display: none;">
+              <div class="info-message">
+                <strong>📧 SendSecure.ly Selected:</strong> You've chosen to use SendSecure.ly to share your login information. After submitting this form, we'll email you a private link where you can securely enter your credentials. Please keep an eye on your inbox!
+              </div>
+            </div>
+            
             <!-- Conditional Login Fields -->
             <div id="loginSection" class="conditional-section">
               <div class="security-disclaimer">
@@ -784,10 +809,16 @@
       const submissionMethodRadios = document.querySelectorAll('input[name="submission_method"]');
       const loginSection = document.getElementById('loginSection');
       const proLoginSection = document.getElementById('proLoginSection');
+      const sendSecurelyMessage = document.getElementById('sendSecurelyMessage');
       
       function updateLoginFields() {
         const selectedPlan = document.querySelector('input[name="plan"]:checked');
         const selectedMethod = document.querySelector('input[name="submission_method"]:checked');
+        
+        // Hide all conditional elements first
+        loginSection.classList.remove('show');
+        proLoginSection.classList.remove('show');
+        sendSecurelyMessage.style.display = 'none';
         
         if (selectedPlan && selectedMethod) {
           if (selectedMethod.value === 'Submit through this page') {
@@ -802,11 +833,14 @@
             
             // Set required attributes
             updateLoginRequirements(selectedPlan.value, true);
-          } else {
-            loginSection.classList.remove('show');
-            proLoginSection.classList.remove('show');
+          } else if (selectedMethod.value === 'Use sendsecure.ly') {
+            // Show SendSecure.ly message
+            sendSecurelyMessage.style.display = 'block';
             
             // Remove required attributes
+            updateLoginRequirements(selectedPlan.value, false);
+          } else {
+            // Remove required attributes for other methods
             updateLoginRequirements(selectedPlan.value, false);
           }
         }
