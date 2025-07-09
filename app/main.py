@@ -59,8 +59,13 @@ async def submit_onboarding(form_data: OnboardingForm):
         data_dict = form_data.dict()
         
         # Save submission to file (since no database)
-        submissions_dir = BASE_DIR / "submissions"
-        submissions_dir.mkdir(exist_ok=True)
+        try:
+            submissions_dir = BASE_DIR / "submissions"
+            submissions_dir.mkdir(exist_ok=True)
+        except OSError as e:
+            print(f"Warning: Could not create submissions directory: {e}")
+            # Fallback to current directory if submissions dir can't be created
+            submissions_dir = Path(".")
         
         timestamp = data_dict['submission_timestamp'].isoformat()
         filename = f"submission_{data_dict['business_name'].replace(' ', '_')}_{timestamp}.json"
