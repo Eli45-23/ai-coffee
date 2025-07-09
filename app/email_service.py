@@ -187,6 +187,57 @@ class EmailService:
                 return default
             return value
         
+        # Helper function to detect if a file URL is an image
+        def is_image_file(file_url):
+            if not file_url:
+                return False
+            image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
+            return any(file_url.lower().endswith(ext) for ext in image_extensions)
+        
+        # Helper function to get file name from URL
+        def get_filename_from_url(file_url):
+            if not file_url:
+                return "File"
+            return file_url.split('/')[-1]
+        
+        # Helper function to create file display HTML
+        def create_file_display(file_url, file_label):
+            if not file_url:
+                return f"<div class=\"detail-item\"><strong>• {file_label}:</strong> Not provided</div>"
+            
+            filename = get_filename_from_url(file_url)
+            
+            if is_image_file(file_url):
+                return f"""
+                    <div class="detail-item">
+                        <strong>• {file_label}:</strong><br>
+                        <div style="margin-top: 10px;">
+                            <img src="{file_url}" alt="{filename}" style="max-width: 200px; max-height: 150px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 5px; display: block;">
+                            <a href="{file_url}" target="_blank" style="color: #00e676; text-decoration: none; font-size: 0.9em;">📎 {filename}</a>
+                        </div>
+                    </div>"""
+            else:
+                return f"""
+                    <div class="detail-item">
+                        <strong>• {file_label}:</strong><br>
+                        <div style="margin-top: 5px;">
+                            <a href="{file_url}" target="_blank" style="color: #00e676; text-decoration: none; padding: 5px 10px; background-color: #f0f0f0; border-radius: 4px; display: inline-block;">
+                                📄 View File: {filename}
+                            </a>
+                        </div>
+                    </div>"""
+        
+        # Helper function for text version file display
+        def create_file_text(file_url, file_label):
+            if not file_url:
+                return f"• {file_label}: Not provided"
+            
+            filename = get_filename_from_url(file_url)
+            if is_image_file(file_url):
+                return f"• {file_label}: {filename} (Image) - {file_url}"
+            else:
+                return f"• {file_label}: {filename} - {file_url}"
+        
         html_content = f"""
         <!DOCTYPE html>
         <html>
@@ -282,13 +333,13 @@ class EmailService:
                         <div class="section">
                             <h3>Menu & Content</h3>
                             <div class="detail-item"><strong>• Menu Text:</strong> {get_value('menu_text')}</div>
-                            <div class="detail-item"><strong>• Menu Upload:</strong> {"Yes" if form_data.get('menu_upload') else "No"}</div>
-                            <div class="detail-item"><strong>• Additional Documents:</strong> {"Yes" if form_data.get('additional_docs') else "No"}</div>
+                            {create_file_display(form_data.get('menu_upload'), 'Uploaded Menu')}
+                            {create_file_display(form_data.get('additional_docs'), 'Additional Documents')}
                             <div class="detail-item"><strong>• Has FAQs:</strong> {format_boolean(form_data.get('has_faqs'))}</div>"""
         
         if form_data.get('has_faqs'):
             html_content += f"""
-                            <div class="detail-item"><strong>• FAQ Upload:</strong> {"Yes" if form_data.get('faq_upload') else "No"}</div>"""
+                            {create_file_display(form_data.get('faq_upload'), 'FAQ Document')}"""
         
         html_content += f"""
                         </div>
@@ -377,13 +428,13 @@ class EmailService:
         
         Menu & Content:
         • Menu Text: {get_value('menu_text')}
-        • Menu Upload: {"Yes" if form_data.get('menu_upload') else "No"}
-        • Additional Documents: {"Yes" if form_data.get('additional_docs') else "No"}
+        {create_file_text(form_data.get('menu_upload'), 'Uploaded Menu')}
+        {create_file_text(form_data.get('additional_docs'), 'Additional Documents')}
         • Has FAQs: {format_boolean(form_data.get('has_faqs'))}"""
         
         if form_data.get('has_faqs'):
             text_content += f"""
-        • FAQ Upload: {"Yes" if form_data.get('faq_upload') else "No"}"""
+        {create_file_text(form_data.get('faq_upload'), 'FAQ Document')}"""
         
         text_content += f"""
         

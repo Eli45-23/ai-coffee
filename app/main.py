@@ -10,15 +10,17 @@ import logging
 import uuid
 import traceback
 import re
+import shutil
+import mimetypes
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import bleach
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBearer
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -39,6 +41,21 @@ logger = logging.getLogger(__name__)
 
 # Get the parent directory (ai-coffee root)
 BASE_DIR = Path(__file__).parent.parent
+
+# File upload configuration
+UPLOADS_DIR = BASE_DIR / "uploads"
+UPLOADS_DIR.mkdir(exist_ok=True)
+MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+ALLOWED_EXTENSIONS = {
+    'image': {'.jpg', '.jpeg', '.png', '.gif', '.webp'},
+    'document': {'.pdf', '.doc', '.docx', '.txt', '.rtf'},
+}
+ALLOWED_MIME_TYPES = {
+    'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+    'application/pdf', 'application/msword', 
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'text/plain', 'application/rtf'
+}
 
 app = FastAPI(
     title="AIChatFlows API",
@@ -572,6 +589,113 @@ def create_secure_error_response(error_type: str, message: str, request_id: str,
             "timestamp": datetime.now().isoformat()
         }
     )
+
+# File upload helper functions
+def validate_file(file: UploadFile) -> tuple[bool, str]:
+    """Validate uploaded file for security and type compliance."""
+    # Check file size
+    if hasattr(file, 'size') and file.size > MAX_FILE_SIZE:
+        return False, f"File size exceeds maximum allowed size of {MAX_FILE_SIZE // (1024*1024)}MB"
+    
+    # Check MIME type
+    if file.content_type not in ALLOWED_MIME_TYPES:
+        return False, f"File type '{file.content_type}' is not allowed"
+    
+    # Check file extension
+    file_ext = Path(file.filename).suffix.lower()
+    allowed_exts = set()
+    for ext_group in ALLOWED_EXTENSIONS.values():
+        allowed_exts.update(ext_group)
+    
+    if file_ext not in allowed_exts:
+        return False, f"File extension '{file_ext}' is not allowed"
+    
+    return True, "File is valid"
+
+def save_uploaded_file(file: UploadFile, business_name: str, file_type: str) -> str:
+    """Save uploaded file and return the file URL."""
+    # Create business directory
+    business_dir = UPLOADS_DIR / business_name.replace(' ', '_').lower()
+    business_dir.mkdir(exist_ok=True)
+    
+    # Generate unique filename
+    file_ext = Path(file.filename).suffix.lower()
+    unique_filename = f"{uuid.uuid4()}{file_ext}"
+    file_path = business_dir / unique_filename
+    
+    # Save file
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    # Return relative URL
+    return f"/api/files/{business_name.replace(' ', '_').lower()}/{unique_filename}"
+
+# File upload endpoint
+@app.post("/api/upload-file")
+@limiter.limit("10/minute")
+async def upload_file(
+    request: Request,
+    file: UploadFile = File(...),
+    business_name: str = Form(...),
+    file_type: str = Form(...)
+):
+    """Upload a file and return its URL."""
+    request_id = str(uuid.uuid4())[:8]
+    logger.info(f"[{request_id}] File upload request: {file.filename} for {business_name}")
+    
+    try:
+        # Validate file
+        is_valid, message = validate_file(file)
+        if not is_valid:
+            logger.warning(f"[{request_id}] File validation failed: {message}")
+            raise HTTPException(status_code=400, detail=message)
+        
+        # Save file
+        file_url = save_uploaded_file(file, business_name, file_type)
+        
+        logger.info(f"[{request_id}] File uploaded successfully: {file_url}")
+        return {
+            "success": True,
+            "file_url": file_url,
+            "filename": file.filename,
+            "file_type": file.content_type,
+            "size": file.size if hasattr(file, 'size') else 0
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"[{request_id}] File upload error: {str(e)}")
+        raise HTTPException(status_code=500, detail="File upload failed")
+
+# File serving endpoint
+@app.get("/api/files/{business_name}/{filename}")
+async def serve_file(business_name: str, filename: str):
+    """Serve uploaded files with proper security."""
+    try:
+        file_path = UPLOADS_DIR / business_name / filename
+        
+        if not file_path.exists():
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        # Verify file is within uploads directory (security check)
+        if not str(file_path.resolve()).startswith(str(UPLOADS_DIR.resolve())):
+            raise HTTPException(status_code=403, detail="Access denied")
+        
+        # Get MIME type
+        mime_type, _ = mimetypes.guess_type(str(file_path))
+        
+        return FileResponse(
+            path=str(file_path),
+            media_type=mime_type,
+            filename=filename
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"File serving error: {str(e)}")
+        raise HTTPException(status_code=500, detail="File access failed")
 
 # Onboarding form submission endpoint
 @app.post("/api/submit-onboarding", response_model=OnboardingResponse)

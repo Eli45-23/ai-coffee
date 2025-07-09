@@ -23,9 +23,9 @@ class OnboardingForm(BaseModel):
     pickup_details: Optional[str] = None
     
     # Menu Submission
-    menu_upload: Optional[str] = None  # File path or base64
+    menu_upload: Optional[str] = None  # File URL from upload endpoint
     menu_text: Optional[str] = None
-    additional_docs: Optional[str] = None  # Multiple file paths
+    additional_docs: Optional[str] = None  # File URL from upload endpoint
     
     # Plan Selection
     plan: Literal["Starter", "Pro"]
@@ -44,7 +44,7 @@ class OnboardingForm(BaseModel):
     
     # FAQ Support
     has_faqs: bool
-    faq_upload: Optional[str] = None  # File path
+    faq_upload: Optional[str] = None  # File URL from upload endpoint
     
     # Legal & Consent
     consent_to_share: bool

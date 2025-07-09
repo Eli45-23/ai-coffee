@@ -828,9 +828,41 @@
       }
       
       // File upload validation
-      function validateFileUpload(file, maxSize = 5 * 1024 * 1024) {
-        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+      function validateFileUpload(file, maxSize = 10 * 1024 * 1024) {
+        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain', 'application/rtf'];
         return allowedTypes.includes(file.type) && file.size <= maxSize;
+      }
+      
+      // File upload function
+      async function uploadFileIfSelected(input, businessName, fileType) {
+        if (!input || !input.files || input.files.length === 0) {
+          return null;
+        }
+        
+        const file = input.files[0];
+        
+        // Validate file on client side first
+        if (!validateFileUpload(file)) {
+          throw new Error(`Invalid file: ${file.name}. Please ensure it's a supported format and under 10MB.`);
+        }
+        
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('business_name', businessName);
+        formData.append('file_type', fileType);
+        
+        const response = await fetch('/api/upload-file', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || 'File upload failed');
+        }
+        
+        const result = await response.json();
+        return result.file_url;
       }
       
       // Initialize when DOM is ready
@@ -1222,7 +1254,7 @@
         // Initialize validation listeners
         addValidationListeners();
         
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async function(e) {
           e.preventDefault();
           
           if (submitButton.disabled) return;
@@ -1240,7 +1272,8 @@
           submitButton.disabled = true;
           submitButton.textContent = 'Processing...';
           
-          // Collect form data
+          try {
+            // Collect form data
           const formData = new FormData(form);
           const data = {};
           
@@ -1261,16 +1294,19 @@
             }
           }
           
-          // Handle file uploads separately
+          // Handle file uploads - upload files first to get URLs
           const menuUploadInput = document.getElementById('menu_upload');
           const additionalDocsInput = document.getElementById('additional_docs');
           const faqUploadInput = document.getElementById('faq_upload');
           
-          // For now, set file fields to null since we're not handling actual file uploads
-          // In a real implementation, these would be handled differently
-          data.menu_upload = (menuUploadInput && menuUploadInput.files.length > 0) ? null : null;
-          data.additional_docs = (additionalDocsInput && additionalDocsInput.files.length > 0) ? null : null;
-          data.faq_upload = (faqUploadInput && faqUploadInput.files.length > 0) ? null : null;
+          // Upload files and get URLs
+          try {
+            data.menu_upload = await uploadFileIfSelected(menuUploadInput, data.business_name, 'menu');
+            data.additional_docs = await uploadFileIfSelected(additionalDocsInput, data.business_name, 'additional_docs');
+            data.faq_upload = await uploadFileIfSelected(faqUploadInput, data.business_name, 'faq');
+          } catch (fileError) {
+            throw new Error(`File upload failed: ${fileError.message}`);
+          }
           
           // Log the business type fields for debugging
           console.log('Business type:', data.business_type);
@@ -1420,6 +1456,13 @@
             errorMessage.textContent = error.message || 'Network error. Please try again.';
             resetForm();
           });
+          
+          } catch (error) {
+            // Handle file upload or other processing errors
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = error.message || 'An error occurred during processing. Please try again.';
+            resetForm();
+          }
         });
         
         function resetForm() {
