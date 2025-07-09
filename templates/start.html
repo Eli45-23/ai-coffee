@@ -690,22 +690,29 @@
       form.addEventListener('submit', async function(e) {
         e.preventDefault();
         
+        // Generate request ID for tracking
+        const requestId = Math.random().toString(36).substr(2, 8);
+        console.log(`[${requestId}] Starting form submission`);
+        
         // Hide messages and show loading
         errorMessage.style.display = 'none';
         successMessage.style.display = 'none';
         loadingSpinner.style.display = 'block';
         submitButton.disabled = true;
         
-        // Collect form data
+        // Collect form data with improved serialization
         const formData = new FormData(form);
         const data = {};
         
+        // Process all form fields
         for (let [key, value] of formData.entries()) {
-          // Convert boolean strings
-          if (value === 'true' || value === 'false') {
-            data[key] = value === 'true';
+          // Handle empty values
+          if (value === '') {
+            data[key] = null;
           } else if (key === 'consent_to_share') {
             data[key] = true; // Checkbox is only in formData if checked
+          } else if (key === 'has_faqs') {
+            data[key] = value === 'true';
           } else {
             data[key] = value;
           }
@@ -716,6 +723,29 @@
           data['consent_to_share'] = false;
         }
         
+        // For in-person setup, clear empty login fields
+        if (data.submission_method === 'Request In-Person Setup') {
+          console.log(`[${requestId}] In-person setup detected, clearing login fields`);
+          const loginFields = [
+            'instagram_email', 'instagram_password', 'tiktok_email', 'tiktok_password',
+            'facebook_email', 'facebook_password', 'whatsapp_number', 'whatsapp_password'
+          ];
+          
+          loginFields.forEach(field => {
+            if (!data[field] || data[field] === '') {
+              data[field] = null;
+            }
+          });
+        }
+        
+        console.log(`[${requestId}] Form data prepared:`, {
+          keys: Object.keys(data),
+          submission_method: data.submission_method,
+          plan: data.plan,
+          has_faqs: data.has_faqs,
+          consent_to_share: data.consent_to_share
+        });
+        
         try {
           const response = await fetch('/api/submit-onboarding', {
             method: 'POST',
@@ -725,9 +755,20 @@
             body: JSON.stringify(data)
           });
           
-          const result = await response.json();
+          console.log(`[${requestId}] Response status: ${response.status}`);
+          
+          let result;
+          try {
+            result = await response.json();
+            console.log(`[${requestId}] Response parsed successfully`);
+          } catch (jsonError) {
+            console.error(`[${requestId}] Failed to parse JSON response:`, jsonError);
+            throw new Error('Server returned invalid response');
+          }
           
           if (response.ok && result.success) {
+            console.log(`[${requestId}] Submission successful`);
+            
             // Show success message
             successMessage.textContent = result.message;
             successMessage.style.display = 'block';
@@ -735,50 +776,57 @@
             
             // Redirect to Stripe after a short delay
             if (result.stripe_url) {
+              console.log(`[${requestId}] Redirecting to Stripe: ${result.stripe_url}`);
               setTimeout(() => {
                 window.location.href = result.stripe_url;
               }, 2000);
             }
           } else {
+            console.error(`[${requestId}] API error response:`, result);
+            
             // Handle API error responses
             let errorDetail = 'Failed to submit form';
+            
             if (result.detail) {
               if (typeof result.detail === 'object') {
                 if (result.detail.messages && Array.isArray(result.detail.messages)) {
                   errorDetail = result.detail.messages.join('<br>');
+                  console.log(`[${requestId}] Validation errors:`, result.detail.messages);
                 } else if (result.detail.message) {
                   errorDetail = result.detail.message;
                 } else if (result.detail.error) {
                   errorDetail = result.detail.error;
                 }
+                
+                // Log request ID if available
+                if (result.detail.request_id) {
+                  console.log(`[${requestId}] Server request ID: ${result.detail.request_id}`);
+                  errorDetail += `<br><small>Request ID: ${result.detail.request_id}</small>`;
+                }
               } else {
                 errorDetail = result.detail;
               }
             }
+            
             throw new Error(errorDetail);
           }
         } catch (error) {
-          console.error('Form submission error:', error);
+          console.error(`[${requestId}] Form submission error:`, error);
           
           // Handle different types of errors
           let errorText = 'An error occurred. Please try again.';
           
           if (error.message) {
-            try {
-              // Try to parse as JSON in case it's a structured error
-              const parsedError = JSON.parse(error.message);
-              if (parsedError.messages && Array.isArray(parsedError.messages)) {
-                errorText = parsedError.messages.join('<br>');
-              } else if (parsedError.message) {
-                errorText = parsedError.message;
-              } else if (parsedError.detail) {
-                errorText = parsedError.detail;
-              }
-            } catch (parseError) {
-              // If not JSON, use the original error message
+            // Check if it's a network error
+            if (error.message.includes('fetch')) {
+              errorText = 'Network error. Please check your connection and try again.';
+            } else {
               errorText = error.message;
             }
           }
+          
+          // Add request ID for debugging
+          errorText += `<br><small>Request ID: ${requestId}</small>`;
           
           errorMessage.innerHTML = errorText;
           errorMessage.style.display = 'block';
