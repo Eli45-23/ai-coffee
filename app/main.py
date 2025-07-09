@@ -52,6 +52,68 @@ async def start(request: Request):
 async def legal(request: Request):
     return templates.TemplateResponse("legal.html", {"request": request})
 
+# Thank you page route
+@app.get("/thank-you", response_class=HTMLResponse)
+async def thank_you(request: Request):
+    # Generate unique request ID for tracking
+    request_id = str(uuid.uuid4())[:8]
+    logger.info(f"[{request_id}] Thank you page accessed")
+    
+    try:
+        # Get the most recent submission from the submissions directory
+        submissions_dir = BASE_DIR / "submissions"
+        if not submissions_dir.exists():
+            logger.warning(f"[{request_id}] Submissions directory not found")
+            # Still render the page even if no submissions found
+            return templates.TemplateResponse("thank-you.html", {"request": request})
+        
+        # Find the most recent submission file
+        submission_files = list(submissions_dir.glob("submission_*.json"))
+        if not submission_files:
+            logger.warning(f"[{request_id}] No submission files found")
+            return templates.TemplateResponse("thank-you.html", {"request": request})
+        
+        # Get the most recent file by modification time
+        latest_file = max(submission_files, key=lambda f: f.stat().st_mtime)
+        logger.info(f"[{request_id}] Found latest submission: {latest_file.name}")
+        
+        # Read the submission data
+        try:
+            with open(latest_file, 'r') as f:
+                submission_data = json.load(f)
+            
+            business_name = submission_data.get('business_name', 'Valued Customer')
+            plan = submission_data.get('plan', 'Unknown')
+            user_email = submission_data.get('contact_email')
+            
+            logger.info(f"[{request_id}] Processing payment confirmation for {business_name} ({plan} Plan)")
+            
+            if user_email:
+                # Send payment confirmation email to user
+                try:
+                    email_service.send_payment_confirmation(user_email, business_name, plan)
+                    logger.info(f"[{request_id}] Payment confirmation email sent to user")
+                except Exception as e:
+                    logger.error(f"[{request_id}] Failed to send payment confirmation email: {str(e)}")
+                
+                # Send admin notification about completed payment
+                try:
+                    email_service.send_admin_payment_confirmation(business_name, plan, user_email)
+                    logger.info(f"[{request_id}] Admin payment confirmation email sent")
+                except Exception as e:
+                    logger.error(f"[{request_id}] Failed to send admin payment confirmation: {str(e)}")
+            else:
+                logger.warning(f"[{request_id}] No user email found in submission data")
+                
+        except Exception as e:
+            logger.error(f"[{request_id}] Error reading submission file: {str(e)}")
+            
+    except Exception as e:
+        logger.error(f"[{request_id}] Error processing thank you page: {str(e)}")
+    
+    # Always render the thank you page, even if email sending fails
+    return templates.TemplateResponse("thank-you.html", {"request": request})
+
 # 5) CORS (allow your front-end fetch)
 app.add_middleware(
     CORSMiddleware,
@@ -238,10 +300,10 @@ async def submit_onboarding(request: Request):
         except Exception as e:
             logger.error(f"[{request_id}] Failed to send admin notification email: {str(e)}")
         
-        # Determine Stripe URL based on plan
+        # Determine Stripe URL based on plan with success_url redirect
         stripe_urls = {
-            "Starter": "https://buy.stripe.com/fZu5kEaZ4dQqbKUfNZ8Vi00",
-            "Pro": "https://buy.stripe.com/3cI5kE7MS13EcOY6dp8Vi01"
+            "Starter": "https://buy.stripe.com/fZu5kEaZ4dQqbKUfNZ8Vi00?success_url=https://aichatflows.com/thank-you",
+            "Pro": "https://buy.stripe.com/3cI5kE7MS13EcOY6dp8Vi01?success_url=https://aichatflows.com/thank-you"
         }
         
         stripe_url = stripe_urls.get(form_data.plan)

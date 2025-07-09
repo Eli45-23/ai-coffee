@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Welcome to AIChatFlows - Payment Confirmed</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <meta http-equiv="refresh" content="10; url=/">
+  <style>
+    .thank-you-container {
+      min-height: 100vh;
+      background: var(--clr-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2em;
+    }
+    
+    .thank-you-content {
+      max-width: 600px;
+      text-align: center;
+      background: var(--clr-secondary);
+      padding: 4em 3em;
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(0, 230, 118, 0.2);
+    }
+    
+    .success-icon {
+      font-size: 4rem;
+      margin-bottom: 1em;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .thank-you-title {
+      font-family: var(--ff-heading);
+      font-size: 2.5rem;
+      color: var(--clr-primary);
+      margin-bottom: 0.5em;
+      line-height: 1.2;
+    }
+    
+    .thank-you-subtitle {
+      font-family: var(--ff-sans);
+      font-size: 1.1rem;
+      color: var(--clr-light);
+      margin-bottom: 2em;
+      opacity: 0.9;
+    }
+    
+    .confirmation-details {
+      background: rgba(0, 230, 118, 0.1);
+      padding: 2em;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 230, 118, 0.2);
+      margin-bottom: 2em;
+    }
+    
+    .confirmation-details h3 {
+      font-family: var(--ff-heading);
+      color: var(--clr-primary);
+      margin-bottom: 1em;
+      font-size: 1.3rem;
+    }
+    
+    .confirmation-details ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .confirmation-details li {
+      color: var(--clr-light);
+      margin-bottom: 0.75em;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    
+    .confirmation-details li::before {
+      content: "✅ ";
+      margin-right: 0.5em;
+    }
+    
+    .next-steps {
+      background: rgba(0, 176, 255, 0.1);
+      padding: 2em;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 176, 255, 0.2);
+      margin-bottom: 2em;
+    }
+    
+    .next-steps h3 {
+      font-family: var(--ff-heading);
+      color: var(--clr-accent-blue);
+      margin-bottom: 1em;
+      font-size: 1.3rem;
+    }
+    
+    .next-steps p {
+      color: var(--clr-light);
+      line-height: 1.6;
+      margin-bottom: 1em;
+    }
+    
+    .contact-info {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 1.5em;
+      border-radius: 8px;
+      margin-bottom: 2em;
+    }
+    
+    .contact-info p {
+      color: var(--clr-light);
+      margin-bottom: 0.5em;
+    }
+    
+    .contact-info a {
+      color: var(--clr-primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    
+    .contact-info a:hover {
+      color: var(--clr-accent-blue);
+      text-decoration: underline;
+    }
+    
+    .redirect-notice {
+      color: var(--clr-light);
+      font-size: 0.9rem;
+      opacity: 0.7;
+      margin-top: 2em;
+    }
+    
+    .redirect-timer {
+      font-weight: 600;
+      color: var(--clr-primary);
+    }
+    
+    .home-button {
+      display: inline-block;
+      padding: 1em 2.5em;
+      background: linear-gradient(45deg, var(--clr-primary), var(--clr-accent-blue));
+      color: #fff;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 230, 118, 0.3);
+      margin-top: 1em;
+    }
+    
+    .home-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 230, 118, 0.4);
+      background: linear-gradient(45deg, var(--clr-accent-blue), var(--clr-primary));
+    }
+    
+    @media (max-width: 768px) {
+      .thank-you-content {
+        padding: 2.5em 1.5em;
+      }
+      
+      .thank-you-title {
+        font-size: 2rem;
+      }
+      
+      .success-icon {
+        font-size: 3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="thank-you-container">
+    <div class="thank-you-content">
+      <div class="success-icon">🎉</div>
+      
+      <h1 class="thank-you-title">Welcome to AIChatFlows!</h1>
+      <p class="thank-you-subtitle">Your payment has been confirmed and setup is beginning</p>
+      
+      <div class="confirmation-details">
+        <h3>🎯 What's Confirmed</h3>
+        <ul>
+          <li>Payment successfully processed</li>
+          <li>Onboarding form submitted</li>
+          <li>Account setup initiated</li>
+          <li>Confirmation emails sent</li>
+        </ul>
+      </div>
+      
+      <div class="next-steps">
+        <h3>🚀 What Happens Next</h3>
+        <p><strong>Within 24-48 hours:</strong> Our team will begin setting up your AI chat automation system with the information you provided.</p>
+        <p><strong>Setup completion:</strong> You'll receive an email with login details and instructions to access your new AI automation dashboard.</p>
+        <p><strong>Training & Support:</strong> We'll include personalized training materials and best practices for your specific business type.</p>
+      </div>
+      
+      <div class="contact-info">
+        <p><strong>Questions or need help?</strong></p>
+        <p>Contact us at <a href="mailto:eliascolon23@gmail.com">eliascolon23@gmail.com</a></p>
+        <p>We typically respond within 2-4 hours during business hours.</p>
+      </div>
+      
+      <a href="/" class="home-button">Return to Home</a>
+      
+      <div class="redirect-notice">
+        <p>You'll be automatically redirected to our home page in <span class="redirect-timer" id="countdown">10</span> seconds</p>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Countdown timer for redirect
+    let timeLeft = 10;
+    const countdownElement = document.getElementById('countdown');
+    
+    const timer = setInterval(() => {
+      timeLeft--;
+      countdownElement.textContent = timeLeft;
+      
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        window.location.href = '/';
+      }
+    }, 1000);
+    
+    // Allow manual redirect if user clicks elsewhere
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('home-button')) {
+        clearInterval(timer);
+      }
+    });
+  </script>
+</body>
+</html>

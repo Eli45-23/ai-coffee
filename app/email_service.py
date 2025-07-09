@@ -318,3 +318,199 @@ class EmailService:
         """
         
         return self.send_email(user_email, subject, html_content, text_content)
+    
+    def send_payment_confirmation(self, user_email: str, business_name: str, plan: str):
+        """Send final payment confirmation email to user"""
+        subject = "🎉 You're all set – Welcome to AI Chat Flows"
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {{ font-family: Arial, sans-serif; background-color: #0a0a0a; color: #e0e0e0; }}
+                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                .header {{ background: linear-gradient(45deg, #00e676, #00b0ff); padding: 30px; text-align: center; border-radius: 10px; }}
+                .header h1 {{ color: #ffffff; margin: 0; font-size: 2.2rem; }}
+                .content {{ background-color: #1a1a1a; padding: 30px; margin-top: 20px; border-radius: 10px; }}
+                .content p {{ line-height: 1.6; }}
+                .success-badge {{ background: #00e676; color: #000; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0; font-weight: bold; }}
+                .next-steps {{ background: rgba(0, 230, 118, 0.1); padding: 20px; border-radius: 8px; margin: 20px 0; }}
+                .next-steps h3 {{ color: #00e676; margin-top: 0; }}
+                .next-steps ul {{ padding-left: 20px; }}
+                .next-steps li {{ margin-bottom: 8px; }}
+                .button {{ display: inline-block; padding: 12px 30px; background: #00e676; color: #000; text-decoration: none; border-radius: 50px; font-weight: bold; margin-top: 20px; }}
+                .footer {{ text-align: center; margin-top: 30px; font-size: 12px; color: #888; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>🎉 Welcome to AIChatFlows!</h1>
+                </div>
+                <div class="content">
+                    <div class="success-badge">
+                        ✅ Payment Confirmed & Setup Initiated
+                    </div>
+                    
+                    <p>Hi {business_name},</p>
+                    
+                    <p>Congratulations! Your payment has been successfully processed and your AI chat automation setup is now officially underway.</p>
+                    
+                    <p><strong>Your Plan:</strong> {plan} Plan</p>
+                    
+                    <div class="next-steps">
+                        <h3>🚀 What Happens Next</h3>
+                        <ul>
+                            <li><strong>Within 24-48 hours:</strong> Our team will begin configuring your AI system with your business information</li>
+                            <li><strong>Setup completion:</strong> You'll receive login credentials and access to your automation dashboard</li>
+                            <li><strong>Training materials:</strong> Personalized guides and best practices for your specific business</li>
+                            <li><strong>Go-live support:</strong> We'll be available to help you launch your first automated conversations</li>
+                        </ul>
+                    </div>
+                    
+                    <p>Our team is already working on your setup. You'll receive another email within the next 1-2 business days with your login details and next steps.</p>
+                    
+                    <p>Thank you for choosing AIChatFlows to automate your customer conversations!</p>
+                    
+                    <p>Questions? Reply to this email or contact us at eliascolon23@gmail.com</p>
+                    
+                    <a href="https://aichatflows.com" class="button">Visit Our Website</a>
+                </div>
+                <div class="footer">
+                    <p>© 2024 AIChatFlows. All rights reserved.</p>
+                    <p>Your AI chat automation journey starts now!</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        text_content = f"""
+        🎉 Welcome to AIChatFlows!
+        
+        Hi {business_name},
+        
+        Congratulations! Your payment has been successfully processed and your AI chat automation setup is now officially underway.
+        
+        Your Plan: {plan} Plan
+        
+        🚀 What Happens Next:
+        - Within 24-48 hours: Our team will begin configuring your AI system with your business information
+        - Setup completion: You'll receive login credentials and access to your automation dashboard
+        - Training materials: Personalized guides and best practices for your specific business
+        - Go-live support: We'll be available to help you launch your first automated conversations
+        
+        Our team is already working on your setup. You'll receive another email within the next 1-2 business days with your login details and next steps.
+        
+        Thank you for choosing AIChatFlows to automate your customer conversations!
+        
+        Questions? Reply to this email or contact us at eliascolon23@gmail.com
+        
+        Best regards,
+        The AIChatFlows Team
+        """
+        
+        return self.send_email(user_email, subject, html_content, text_content)
+    
+    def send_admin_payment_confirmation(self, business_name: str, plan: str, user_email: str):
+        """Send admin notification that form + payment were both completed"""
+        subject = "✅ New Client Submission + Payment Completed"
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {{ font-family: Arial, sans-serif; background-color: #f5f5f5; }}
+                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                .header {{ background-color: #4caf50; color: #fff; padding: 20px; text-align: center; }}
+                .content {{ background-color: #fff; padding: 30px; margin-top: 20px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }}
+                .success-badge {{ background: #4caf50; color: #fff; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0; font-weight: bold; }}
+                .field {{ margin-bottom: 15px; }}
+                .field-label {{ font-weight: bold; color: #333; }}
+                .field-value {{ color: #666; margin-left: 10px; }}
+                .highlight {{ background-color: #ffeb3b; padding: 2px 5px; }}
+                .actions {{ background-color: #e3f2fd; padding: 20px; border-radius: 8px; margin-top: 20px; }}
+                .actions h3 {{ color: #1976d2; margin-top: 0; }}
+                .actions ul {{ padding-left: 20px; }}
+                .actions li {{ margin-bottom: 8px; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>✅ Payment Confirmed!</h1>
+                </div>
+                <div class="content">
+                    <div class="success-badge">
+                        🎉 COMPLETE: Form Submission + Payment Processed
+                    </div>
+                    
+                    <h2>Client Successfully Onboarded</h2>
+                    
+                    <div class="field">
+                        <span class="field-label">Business Name:</span>
+                        <span class="field-value">{business_name}</span>
+                    </div>
+                    <div class="field">
+                        <span class="field-label">Plan Purchased:</span>
+                        <span class="field-value highlight">{plan} Plan</span>
+                    </div>
+                    <div class="field">
+                        <span class="field-label">Client Email:</span>
+                        <span class="field-value">{user_email}</span>
+                    </div>
+                    <div class="field">
+                        <span class="field-label">Payment Status:</span>
+                        <span class="field-value" style="color: #4caf50; font-weight: bold;">✅ CONFIRMED</span>
+                    </div>
+                    <div class="field">
+                        <span class="field-label">Form Submission:</span>
+                        <span class="field-value" style="color: #4caf50; font-weight: bold;">✅ COMPLETED</span>
+                    </div>
+                    
+                    <div class="actions">
+                        <h3>🚀 Next Actions Required</h3>
+                        <ul>
+                            <li>Review client's form submission in the /submissions/ directory</li>
+                            <li>Begin AI system configuration within 24-48 hours</li>
+                            <li>Prepare login credentials and dashboard access</li>
+                            <li>Send setup completion email when ready</li>
+                        </ul>
+                    </div>
+                    
+                    <p><strong>Status:</strong> Client has successfully completed both onboarding form and payment. Ready for system setup.</p>
+                    
+                    <p>This client is now a confirmed, paying customer and should be prioritized for setup.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        text_content = f"""
+        ✅ New Client Submission + Payment Completed
+        
+        🎉 COMPLETE: Form Submission + Payment Processed
+        
+        Client Successfully Onboarded:
+        
+        Business Name: {business_name}
+        Plan Purchased: {plan} Plan
+        Client Email: {user_email}
+        Payment Status: ✅ CONFIRMED
+        Form Submission: ✅ COMPLETED
+        
+        🚀 Next Actions Required:
+        - Review client's form submission in the /submissions/ directory
+        - Begin AI system configuration within 24-48 hours
+        - Prepare login credentials and dashboard access
+        - Send setup completion email when ready
+        
+        Status: Client has successfully completed both onboarding form and payment. Ready for system setup.
+        
+        This client is now a confirmed, paying customer and should be prioritized for setup.
+        """
+        
+        return self.send_email(self.admin_email, subject, html_content, text_content)
