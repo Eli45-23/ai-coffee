@@ -665,7 +665,7 @@ async def submit_onboarding(request: Request):
                 # Continue processing even if email fails
             
             # Remove sensitive fields from data that gets stored
-            sensitive_fields = ['instagram_password', 'tiktok_password', 'facebook_password', 'whatsapp_password']
+            sensitive_fields = ['instagram_password', 'facebook_password', 'other_platform_credentials']
             storage_data = {k: v for k, v in sanitized_data.items() if k not in sensitive_fields}
             storage_data['credentials_handling'] = 'Sent via secure email'
         else:
@@ -674,8 +674,10 @@ async def submit_onboarding(request: Request):
             # For in-person setup, don't store any login credentials
             non_credential_fields = [
                 'business_name', 'instagram_handle', 'other_platforms', 'business_type',
-                'common_customer_question', 'delivery_pickup', 'product_service_description',
-                'has_faqs', 'faq_content', 'plan', 'submission_method', 'consent_to_share',
+                'common_customer_question', 'product_service_description', 'delivery_pickup',
+                'delivery_services', 'delivery_other', 'pickup_method', 'pickup_details',
+                'menu_upload', 'menu_text', 'additional_docs', 'plan', 'submission_method',
+                'has_faqs', 'faq_upload', 'consent_to_share', 'confirm_accurate', 'consent_automation',
                 'contact_email', 'submission_timestamp'
             ]
             storage_data = {k: v for k, v in sanitized_data.items() if k in non_credential_fields}
