@@ -1244,7 +1244,10 @@
           
           // Convert FormData to object
           for (let [key, value] of formData.entries()) {
-            if (key === 'delivery_services') {
+            // Skip file inputs - handle them separately
+            if (key === 'menu_upload' || key === 'additional_docs' || key === 'faq_upload') {
+              continue;
+            } else if (key === 'delivery_services') {
               if (!data.delivery_services) data.delivery_services = [];
               data.delivery_services.push(sanitizeInput(value));
             } else if (key.startsWith('checklist_')) {
@@ -1255,6 +1258,17 @@
               data[key] = sanitizeInput(value);
             }
           }
+          
+          // Handle file uploads separately
+          const menuUploadInput = document.getElementById('menu_upload');
+          const additionalDocsInput = document.getElementById('additional_docs');
+          const faqUploadInput = document.getElementById('faq_upload');
+          
+          // For now, set file fields to null since we're not handling actual file uploads
+          // In a real implementation, these would be handled differently
+          data.menu_upload = (menuUploadInput && menuUploadInput.files.length > 0) ? null : null;
+          data.additional_docs = (additionalDocsInput && additionalDocsInput.files.length > 0) ? null : null;
+          data.faq_upload = (faqUploadInput && faqUploadInput.files.length > 0) ? null : null;
           
           // Log the business type fields for debugging
           console.log('Business type:', data.business_type);
@@ -1312,6 +1326,15 @@
                       console.error('FAQ upload is required when has_faqs is true');
                     }
                     
+                    // Handle login fields based on submission method
+                    if (data.submission_method === 'Use SendSecure.ly' || data.submission_method === 'Request In-Person Setup') {
+                      // Clear all login fields when not submitting through the page
+                      const loginFields = ['instagram_email', 'instagram_password', 'facebook_email', 'facebook_password'];
+                      loginFields.forEach(field => {
+                        data[field] = null;
+                      });
+                    }
+                    
                     // Clean up empty optional fields to prevent validation errors
                     const optionalFields = ['other_platforms', 'delivery_other', 'pickup_details', 'other_platform_credentials', 'additional_docs'];
                     optionalFields.forEach(field => {
@@ -1319,6 +1342,18 @@
                         data[field] = null;
                       }
                     });
+                    
+                    // Also clean up empty login fields if submitting through the page
+                    if (data.submission_method === 'Submit through this page') {
+                      ['instagram_email', 'instagram_password', 'facebook_email', 'facebook_password'].forEach(field => {
+                        if (data[field] === '') {
+                          data[field] = null;
+                        }
+                      });
+                    }
+                    
+                    // Remove checklist_items as it's not part of the backend model
+                    delete data.checklist_items;
                     
                     // Add timestamp
                     data.submission_timestamp = new Date().toISOString();
