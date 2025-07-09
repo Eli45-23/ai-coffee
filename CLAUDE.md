@@ -30,3 +30,27 @@ The following environment variables are required for email functionality:
 - `python -m uvicorn app.main:app --reload` - Start development server
 - `npm run lint` - Run linting (if available)
 - `npm run typecheck` - Run type checking (if available)
+
+## Email Troubleshooting
+
+### If emails are not being sent:
+
+1. **Check environment variables** - Visit `/test-email` endpoint to verify configuration
+2. **Check server logs** - Look for email service initialization messages
+3. **Verify Gmail setup**:
+   - Use Gmail app password (not regular password) for SMTP_PASSWORD
+   - Enable 2-factor authentication on Gmail account
+   - Generate app password in Google Account settings
+
+### Common Issues:
+
+- **"Email service cannot send emails - SMTP credentials missing!"** - Set SMTP_USERNAME and SMTP_PASSWORD environment variables
+- **"Email service disabled due to initialization failure"** - Check if environment variables are set correctly
+- **Authentication errors** - Use Gmail app password, not regular password
+
+### Gmail App Password Setup:
+
+1. Go to [Google Account settings](https://myaccount.google.com/)
+2. Security → 2-Step Verification (must be enabled)
+3. App passwords → Generate password for "Mail"
+4. Use this generated password as SMTP_PASSWORD

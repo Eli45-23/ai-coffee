@@ -11,12 +11,29 @@ from datetime import datetime
 
 class EmailService:
     def __init__(self):
+        import logging
+        logger = logging.getLogger(__name__)
+        
         self.smtp_server = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
         self.smtp_port = int(os.getenv('SMTP_PORT', '587'))
         self.smtp_username = os.getenv('SMTP_USERNAME')
         self.smtp_password = os.getenv('SMTP_PASSWORD')
         self.admin_email = os.getenv('ADMIN_EMAIL', 'eliascolon23@gmail.com')
         self.from_email = os.getenv('FROM_EMAIL', 'noreply@aichatflows.com')
+        
+        # Log configuration status
+        logger.info(f"Email Service Configuration:")
+        logger.info(f"  SMTP Server: {self.smtp_server}:{self.smtp_port}")
+        logger.info(f"  From Email: {self.from_email}")
+        logger.info(f"  Admin Email: {self.admin_email}")
+        logger.info(f"  SMTP Username: {'✓ Set' if self.smtp_username else '✗ Missing'}")
+        logger.info(f"  SMTP Password: {'✓ Set' if self.smtp_password else '✗ Missing'}")
+        
+        if not self.smtp_username or not self.smtp_password:
+            logger.error("CRITICAL: Email service cannot send emails - SMTP credentials missing!")
+            logger.error("Required environment variables: SMTP_USERNAME, SMTP_PASSWORD")
+        else:
+            logger.info("Email service ready to send emails")
     
     def send_email(self, to_email: str, subject: str, html_content: str, text_content: str = None):
         """Send an email using SMTP"""

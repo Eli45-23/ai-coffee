@@ -132,6 +132,36 @@ async def start(request: Request):
 async def legal(request: Request):
     return templates.TemplateResponse("legal.html", {"request": request})
 
+# Email test endpoint (for debugging)
+@app.get("/test-email")
+@limiter.limit("2/minute")  # Very limited for testing only
+async def test_email(request: Request):
+    """Test endpoint to check email configuration"""
+    try:
+        # Check if email service is working
+        smtp_username = os.getenv('SMTP_USERNAME')
+        smtp_password = os.getenv('SMTP_PASSWORD')
+        admin_email = os.getenv('ADMIN_EMAIL', 'eliascolon23@gmail.com')
+        
+        status = {
+            "email_service_type": type(email_service).__name__,
+            "smtp_username_set": bool(smtp_username),
+            "smtp_password_set": bool(smtp_password),
+            "admin_email": admin_email,
+            "smtp_server": os.getenv('SMTP_SERVER', 'smtp.gmail.com'),
+            "smtp_port": os.getenv('SMTP_PORT', '587')
+        }
+        
+        return JSONResponse(content={
+            "email_configuration": status,
+            "message": "Check server logs for detailed email service status"
+        })
+    except Exception as e:
+        return JSONResponse(content={
+            "error": str(e),
+            "message": "Email service configuration error"
+        }, status_code=500)
+
 # Thank you page route
 @app.get("/thank-you", response_class=HTMLResponse)
 @limiter.limit("5/minute")  # Rate limit: 5 requests per minute for thank you page
@@ -385,8 +415,16 @@ app.add_middleware(SecurityHeadersMiddleware)
 try:
     email_service = EmailService()
     logger.info("Email service initialized successfully")
+    
+    # Test if email service has credentials
+    if not os.getenv('SMTP_USERNAME') or not os.getenv('SMTP_PASSWORD'):
+        logger.error("Email service initialized but SMTP credentials are missing!")
+        logger.error("Set SMTP_USERNAME and SMTP_PASSWORD environment variables to enable emails")
+        logger.error("Without these, no emails will be sent to users or admin")
+        
 except Exception as e:
     logger.error(f"Failed to initialize email service: {e}")
+    logger.error("Email service will be disabled - no emails will be sent")
     # Create a dummy email service that doesn't send emails to prevent crashes
     class DummyEmailService:
         def send_payment_confirmation(self, *args, **kwargs):
