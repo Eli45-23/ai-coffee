@@ -26,6 +26,31 @@
       border: 1px solid rgba(0, 230, 118, 0.2);
     }
     
+    .success-banner {
+      background: linear-gradient(45deg, var(--clr-primary), var(--clr-accent-blue));
+      color: #fff;
+      padding: 1.5em 2em;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 2em;
+      box-shadow: 0 8px 25px rgba(0, 230, 118, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      animation: slideInFromTop 0.8s ease-out;
+    }
+    
+    @keyframes slideInFromTop {
+      0% {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
     .success-icon {
       font-size: 4rem;
       margin-bottom: 1em;
@@ -184,6 +209,11 @@
 <body>
   <div class="thank-you-container">
     <div class="thank-you-content">
+      <!-- Prominent Success Message -->
+      <div class="success-banner">
+        🎉 Thank you for signing up! We've received your info and payment. Check your email for confirmation. We'll be in touch soon.
+      </div>
+      
       <div class="success-icon">🎉</div>
       
       <h1 class="thank-you-title">Welcome to AIChatFlows!</h1>

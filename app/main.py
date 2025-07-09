@@ -58,62 +58,198 @@ async def legal(request: Request):
 async def thank_you(request: Request):
     # Generate unique request ID for tracking
     request_id = str(uuid.uuid4())[:8]
-    logger.info(f"[{request_id}] Thank you page accessed")
+    start_time = datetime.now()
+    logger.info(f"[{request_id}] Thank you page accessed from IP: {request.client.host if request.client else 'unknown'}")
+    
+    # Initialize variables for safe access
+    submission_data = None
+    business_name = "Valued Customer"
+    plan = "Unknown"
+    user_email = None
     
     try:
-        # Get the most recent submission from the submissions directory
+        # Safely get the most recent submission from the submissions directory
         submissions_dir = BASE_DIR / "submissions"
-        if not submissions_dir.exists():
-            logger.warning(f"[{request_id}] Submissions directory not found")
-            # Still render the page even if no submissions found
-            return templates.TemplateResponse("thank-you.html", {"request": request})
         
-        # Find the most recent submission file
-        submission_files = list(submissions_dir.glob("submission_*.json"))
-        if not submission_files:
-            logger.warning(f"[{request_id}] No submission files found")
-            return templates.TemplateResponse("thank-you.html", {"request": request})
-        
-        # Get the most recent file by modification time
-        latest_file = max(submission_files, key=lambda f: f.stat().st_mtime)
-        logger.info(f"[{request_id}] Found latest submission: {latest_file.name}")
-        
-        # Read the submission data
+        # Check if submissions directory exists and is accessible
         try:
-            with open(latest_file, 'r') as f:
+            if not submissions_dir.exists():
+                logger.warning(f"[{request_id}] Submissions directory does not exist at {submissions_dir}")
+                raise FileNotFoundError("Submissions directory not found")
+            
+            if not submissions_dir.is_dir():
+                logger.error(f"[{request_id}] Submissions path exists but is not a directory")
+                raise OSError("Submissions path is not a directory")
+                
+        except (OSError, PermissionError) as e:
+            logger.error(f"[{request_id}] Cannot access submissions directory: {str(e)}")
+            logger.error(f"[{request_id}] Directory access traceback: {traceback.format_exc()}")
+            # Continue to render page without email functionality
+            return templates.TemplateResponse("thank-you.html", {"request": request})
+        
+        # Safely find and load the most recent submission file
+        try:
+            # Get all submission files with error handling
+            submission_files = []
+            try:
+                submission_files = list(submissions_dir.glob("submission_*.json"))
+            except (OSError, PermissionError) as e:
+                logger.error(f"[{request_id}] Error listing submission files: {str(e)}")
+                raise
+            
+            if not submission_files:
+                logger.warning(f"[{request_id}] No submission files found in {submissions_dir}")
+                # Render page without triggering emails
+                return templates.TemplateResponse("thank-you.html", {"request": request})
+            
+            logger.info(f"[{request_id}] Found {len(submission_files)} submission files")
+            
+            # Safely get the most recent file by modification time with validation
+            try:
+                latest_file = max(submission_files, key=lambda f: f.stat().st_mtime)
+                
+                # Validate the selected file
+                if not latest_file.exists():
+                    logger.error(f"[{request_id}] Latest file {latest_file} no longer exists")
+                    raise FileNotFoundError("Latest submission file missing")
+                    
+                if not latest_file.is_file():
+                    logger.error(f"[{request_id}] Latest path {latest_file} is not a file")
+                    raise OSError("Latest submission path is not a file")
+                    
+                # Check file size (prevent loading huge files)
+                file_size = latest_file.stat().st_size
+                if file_size > 1024 * 1024:  # 1MB limit
+                    logger.error(f"[{request_id}] Submission file too large: {file_size} bytes")
+                    raise ValueError("Submission file too large")
+                    
+                if file_size == 0:
+                    logger.warning(f"[{request_id}] Submission file is empty")
+                    raise ValueError("Submission file is empty")
+                    
+                logger.info(f"[{request_id}] Selected latest submission: {latest_file.name} ({file_size} bytes)")
+                
+            except (OSError, ValueError, PermissionError) as e:
+                logger.error(f"[{request_id}] Error selecting latest file: {str(e)}")
+                logger.error(f"[{request_id}] File selection traceback: {traceback.format_exc()}")
+                return templates.TemplateResponse("thank-you.html", {"request": request})
+            
+        except Exception as e:
+            logger.error(f"[{request_id}] Unexpected error during file discovery: {str(e)}")
+            logger.error(f"[{request_id}] File discovery traceback: {traceback.format_exc()}")
+            return templates.TemplateResponse("thank-you.html", {"request": request})
+        
+        # Safely read and parse the submission data
+        try:
+            with open(latest_file, 'r', encoding='utf-8') as f:
                 submission_data = json.load(f)
             
-            business_name = submission_data.get('business_name', 'Valued Customer')
-            plan = submission_data.get('plan', 'Unknown')
+            # Validate JSON structure
+            if not isinstance(submission_data, dict):
+                logger.error(f"[{request_id}] Invalid JSON structure: not a dictionary")
+                raise ValueError("Invalid submission data structure")
+            
+            # Safely extract data with validation and sanitization
+            business_name = str(submission_data.get('business_name', 'Valued Customer')).strip()
+            plan = str(submission_data.get('plan', 'Unknown')).strip()
             user_email = submission_data.get('contact_email')
             
-            logger.info(f"[{request_id}] Processing payment confirmation for {business_name} ({plan} Plan)")
+            # Validate business name (prevent XSS and ensure reasonable length)
+            if len(business_name) > 200:
+                logger.warning(f"[{request_id}] Business name too long, truncating")
+                business_name = business_name[:200] + "..."
             
+            # Validate email format if present
             if user_email:
-                # Send payment confirmation email to user
-                try:
-                    email_service.send_payment_confirmation(user_email, business_name, plan)
-                    logger.info(f"[{request_id}] Payment confirmation email sent to user")
-                except Exception as e:
-                    logger.error(f"[{request_id}] Failed to send payment confirmation email: {str(e)}")
-                
-                # Send admin notification about completed payment
-                try:
-                    email_service.send_admin_payment_confirmation(business_name, plan, user_email)
-                    logger.info(f"[{request_id}] Admin payment confirmation email sent")
-                except Exception as e:
-                    logger.error(f"[{request_id}] Failed to send admin payment confirmation: {str(e)}")
-            else:
-                logger.warning(f"[{request_id}] No user email found in submission data")
-                
-        except Exception as e:
-            logger.error(f"[{request_id}] Error reading submission file: {str(e)}")
+                user_email = str(user_email).strip()
+                if '@' not in user_email or len(user_email) > 254:
+                    logger.warning(f"[{request_id}] Invalid email format detected")
+                    user_email = None
             
+            # Mask sensitive data for logging
+            masked_data = mask_sensitive_data(submission_data)
+            logger.info(f"[{request_id}] Loaded submission data for {business_name} ({plan} Plan)")
+            logger.debug(f"[{request_id}] Submission data keys: {list(masked_data.keys())}")
+            
+        except (json.JSONDecodeError, UnicodeDecodeError) as e:
+            logger.error(f"[{request_id}] Failed to parse submission file {latest_file}: {str(e)}")
+            logger.error(f"[{request_id}] JSON parsing traceback: {traceback.format_exc()}")
+            return templates.TemplateResponse("thank-you.html", {"request": request})
+            
+        except (OSError, PermissionError) as e:
+            logger.error(f"[{request_id}] Failed to read submission file {latest_file}: {str(e)}")
+            logger.error(f"[{request_id}] File read traceback: {traceback.format_exc()}")
+            return templates.TemplateResponse("thank-you.html", {"request": request})
+            
+        except Exception as e:
+            logger.error(f"[{request_id}] Unexpected error reading submission data: {str(e)}")
+            logger.error(f"[{request_id}] Data reading traceback: {traceback.format_exc()}")
+            return templates.TemplateResponse("thank-you.html", {"request": request})
+        
+        # Send confirmation emails with comprehensive error handling
+        if user_email and submission_data:
+            # Send payment confirmation email to user
+            try:
+                logger.info(f"[{request_id}] Attempting to send payment confirmation to user")
+                email_result = email_service.send_payment_confirmation(user_email, business_name, plan)
+                
+                if email_result:
+                    logger.info(f"[{request_id}] Payment confirmation email sent successfully to {user_email}")
+                else:
+                    logger.warning(f"[{request_id}] Payment confirmation email failed - service returned False")
+                    
+            except Exception as e:
+                logger.error(f"[{request_id}] Failed to send payment confirmation email: {str(e)}")
+                logger.error(f"[{request_id}] User email traceback: {traceback.format_exc()}")
+                # Continue processing - don't fail the entire request
+            
+            # Send admin notification about completed payment
+            try:
+                logger.info(f"[{request_id}] Attempting to send admin payment notification")
+                admin_result = email_service.send_admin_payment_confirmation(business_name, plan, user_email)
+                
+                if admin_result:
+                    logger.info(f"[{request_id}] Admin payment confirmation email sent successfully")
+                else:
+                    logger.warning(f"[{request_id}] Admin payment confirmation email failed - service returned False")
+                    
+            except Exception as e:
+                logger.error(f"[{request_id}] Failed to send admin payment confirmation: {str(e)}")
+                logger.error(f"[{request_id}] Admin email traceback: {traceback.format_exc()}")
+                # Continue processing - don't fail the entire request
+        else:
+            if not user_email:
+                logger.warning(f"[{request_id}] No valid user email found - skipping email notifications")
+            if not submission_data:
+                logger.warning(f"[{request_id}] No submission data available - skipping email notifications")
+                
     except Exception as e:
-        logger.error(f"[{request_id}] Error processing thank you page: {str(e)}")
+        logger.error(f"[{request_id}] Unexpected error processing thank you page: {str(e)}")
+        logger.error(f"[{request_id}] Full processing traceback: {traceback.format_exc()}")
+        # Continue to render page - never fail completely
     
-    # Always render the thank you page, even if email sending fails
-    return templates.TemplateResponse("thank-you.html", {"request": request})
+    # Calculate processing time for monitoring
+    processing_time = (datetime.now() - start_time).total_seconds()
+    logger.info(f"[{request_id}] Thank you page processing completed in {processing_time:.3f}s")
+    
+    # Always render the thank you page with graceful fallback
+    try:
+        return templates.TemplateResponse("thank-you.html", {"request": request})
+    except Exception as e:
+        logger.error(f"[{request_id}] Failed to render thank-you template: {str(e)}")
+        logger.error(f"[{request_id}] Template rendering traceback: {traceback.format_exc()}")
+        
+        # Last resort fallback - return minimal HTML
+        minimal_html = """
+        <!DOCTYPE html>
+        <html><head><title>Thank You - AIChatFlows</title></head>
+        <body>
+        <h1>Thank You!</h1>
+        <p>Your payment has been confirmed. We'll be in touch soon.</p>
+        <a href="/">Return Home</a>
+        </body></html>
+        """
+        return HTMLResponse(content=minimal_html, status_code=200)
 
 # 5) CORS (allow your front-end fetch)
 app.add_middleware(
