@@ -62,25 +62,26 @@ class OnboardingForm(BaseModel):
     def validate_conditional_fields(self):
         # Validate FAQ content
         if self.has_faqs and not self.faq_content:
-            raise ValueError('FAQ content is required when has_faqs is True')
+            raise ValueError('FAQ content is required when FAQs are selected')
         
-        # Validate Instagram login fields (required for both plans)
-        if self.plan and not self.instagram_email:
-            raise ValueError('Instagram email is required for both plans')
-        if self.plan and not self.instagram_password:
-            raise ValueError('Instagram password is required for both plans')
-        
-        # Validate Pro plan login fields
-        if (self.plan == 'Pro' and 
-            self.submission_method == 'Submit through this page'):
-            if not self.tiktok_email:
-                raise ValueError('TikTok email is required for Pro plan')
-            if not self.tiktok_password:
-                raise ValueError('TikTok password is required for Pro plan')
-            if not self.facebook_email:
-                raise ValueError('Facebook email is required for Pro plan')
-            if not self.facebook_password:
-                raise ValueError('Facebook password is required for Pro plan')
+        # Only validate login fields if submitting through the page (not for in-person setup)
+        if self.submission_method == 'Submit through this page':
+            # Validate Instagram login fields (required for both plans when submitting online)
+            if self.plan and not self.instagram_email:
+                raise ValueError('Instagram email is required for online setup')
+            if self.plan and not self.instagram_password:
+                raise ValueError('Instagram password is required for online setup')
+            
+            # Validate Pro plan login fields
+            if self.plan == 'Pro':
+                if not self.tiktok_email:
+                    raise ValueError('TikTok email is required for Pro plan online setup')
+                if not self.tiktok_password:
+                    raise ValueError('TikTok password is required for Pro plan online setup')
+                if not self.facebook_email:
+                    raise ValueError('Facebook email is required for Pro plan online setup')
+                if not self.facebook_password:
+                    raise ValueError('Facebook password is required for Pro plan online setup')
         
         return self
 

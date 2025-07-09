@@ -196,3 +196,125 @@ class EmailService:
         """
         
         return self.send_email(self.admin_email, subject, html_content, text_content)
+    
+    def send_secure_credentials(self, user_email: str, form_data: Dict[str, Any]):
+        """Send login credentials via secure email separately from main notification"""
+        subject = "🔐 AIChatFlows - Your Login Credentials (Secure)"
+        
+        # Extract only the login credentials
+        credentials = {}
+        credential_fields = [
+            'instagram_email', 'instagram_password',
+            'tiktok_email', 'tiktok_password', 
+            'facebook_email', 'facebook_password',
+            'whatsapp_number', 'whatsapp_password'
+        ]
+        
+        for field in credential_fields:
+            if form_data.get(field):
+                credentials[field] = form_data[field]
+        
+        if not credentials:
+            return True  # No credentials to send
+        
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {{ font-family: Arial, sans-serif; background-color: #0a0a0a; color: #e0e0e0; }}
+                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                .header {{ background: linear-gradient(45deg, #ff6b6b, #feca57); padding: 30px; text-align: center; border-radius: 10px; }}
+                .header h1 {{ color: #ffffff; margin: 0; }}
+                .content {{ background-color: #1a1a1a; padding: 30px; margin-top: 20px; border-radius: 10px; }}
+                .content p {{ line-height: 1.6; }}
+                .credential-block {{ background-color: #2a2a2a; padding: 20px; margin: 15px 0; border-radius: 8px; border-left: 4px solid #00e676; }}
+                .credential-label {{ font-weight: bold; color: #00e676; }}
+                .credential-value {{ color: #ffffff; font-family: monospace; }}
+                .security-notice {{ background-color: #ff6b6b; color: #ffffff; padding: 15px; border-radius: 8px; margin-top: 20px; }}
+                .footer {{ text-align: center; margin-top: 30px; font-size: 12px; color: #888; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>🔐 Your Login Credentials</h1>
+                </div>
+                <div class="content">
+                    <p>Hi {form_data.get('business_name')},</p>
+                    
+                    <p>This email contains your social media login credentials for AIChatFlows setup. This information is sent via encrypted email and is not stored on our servers.</p>
+                    
+                    <p><strong>Plan:</strong> {form_data.get('plan')} Plan</p>
+                    
+                    <div class="credential-block">
+                        <h3>Your Login Credentials:</h3>
+        """
+        
+        # Add credentials to email
+        for field, value in credentials.items():
+            platform = field.replace('_email', '').replace('_password', '').replace('_number', '').title()
+            field_type = 'Email' if 'email' in field else 'Password' if 'password' in field else 'Number'
+            html_content += f"""
+                        <div style="margin-bottom: 10px;">
+                            <span class="credential-label">{platform} {field_type}:</span><br>
+                            <span class="credential-value">{value}</span>
+                        </div>
+            """
+        
+        html_content += f"""
+                    </div>
+                    
+                    <div class="security-notice">
+                        <strong>🔒 Security Notice:</strong><br>
+                        • This email will be automatically deleted from our systems within 24 hours<br>
+                        • Your credentials are never stored permanently on our servers<br>
+                        • We recommend changing your passwords after setup is complete<br>
+                        • If you have any security concerns, contact us immediately
+                    </div>
+                    
+                    <p>Our team will use these credentials only for the initial setup of your automation system. Once setup is complete, we'll notify you and you can change your passwords if desired.</p>
+                    
+                    <p>If you have any questions, contact us at eliascolon23@gmail.com</p>
+                </div>
+                <div class="footer">
+                    <p>© 2024 AIChatFlows. All rights reserved.</p>
+                    <p>This email contains sensitive information - please handle securely.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        
+        text_content = f"""
+        🔐 Your AIChatFlows Login Credentials
+        
+        Hi {form_data.get('business_name')},
+        
+        This email contains your social media login credentials for AIChatFlows setup.
+        
+        Plan: {form_data.get('plan')} Plan
+        
+        LOGIN CREDENTIALS:
+        """
+        
+        for field, value in credentials.items():
+            platform = field.replace('_email', '').replace('_password', '').replace('_number', '').title()
+            field_type = 'Email' if 'email' in field else 'Password' if 'password' in field else 'Number'
+            text_content += f"\\n{platform} {field_type}: {value}"
+        
+        text_content += f"""
+        
+        🔒 SECURITY NOTICE:
+        • This email will be automatically deleted from our systems within 24 hours
+        • Your credentials are never stored permanently on our servers
+        • We recommend changing your passwords after setup is complete
+        • If you have any security concerns, contact us immediately
+        
+        Our team will use these credentials only for the initial setup of your automation system.
+        
+        Best regards,
+        The AIChatFlows Team
+        """
+        
+        return self.send_email(user_email, subject, html_content, text_content)
