@@ -1226,8 +1226,25 @@
           data.consent_automation = document.getElementById('consent_automation')?.checked || false;
           data.consent_to_share = document.getElementById('consent_to_share')?.checked || false;
           data.has_faqs = document.querySelector('input[name="has_faqs"]:checked')?.value === 'true';
+                    
+                    // Handle conditional field requirements to prevent 422 errors
+                    if (!data.menu_upload && !data.menu_text) {
+                      data.menu_text = ''; // Backend expects either menu_upload or menu_text
+                    }
+                    
+                    if ((data.delivery_pickup === 'Delivery' || data.delivery_pickup === 'Both') && !data.delivery_services && !data.delivery_other) {
+                      data.delivery_services = ''; // Provide empty string if no services selected
+                    }
+                    
+                    if ((data.delivery_pickup === 'Pickup' || data.delivery_pickup === 'Both') && !data.pickup_method) {
+                      data.pickup_method = ''; // Provide empty string if no method selected
+                    }
+                    
+                    // Add timestamp
+                    data.submission_timestamp = new Date().toISOString();
           
           // Submit form
+                    console.log('Submitting form data:', data);
           fetch('/api/submit-onboarding', {
             method: 'POST',
             headers: {
@@ -1235,7 +1252,16 @@
             },
             body: JSON.stringify(data)
           })
-          .then(response => response.json())
+          .then(response => {
+                      console.log('Response status:', response.status);
+                      if (!response.ok) {
+                        return response.text().then(text => {
+                          console.error('Server response:', text);
+                          throw new Error(`Server error (${response.status}): ${text}`);
+                        });
+                      }
+                      return response.json();
+                    })
           .then(data => {
             if (data.success && data.stripe_url) {
               successMessage.style.display = 'block';
