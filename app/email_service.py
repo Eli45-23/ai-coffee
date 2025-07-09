@@ -15,16 +15,21 @@ class EmailService:
         self.smtp_port = int(os.getenv('SMTP_PORT', '587'))
         self.smtp_username = os.getenv('SMTP_USERNAME')
         self.smtp_password = os.getenv('SMTP_PASSWORD')
-        self.admin_email = 'eliascolon23@gmail.com'
+        self.admin_email = os.getenv('ADMIN_EMAIL', 'eliascolon23@gmail.com')
         self.from_email = os.getenv('FROM_EMAIL', 'noreply@aichatflows.com')
     
     def send_email(self, to_email: str, subject: str, html_content: str, text_content: str = None):
         """Send an email using SMTP"""
+        import logging
+        logger = logging.getLogger(__name__)
+        
         if not self.smtp_username or not self.smtp_password:
-            print("Email credentials not configured. Skipping email send.")
+            logger.warning("Email credentials not configured. Skipping email send.")
             return False
         
         try:
+            logger.info(f"Preparing to send email to {to_email} with subject: {subject}")
+            
             msg = MIMEMultipart('alternative')
             msg['From'] = self.from_email
             msg['To'] = to_email
@@ -40,18 +45,24 @@ class EmailService:
             msg.attach(html_part)
             
             # Send email
+            logger.info(f"Connecting to SMTP server {self.smtp_server}:{self.smtp_port}")
             with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
                 server.starttls()
                 server.login(self.smtp_username, self.smtp_password)
                 server.send_message(msg)
             
+            logger.info(f"Email sent successfully to {to_email}")
             return True
         except Exception as e:
-            print(f"Error sending email: {str(e)}")
+            logger.error(f"Error sending email to {to_email}: {str(e)}")
             return False
     
     def send_user_confirmation(self, user_email: str, form_data: Dict[str, Any]):
-        """Send confirmation email to the user"""
+        """Send confirmation email to the user after form submission"""
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Sending user confirmation email to {user_email} for business: {form_data.get('business_name')}")
+        
         subject = "Welcome to AIChatFlows – Your Setup Has Begun"
         
         html_content = f"""
@@ -93,7 +104,7 @@ class EmailService:
                     <a href="https://aichatflows.com" class="button">Visit Our Website</a>
                 </div>
                 <div class="footer">
-                    <p>© 2024 AIChatFlows. All rights reserved.</p>
+                    <p>© 2025 AIChatFlows. All rights reserved.</p>
                     <p>Your information is secure and encrypted.</p>
                 </div>
             </div>
@@ -125,6 +136,10 @@ class EmailService:
     
     def send_admin_notification(self, form_data: Dict[str, Any]):
         """Send notification email to admin with all form details"""
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Sending admin notification email for new signup: {form_data.get('business_name')} ({form_data.get('plan')} Plan)")
+        
         subject = f"🚀 New Signup Submitted on AIChatFlows - {form_data.get('business_name')}"
         
         # Format form data for email
@@ -282,7 +297,7 @@ class EmailService:
                     <p>If you have any questions, contact us at eliascolon23@gmail.com</p>
                 </div>
                 <div class="footer">
-                    <p>© 2024 AIChatFlows. All rights reserved.</p>
+                    <p>© 2025 AIChatFlows. All rights reserved.</p>
                     <p>This email contains sensitive information - please handle securely.</p>
                 </div>
             </div>
@@ -328,7 +343,11 @@ class EmailService:
         return self.send_email(user_email, subject, html_content, text_content)
     
     def send_payment_confirmation(self, user_email: str, business_name: str, plan: str):
-        """Send final payment confirmation email to user"""
+        """Send final payment confirmation email to user after successful payment"""
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Sending payment confirmation email to {user_email} for business: {business_name} ({plan} Plan)")
+        
         subject = "🎉 You're all set – Welcome to AI Chat Flows"
         
         html_content = f"""
@@ -386,7 +405,7 @@ class EmailService:
                     <a href="https://aichatflows.com" class="button">Visit Our Website</a>
                 </div>
                 <div class="footer">
-                    <p>© 2024 AIChatFlows. All rights reserved.</p>
+                    <p>© 2025 AIChatFlows. All rights reserved.</p>
                     <p>Your AI chat automation journey starts now!</p>
                 </div>
             </div>
@@ -423,6 +442,10 @@ class EmailService:
     
     def send_admin_payment_confirmation(self, business_name: str, plan: str, user_email: str):
         """Send admin notification that form + payment were both completed"""
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Sending admin payment confirmation for completed client: {business_name} ({plan} Plan) - {user_email}")
+        
         subject = "✅ New Client Submission + Payment Completed"
         
         html_content = f"""
