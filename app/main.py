@@ -48,10 +48,30 @@ app = FastAPI(
     redoc_url=None  # Disable redoc in production
 )
 
-# Rate limiting configuration
-limiter = Limiter(key_func=get_remote_address)
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+# Rate limiting configuration with fallback
+try:
+    # Try to use Redis if available, otherwise fall back to in-memory
+    redis_url = os.getenv("REDIS_URL") or os.getenv("RATE_LIMIT_STORAGE_URL")
+    if redis_url:
+        limiter = Limiter(key_func=get_remote_address, storage_uri=redis_url)
+        logger.info("Rate limiting initialized with Redis backend")
+    else:
+        limiter = Limiter(key_func=get_remote_address)
+        logger.warning("Rate limiting initialized with in-memory backend")
+    
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+except Exception as e:
+    logger.error(f"Failed to initialize rate limiter: {e}")
+    # Create a dummy limiter that doesn't actually limit to prevent crashes
+    class DummyLimiter:
+        def limit(self, *args, **kwargs):
+            def decorator(func):
+                return func
+            return decorator
+    
+    limiter = DummyLimiter()
+    logger.warning("Rate limiting disabled due to initialization failure")
 
 # Security Headers Middleware
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
@@ -311,32 +331,42 @@ async def thank_you(request: Request):
         return HTMLResponse(content=minimal_html, status_code=200)
 
 # Security Middleware Configuration
-# Add security headers middleware first
-app.add_middleware(SecurityHeadersMiddleware)
+# IMPORTANT: Middleware order matters - add in reverse order of execution
 
 # Trusted Host Middleware - Only allow specific domains
+render_app_name = os.getenv("RENDER_SERVICE_NAME", "aichatflows")
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1", 
     "aichatflows.com",
     "*.aichatflows.com",
-    "*.herokuapp.com"  # For Heroku deployment
+    "*.herokuapp.com",  # For Heroku deployment
+    "*.onrender.com",   # For Render deployment
+    "*.render.com",     # For Render deployment
+    f"{render_app_name}.onrender.com"  # Specific Render app
 ]
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=ALLOWED_HOSTS)
 
 # CORS Configuration - Secure production settings
-# TODO: SECURITY - Update allowed origins for production deployment
-ALLOWED_ORIGINS = [
-    "https://aichatflows.com",
-    "https://www.aichatflows.com",
-    "http://localhost:8000",  # For local development
-    "http://127.0.0.1:8000"   # For local development
-]
 
-# In development, allow all origins (but log warning)
-if os.getenv("ENVIRONMENT") == "development":
+# Environment detection with defaults
+environment = os.getenv("ENVIRONMENT", "production").lower()
+if environment in ["development", "dev"]:
     ALLOWED_ORIGINS = ["*"]
     logger.warning("CORS configured for development - allowing all origins")
+else:
+    # Production environment with Render support
+    render_app_name = os.getenv("RENDER_SERVICE_NAME", "aichatflows")
+    render_url = f"https://{render_app_name}.onrender.com"
+    
+    ALLOWED_ORIGINS = [
+        "https://aichatflows.com",
+        "https://www.aichatflows.com",
+        render_url,  # Dynamic Render URL
+        "http://localhost:8000",  # For local development
+        "http://127.0.0.1:8000"   # For local development
+    ]
+    logger.info(f"CORS configured for production with origins: {ALLOWED_ORIGINS}")
 
 app.add_middleware(
     CORSMiddleware,
@@ -347,8 +377,75 @@ app.add_middleware(
     max_age=3600,  # Cache preflight requests for 1 hour
 )
 
-# Initialize email service
-email_service = EmailService()
+# Security headers middleware - add last so it runs first
+app.add_middleware(SecurityHeadersMiddleware)
+
+# Initialize email service with error handling
+try:
+    email_service = EmailService()
+    logger.info("Email service initialized successfully")
+except Exception as e:
+    logger.error(f"Failed to initialize email service: {e}")
+    # Create a dummy email service that doesn't send emails to prevent crashes
+    class DummyEmailService:
+        def send_payment_confirmation(self, *args, **kwargs):
+            logger.warning("Email service not available - skipping payment confirmation")
+            return False
+        
+        def send_admin_payment_confirmation(self, *args, **kwargs):
+            logger.warning("Email service not available - skipping admin notification")
+            return False
+        
+        def send_user_confirmation(self, *args, **kwargs):
+            logger.warning("Email service not available - skipping user confirmation")
+            return False
+        
+        def send_admin_notification(self, *args, **kwargs):
+            logger.warning("Email service not available - skipping admin notification")
+            return False
+        
+        def send_secure_credentials(self, *args, **kwargs):
+            logger.warning("Email service not available - skipping secure credentials")
+            return False
+    
+    email_service = DummyEmailService()
+    logger.warning("Email service disabled due to initialization failure")
+
+# Startup validation
+@app.on_event("startup")
+async def startup_validation():
+    """Validate critical dependencies on startup"""
+    logger.info("Starting application startup validation...")
+    
+    # Validate templates directory
+    templates_dir = BASE_DIR / "templates"
+    if not templates_dir.exists():
+        logger.error(f"Templates directory not found: {templates_dir}")
+        raise RuntimeError("Templates directory missing")
+    
+    # Validate static files directory
+    static_dir = BASE_DIR / "static"
+    if not static_dir.exists():
+        logger.warning(f"Static directory not found: {static_dir}")
+    
+    # Validate environment variables
+    required_env_vars = ["ENVIRONMENT"]
+    missing_vars = []
+    for var in required_env_vars:
+        if not os.getenv(var):
+            missing_vars.append(var)
+    
+    if missing_vars:
+        logger.warning(f"Missing optional environment variables: {missing_vars}")
+    
+    # Log startup configuration
+    logger.info(f"Environment: {environment}")
+    logger.info(f"Allowed hosts: {ALLOWED_HOSTS}")
+    logger.info(f"CORS origins: {ALLOWED_ORIGINS}")
+    logger.info(f"Rate limiter: {'Redis' if hasattr(limiter, 'storage') else 'In-memory'}")
+    logger.info(f"Email service: {'Active' if hasattr(email_service, 'smtp_server') else 'Disabled'}")
+    
+    logger.info("Application startup validation completed successfully")
 
 def mask_sensitive_data(data: dict) -> dict:
     """Mask sensitive credential data for logging"""
@@ -589,7 +686,18 @@ async def submit_onboarding(request: Request):
         # Save sanitized, non-sensitive data to file with enhanced error handling
         try:
             submissions_dir = BASE_DIR / "submissions"
-            submissions_dir.mkdir(exist_ok=True)
+            
+            # Create directory with proper error handling
+            try:
+                submissions_dir.mkdir(exist_ok=True, parents=True)
+            except PermissionError:
+                logger.warning(f"[{request_id}] No write permission for submissions directory, using temp directory")
+                submissions_dir = Path("/tmp") / "submissions"
+                submissions_dir.mkdir(exist_ok=True, parents=True)
+            except Exception as dir_error:
+                logger.error(f"[{request_id}] Failed to create submissions directory: {dir_error}")
+                # Use current directory as final fallback
+                submissions_dir = Path(".")
             
             timestamp = storage_data['submission_timestamp'].isoformat()
             safe_business_name = "".join(c for c in storage_data['business_name'] if c.isalnum() or c in (' ', '-', '_')).rstrip()
@@ -600,21 +708,10 @@ async def submit_onboarding(request: Request):
                 json.dump(storage_data, f, indent=2, default=str)
             logger.info(f"[{request_id}] Submission saved to {filepath}")
             
-        except OSError as e:
-            logger.error(f"[{request_id}] Failed to create submissions directory: {e}")
-            logger.error(f"[{request_id}] File error traceback: {traceback.format_exc()}")
-            # Try fallback directory
-            try:
-                fallback_path = Path(".") / f"submission_{request_id}.json"
-                with open(fallback_path, 'w') as f:
-                    json.dump(storage_data, f, indent=2, default=str)
-                logger.info(f"[{request_id}] Submission saved to fallback location: {fallback_path}")
-            except Exception as fallback_error:
-                logger.error(f"[{request_id}] Failed to save submission even to fallback: {fallback_error}")
-                
         except Exception as e:
             logger.error(f"[{request_id}] Failed to save submission: {str(e)}")
             logger.error(f"[{request_id}] File save traceback: {traceback.format_exc()}")
+            # Continue processing even if file save fails - email notifications still work
         
         # Send confirmation email to user with enhanced error handling
         try:
