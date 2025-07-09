@@ -1,6 +1,6 @@
 # app/models.py
 
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, field_validator, model_validator
 from typing import Optional, Literal, List
 from datetime import datetime
 
@@ -44,38 +44,45 @@ class OnboardingForm(BaseModel):
     contact_email: EmailStr
     
     # Auto-generated
-    submission_timestamp: datetime = None
+    submission_timestamp: Optional[datetime] = None
     
-    @validator('submission_timestamp', pre=True, always=True)
+    @field_validator('submission_timestamp', mode='before')
+    @classmethod
     def set_timestamp(cls, v):
         return v or datetime.now()
     
-    @validator('faq_content')
-    def validate_faq_content(cls, v, values):
-        if values.get('has_faqs') and not v:
-            raise ValueError('FAQ content is required when has_faqs is True')
-        return v
-    
-    @validator('instagram_email', 'instagram_password')
-    def validate_instagram_login(cls, v, values, field):
-        if values.get('plan') and not v:
-            raise ValueError(f'{field.name.replace("_", " ").title()} is required for both plans')
-        return v
-    
-    @validator('tiktok_email', 'tiktok_password', 'facebook_email', 
-               'facebook_password', 'whatsapp_number', 'whatsapp_password')
-    def validate_pro_logins(cls, v, values, field):
-        if values.get('plan') == 'Pro' and values.get('submission_method') == 'Submit through this page':
-            platform = field.name.split('_')[0]
-            if platform in ['tiktok', 'facebook'] and not v:
-                raise ValueError(f'{field.name.replace("_", " ").title()} is required for Pro plan')
-        return v
-    
-    @validator('consent_to_share')
+    @field_validator('consent_to_share')
+    @classmethod
     def validate_consent(cls, v):
         if not v:
             raise ValueError('You must consent to share information to proceed')
         return v
+    
+    @model_validator(mode='after')
+    def validate_conditional_fields(self):
+        # Validate FAQ content
+        if self.has_faqs and not self.faq_content:
+            raise ValueError('FAQ content is required when has_faqs is True')
+        
+        # Validate Instagram login fields (required for both plans)
+        if self.plan and not self.instagram_email:
+            raise ValueError('Instagram email is required for both plans')
+        if self.plan and not self.instagram_password:
+            raise ValueError('Instagram password is required for both plans')
+        
+        # Validate Pro plan login fields
+        if (self.plan == 'Pro' and 
+            self.submission_method == 'Submit through this page'):
+            if not self.tiktok_email:
+                raise ValueError('TikTok email is required for Pro plan')
+            if not self.tiktok_password:
+                raise ValueError('TikTok password is required for Pro plan')
+            if not self.facebook_email:
+                raise ValueError('Facebook email is required for Pro plan')
+            if not self.facebook_password:
+                raise ValueError('Facebook password is required for Pro plan')
+        
+        return self
 
 
 class OnboardingResponse(BaseModel):
