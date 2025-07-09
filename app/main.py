@@ -9,13 +9,23 @@ import html
 import logging
 import uuid
 import traceback
+import re
 from pathlib import Path
 from datetime import datetime
+from typing import Dict, Any, Optional
+import bleach
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.security import HTTPBearer
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 from pydantic import ValidationError
 from .models import OnboardingForm, OnboardingResponse
 from .email_service import EmailService
@@ -30,7 +40,52 @@ logger = logging.getLogger(__name__)
 # Get the parent directory (ai-coffee root)
 BASE_DIR = Path(__file__).parent.parent
 
-app = FastAPI()
+app = FastAPI(
+    title="AIChatFlows API",
+    description="Secure AI-powered chatbot automation platform",
+    version="1.0.0",
+    docs_url=None,  # Disable docs in production
+    redoc_url=None  # Disable redoc in production
+)
+
+# Rate limiting configuration
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Security Headers Middleware
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response: Response = await call_next(request)
+        
+        # Content Security Policy - Strict policy to prevent XSS
+        csp_policy = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "font-src 'self' https://fonts.gstatic.com; "
+            "img-src 'self' data:; "
+            "form-action 'self' https://buy.stripe.com; "
+            "frame-ancestors 'none'; "
+            "base-uri 'self'; "
+            "object-src 'none';"
+        )
+        
+        response.headers["Content-Security-Policy"] = csp_policy
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+        
+        # HSTS (HTTP Strict Transport Security) - Enable in production with HTTPS
+        if request.url.scheme == "https":
+            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        
+        # Remove server information
+        response.headers.pop("server", None)
+        
+        return response
 
 # 2) Serve static assets from ./static
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
@@ -40,21 +95,25 @@ templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 # 4) Root route → landing page
 @app.get("/", response_class=HTMLResponse)
+@limiter.limit("30/minute")  # Rate limit: 30 requests per minute
 async def read_index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 # Start/onboarding route
 @app.get("/start", response_class=HTMLResponse)
+@limiter.limit("10/minute")  # Rate limit: 10 requests per minute for form access
 async def start(request: Request):
     return templates.TemplateResponse("start.html", {"request": request})
 
 # Legal page route
 @app.get("/legal", response_class=HTMLResponse)
+@limiter.limit("20/minute")  # Rate limit: 20 requests per minute
 async def legal(request: Request):
     return templates.TemplateResponse("legal.html", {"request": request})
 
 # Thank you page route
 @app.get("/thank-you", response_class=HTMLResponse)
+@limiter.limit("5/minute")  # Rate limit: 5 requests per minute for thank you page
 async def thank_you(request: Request):
     # Generate unique request ID for tracking
     request_id = str(uuid.uuid4())[:8]
@@ -251,12 +310,41 @@ async def thank_you(request: Request):
         """
         return HTMLResponse(content=minimal_html, status_code=200)
 
-# 5) CORS (allow your front-end fetch)
+# Security Middleware Configuration
+# Add security headers middleware first
+app.add_middleware(SecurityHeadersMiddleware)
+
+# Trusted Host Middleware - Only allow specific domains
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1", 
+    "aichatflows.com",
+    "*.aichatflows.com",
+    "*.herokuapp.com"  # For Heroku deployment
+]
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=ALLOWED_HOSTS)
+
+# CORS Configuration - Secure production settings
+# TODO: SECURITY - Update allowed origins for production deployment
+ALLOWED_ORIGINS = [
+    "https://aichatflows.com",
+    "https://www.aichatflows.com",
+    "http://localhost:8000",  # For local development
+    "http://127.0.0.1:8000"   # For local development
+]
+
+# In development, allow all origins (but log warning)
+if os.getenv("ENVIRONMENT") == "development":
+    ALLOWED_ORIGINS = ["*"]
+    logger.warning("CORS configured for development - allowing all origins")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],       # in prod, lock this to your domain
-    allow_methods=["GET", "POST"],
-    allow_headers=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
+    allow_credentials=True,
+    max_age=3600,  # Cache preflight requests for 1 hour
 )
 
 # Initialize email service
@@ -273,8 +361,85 @@ def mask_sensitive_data(data: dict) -> dict:
     
     return masked_data
 
+def sanitize_input(value: Any) -> Any:
+    """Comprehensive input sanitization to prevent XSS and injection attacks"""
+    if value is None:
+        return None
+    
+    if isinstance(value, str):
+        # Remove null bytes and control characters
+        value = value.replace('\x00', '').replace('\r', '').replace('\n', ' ')
+        
+        # Limit length to prevent DoS
+        if len(value) > 10000:
+            logger.warning(f"Input truncated - length: {len(value)}")
+            value = value[:10000]
+        
+        # Use bleach for HTML sanitization - more robust than html.escape
+        allowed_tags = []  # No HTML tags allowed
+        value = bleach.clean(value, tags=allowed_tags, strip=True)
+        
+        # Additional sanitization for specific patterns
+        value = re.sub(r'<script[^>]*>.*?</script>', '', value, flags=re.IGNORECASE | re.DOTALL)
+        value = re.sub(r'javascript:', '', value, flags=re.IGNORECASE)
+        value = re.sub(r'vbscript:', '', value, flags=re.IGNORECASE)
+        value = re.sub(r'onload=', '', value, flags=re.IGNORECASE)
+        value = re.sub(r'onerror=', '', value, flags=re.IGNORECASE)
+        
+        # Strip excessive whitespace
+        value = re.sub(r'\s+', ' ', value).strip()
+        
+        return value
+    
+    elif isinstance(value, (int, float, bool)):
+        return value
+    
+    elif isinstance(value, dict):
+        return {k: sanitize_input(v) for k, v in value.items()}
+    
+    elif isinstance(value, list):
+        return [sanitize_input(item) for item in value]
+    
+    else:
+        # Convert to string and sanitize
+        return sanitize_input(str(value))
+
+def validate_email_format(email: str) -> bool:
+    """Validate email format with regex"""
+    email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(email_pattern, email) is not None
+
+def create_secure_error_response(error_type: str, message: str, request_id: str, status_code: int = 400) -> HTTPException:
+    """Create secure error response that doesn't leak internal information"""
+    # Log detailed error internally
+    logger.error(f"[{request_id}] {error_type}: {message}")
+    
+    # Return generic error message to client
+    safe_messages = {
+        "validation": "Please check your input and try again.",
+        "authentication": "Authentication failed. Please verify your credentials.",
+        "authorization": "You don't have permission to access this resource.",
+        "rate_limit": "Too many requests. Please try again later.",
+        "server_error": "An error occurred. Please try again or contact support.",
+        "not_found": "The requested resource was not found.",
+        "bad_request": "Invalid request format. Please check your input."
+    }
+    
+    safe_message = safe_messages.get(error_type, "An error occurred. Please try again.")
+    
+    return HTTPException(
+        status_code=status_code,
+        detail={
+            "error": error_type,
+            "message": safe_message,
+            "request_id": request_id,
+            "timestamp": datetime.now().isoformat()
+        }
+    )
+
 # Onboarding form submission endpoint
 @app.post("/api/submit-onboarding", response_model=OnboardingResponse)
+@limiter.limit("3/minute")  # Rate limit: 3 form submissions per minute per IP
 async def submit_onboarding(request: Request):
     # Generate unique request ID for tracking
     request_id = str(uuid.uuid4())[:8]
@@ -294,27 +459,20 @@ async def submit_onboarding(request: Request):
         except Exception as e:
             logger.error(f"[{request_id}] Failed to parse request body: {str(e)}")
             logger.error(f"[{request_id}] Full traceback: {traceback.format_exc()}")
-            raise HTTPException(
-                status_code=400,
-                detail={
-                    "error": "Invalid request format",
-                    "message": "Request body must be valid JSON",
-                    "request_id": request_id
-                }
-            )
+            raise create_secure_error_response("bad_request", "Invalid request format", request_id, 400)
         
-        # Enhanced data processing and cleaning
+        # Enhanced data processing and cleaning with security
         def process_form_data(data):
-            """Clean and process form data before validation"""
+            """Clean and process form data before validation with comprehensive sanitization"""
             processed = {}
             
-            # Handle all fields
+            # Handle all fields with sanitization
             for key, value in data.items():
                 # Convert empty strings and null values to None for optional fields
                 if value in ["", "null", "undefined", None]:
                     processed[key] = None
                 # Handle boolean fields
-                elif key in ['has_faqs', 'consent_to_share']:
+                elif key in ['has_faqs', 'consent_to_share', 'confirm_accurate', 'consent_automation']:
                     if isinstance(value, str):
                         processed[key] = value.lower() == 'true'
                     elif isinstance(value, bool):
@@ -322,12 +480,18 @@ async def submit_onboarding(request: Request):
                     else:
                         processed[key] = bool(value) if value is not None else False
                 else:
-                    processed[key] = value
+                    # Apply comprehensive sanitization to all other fields
+                    processed[key] = sanitize_input(value)
             
             return processed
         
-        # Process form data
+        # Process form data with sanitization
         processed_data = process_form_data(request_data)
+        
+        # Additional validation for critical fields
+        if processed_data.get('contact_email'):
+            if not validate_email_format(processed_data['contact_email']):
+                raise create_secure_error_response("validation", "Invalid email format", request_id, 422)
         
         # Log submission details (with masked sensitive data)
         masked_data = mask_sensitive_data(processed_data)
@@ -356,34 +520,24 @@ async def submit_onboarding(request: Request):
             logger.error(f"[{request_id}] Validation errors: {e.errors()}")
             logger.error(f"[{request_id}] Full traceback: {traceback.format_exc()}")
             
-            # Create user-friendly error messages
+            # Create user-friendly error messages without exposing internal structure
             error_messages = []
             for error in e.errors():
                 field_name = error['loc'][-1] if error['loc'] else 'field'
-                error_msg = error['msg']
                 error_type = error['type']
                 
-                # Custom error messages for better UX
+                # Sanitize field names and provide generic error messages
+                safe_field_name = sanitize_input(str(field_name)).replace('_', ' ').title()
+                
+                # Custom error messages for better UX but no internal details
                 if error_type == 'missing':
-                    error_messages.append(f"{field_name.replace('_', ' ').title()} is required")
-                elif error_type == 'value_error':
-                    if 'required' in error_msg.lower():
-                        error_messages.append(f"{field_name.replace('_', ' ').title()} is required")
-                    else:
-                        error_messages.append(f"{field_name.replace('_', ' ').title()}: {error_msg}")
+                    error_messages.append(f"{safe_field_name} is required")
                 elif 'email' in error_type.lower():
-                    error_messages.append(f"{field_name.replace('_', ' ').title()} must be a valid email address")
+                    error_messages.append(f"{safe_field_name} must be a valid email address")
                 else:
-                    error_messages.append(f"{field_name.replace('_', ' ').title()}: {error_msg}")
+                    error_messages.append(f"{safe_field_name} is invalid")
             
-            raise HTTPException(
-                status_code=422,
-                detail={
-                    "error": "Validation failed",
-                    "messages": error_messages,
-                    "request_id": request_id
-                }
-            )
+            raise create_secure_error_response("validation", f"Validation failed: {'; '.join(error_messages)}", request_id, 422)
         
         # Convert form data to dict and sanitize inputs
         data_dict = form_data.dict()
@@ -478,14 +632,23 @@ async def submit_onboarding(request: Request):
             logger.error(f"[{request_id}] Failed to send admin notification email: {str(e)}")
             logger.error(f"[{request_id}] Admin email traceback: {traceback.format_exc()}")
         
-        # Determine Stripe URL based on plan with success_url redirect
+        # Generate secure payment URL - URLs now stored server-side only
+        # TODO: SECURITY - Move Stripe URLs to environment variables
         stripe_urls = {
-            "Starter": "https://buy.stripe.com/fZu5kEaZ4dQqbKUfNZ8Vi00?success_url=https://aichatflows.com/thank-you",
-            "Pro": "https://buy.stripe.com/3cI5kE7MS13EcOY6dp8Vi01?success_url=https://aichatflows.com/thank-you"
+            "Starter": os.getenv("STRIPE_STARTER_URL", "https://buy.stripe.com/fZu5kEaZ4dQqbKUfNZ8Vi00"),
+            "Pro": os.getenv("STRIPE_PRO_URL", "https://buy.stripe.com/3cI5kE7MS13EcOY6dp8Vi01")
         }
         
         stripe_url = stripe_urls.get(form_data.plan)
-        logger.info(f"[{request_id}] Stripe URL selected: {stripe_url}")
+        
+        # Add success URL parameter securely
+        success_url = os.getenv("SUCCESS_URL", "https://aichatflows.com/thank-you")
+        if "?" in stripe_url:
+            stripe_url += f"&success_url={success_url}"
+        else:
+            stripe_url += f"?success_url={success_url}"
+            
+        logger.info(f"[{request_id}] Payment URL generated for {form_data.plan} plan")
         
         # Calculate processing time
         processing_time = (datetime.now() - start_time).total_seconds()
@@ -506,11 +669,4 @@ async def submit_onboarding(request: Request):
         logger.error(f"[{request_id}] Unexpected error during form submission: {str(e)}")
         logger.error(f"[{request_id}] Full traceback: {traceback.format_exc()}")
         
-        raise HTTPException(
-            status_code=500,
-            detail={
-                "error": "Internal server error",
-                "message": "An unexpected error occurred. Please try again or contact support.",
-                "request_id": request_id
-            }
-        )
+        raise create_secure_error_response("server_error", "Unexpected error during form submission", request_id, 500)

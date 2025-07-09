@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Welcome to AIChatFlows Setup</title>
   <link rel="stylesheet" href="/static/css/styles.css">
+  <meta name="description" content="Start your AI-powered chatbot setup with AIChatFlows">
+  <meta name="robots" content="noindex">
   <style>
+    /* Form-specific styles */
     .setup-container {
       min-height: 100vh;
       background: var(--clr-dark);
@@ -86,10 +89,7 @@
       font-size: 1rem;
     }
     
-    .form-group input[type="text"],
-    .form-group input[type="email"],
-    .form-group input[type="password"],
-    .form-group input[type="file"],
+    .form-group input,
     .form-group textarea,
     .form-group select {
       width: 100%;
@@ -99,54 +99,15 @@
       border-radius: 8px;
       color: var(--clr-light);
       font-size: 1rem;
+      font-family: var(--ff-sans);
       transition: border-color 0.3s ease;
     }
     
-    .form-group input[type="text"]:focus,
-    .form-group input[type="email"]:focus,
-    .form-group input[type="password"]:focus,
+    .form-group input:focus,
     .form-group textarea:focus,
     .form-group select:focus {
       outline: none;
       border-color: var(--clr-primary);
-    }
-    
-    .form-group textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-    
-    .radio-group,
-    .checkbox-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1em;
-      margin-top: 0.5em;
-    }
-    
-    .radio-option,
-    .checkbox-option {
-      display: flex;
-      align-items: center;
-      gap: 0.5em;
-    }
-    
-    .radio-option input[type="radio"],
-    .checkbox-option input[type="checkbox"] {
-      width: auto;
-      margin: 0;
-    }
-    
-    .radio-option label,
-    .checkbox-option label {
-      font-weight: normal;
-      margin-bottom: 0;
-      cursor: pointer;
-    }
-    
-    .checkbox-group {
-      flex-direction: column;
-      gap: 0.75em;
     }
     
     .conditional-section {
@@ -159,11 +120,6 @@
     .conditional-section.show {
       display: block;
       animation: fadeIn 0.3s ease-in-out;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
     }
     
     .conditional-message {
@@ -182,85 +138,6 @@
     
     .info-message strong {
       color: var(--clr-primary);
-    }
-    
-    .other-input {
-      margin-top: 0.5em;
-    }
-    
-    .file-upload-group {
-      position: relative;
-    }
-    
-    .file-upload-label {
-      display: inline-block;
-      padding: 0.75em 1.5em;
-      background: linear-gradient(45deg, var(--clr-primary), var(--clr-accent-blue));
-      color: #fff;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: 600;
-    }
-    
-    .file-upload-label:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0, 230, 118, 0.3);
-    }
-    
-    .file-info {
-      margin-top: 0.5em;
-      font-size: 0.9rem;
-      color: var(--clr-light);
-      opacity: 0.8;
-    }
-    
-    .security-disclaimer {
-      background: rgba(0, 230, 118, 0.1);
-      border: 1px solid rgba(0, 230, 118, 0.3);
-      padding: 1em;
-      border-radius: 8px;
-      margin-top: 1em;
-      font-size: 0.9rem;
-      color: var(--clr-light);
-    }
-    
-    .security-disclaimer strong {
-      color: var(--clr-primary);
-    }
-    
-    .checklist {
-      background: var(--clr-dark);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      padding: 1.5em;
-      margin-top: 2em;
-    }
-    
-    .checklist h4 {
-      color: var(--clr-primary);
-      margin-bottom: 1em;
-    }
-    
-    .checklist ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    
-    .checklist li {
-      padding-left: 1.5em;
-      margin-bottom: 0.5em;
-      position: relative;
-      color: var(--clr-light);
-    }
-    
-    .checklist li::before {
-      content: "✓";
-      position: absolute;
-      left: 0;
-      color: var(--clr-primary);
-      font-weight: bold;
     }
     
     .submit-button {
@@ -291,45 +168,26 @@
       transform: none;
     }
     
-    .privacy-text {
-      font-size: 0.85rem;
-      color: var(--clr-light);
-      opacity: 0.7;
-      margin-top: 2em;
+    .error-message,
+    .success-message {
+      padding: 1.5em;
+      border-radius: 8px;
+      margin-bottom: 1em;
+      font-size: 1rem;
       text-align: center;
-      line-height: 1.5;
-    }
-    
-    .privacy-text a {
-      color: var(--clr-primary);
-      text-decoration: none;
-    }
-    
-    .privacy-text a:hover {
-      text-decoration: underline;
+      display: none;
     }
     
     .error-message {
-      display: none;
-      background: rgba(255, 0, 0, 0.1);
-      border: 1px solid rgba(255, 0, 0, 0.3);
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.3);
       color: #ff6b6b;
-      padding: 1em;
-      border-radius: 8px;
-      margin-bottom: 1em;
-      font-size: 0.9rem;
     }
     
     .success-message {
-      display: none;
       background: rgba(0, 230, 118, 0.1);
       border: 1px solid rgba(0, 230, 118, 0.3);
       color: var(--clr-primary);
-      padding: 1.5em;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 1.1rem;
-      margin-bottom: 1em;
     }
     
     .loading-spinner {
@@ -353,52 +211,34 @@
       to { transform: rotate(360deg); }
     }
     
-    .contact-section {
-      text-align: center;
-      margin-top: 3em;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     
-    .contact-section p {
+    .privacy-text {
+      font-size: 0.85rem;
       color: var(--clr-light);
-      margin-bottom: 0.5em;
+      opacity: 0.7;
+      text-align: center;
+      margin-top: 1em;
     }
     
-    .contact-section a {
+    .privacy-text a {
       color: var(--clr-primary);
       text-decoration: none;
-      font-weight: 600;
-      transition: color 0.3s ease;
     }
     
-    .contact-section a:hover {
-      color: var(--clr-accent-blue);
+    .privacy-text a:hover {
       text-decoration: underline;
     }
     
-    @media (max-width: 768px) {
-      .setup-header h1 {
-        font-size: 2.5rem;
-      }
-      
-      .welcome-text {
-        font-size: 1rem;
-      }
-      
-      .form-container {
-        padding: 2em 1.5em;
-      }
-      
-      .section-title {
-        font-size: 1.25rem;
-      }
-      
-      .submit-button {
-        font-size: 1rem;
-      }
-      
-      .radio-group {
-        flex-direction: column;
-      }
+    /* Security: Disable text selection on form elements */
+    .form-container input[type="password"] {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
   </style>
 </head>
@@ -406,190 +246,94 @@
   <div class="setup-container">
     <div class="setup-content">
       <div class="setup-header">
-        <h1>Welcome to AIChatFlows</h1>
+        <h1>🚀 AIChatFlows Setup</h1>
+        <p class="welcome-text">
+          Welcome! Let's get your AI-powered chatbot automation system set up. 
+          This secure form will collect your business information and preferences.
+        </p>
       </div>
       
-      <p class="welcome-text">
-        Thank you for joining AIChatFlows! This onboarding will help us set up your AI-powered chatbot and automate your social media interactions.
-      </p>
-      
       <div class="form-container">
-        <form id="onboardingForm">
-          <div class="error-message" id="errorMessage"></div>
-          <div class="success-message" id="successMessage"></div>
-          <div class="loading-spinner" id="loadingSpinner"></div>
-          
-          <!-- Business Info Section -->
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+        <div class="loading-spinner" id="loadingSpinner"></div>
+        
+        <form id="onboardingForm" method="post" action="/api/submit-onboarding">
+          <!-- Business Information -->
           <div class="form-section">
-            <h2 class="section-title">Business Info</h2>
+            <h2 class="section-title">📋 Business Information</h2>
             
             <div class="form-group">
               <label for="business_name">Business Name *</label>
-              <input type="text" id="business_name" name="business_name" required>
+              <input type="text" id="business_name" name="business_name" required maxlength="100">
             </div>
             
             <div class="form-group">
-              <label for="instagram_handle">Instagram Handle *</label>
-              <input type="text" id="instagram_handle" name="instagram_handle" placeholder="@yourbusiness" required>
+              <label for="instagram_handle">Instagram Handle (without @) *</label>
+              <input type="text" id="instagram_handle" name="instagram_handle" required maxlength="30">
             </div>
             
             <div class="form-group">
-              <label for="other_platforms">Other Platforms (Optional)</label>
-              <input type="text" id="other_platforms" name="other_platforms" placeholder="TikTok, Facebook, WhatsApp handles...">
+              <label for="business_type">Business Type *</label>
+              <select id="business_type" name="business_type" required>
+                <option value="">Select your business type</option>
+                <option value="Restaurant">Restaurant</option>
+                <option value="Retail">Retail</option>
+                <option value="Service">Service</option>
+                <option value="E-commerce">E-commerce</option>
+                <option value="Other">Other</option>
+              </select>
             </div>
             
             <div class="form-group">
-              <label for="business_type">Business Type or Niche *</label>
-              <input type="text" id="business_type" name="business_type" placeholder="e.g., Restaurant, Beauty Salon, E-commerce" required>
+              <label for="common_customer_question">Most Common Customer Question *</label>
+              <textarea id="common_customer_question" name="common_customer_question" required maxlength="500" rows="3"></textarea>
             </div>
             
             <div class="form-group">
-              <label for="product_service_description">What do you offer? *</label>
-              <textarea id="product_service_description" name="product_service_description" placeholder="Describe your main products or services..." required></textarea>
-            </div>
-            
-            <div class="form-group">
-              <label for="common_customer_question">Most common customer questions *</label>
-              <textarea id="common_customer_question" name="common_customer_question" placeholder="What do customers typically ask about? (e.g., hours, pricing, delivery options...)" required></textarea>
+              <label for="product_service_description">Product/Service Description *</label>
+              <textarea id="product_service_description" name="product_service_description" required maxlength="1000" rows="4"></textarea>
             </div>
           </div>
           
-          <!-- Delivery & Pickup Section -->
+          <!-- Plan Selection -->
           <div class="form-section">
-            <h2 class="section-title">Delivery & Pickup</h2>
+            <h2 class="section-title">💰 Plan Selection</h2>
             
             <div class="form-group">
-              <label>Do you offer delivery or pickup? *</label>
+              <label>Choose Your Plan *</label>
               <div class="radio-group">
-                <div class="radio-option">
-                  <input type="radio" id="delivery_only" name="delivery_pickup" value="Delivery" required>
-                  <label for="delivery_only">Delivery only</label>
-                </div>
-                <div class="radio-option">
-                  <input type="radio" id="pickup_only" name="delivery_pickup" value="Pickup" required>
-                  <label for="pickup_only">Pickup only</label>
-                </div>
-                <div class="radio-option">
-                  <input type="radio" id="both_delivery_pickup" name="delivery_pickup" value="Both" required>
-                  <label for="both_delivery_pickup">Both</label>
-                </div>
-                <div class="radio-option">
-                  <input type="radio" id="neither_delivery_pickup" name="delivery_pickup" value="None" required>
-                  <label for="neither_delivery_pickup">Neither</label>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Conditional Delivery Services -->
-            <div id="deliveryServices" class="conditional-section">
-              <div class="form-group">
-                <label>What service(s) do you use?</label>
-                <div class="checkbox-group">
-                  <div class="checkbox-option">
-                    <input type="checkbox" id="uber_eats" name="delivery_services" value="Uber Eats">
-                    <label for="uber_eats">Uber Eats</label>
-                  </div>
-                  <div class="checkbox-option">
-                    <input type="checkbox" id="doordash" name="delivery_services" value="DoorDash">
-                    <label for="doordash">DoorDash</label>
-                  </div>
-                  <div class="checkbox-option">
-                    <input type="checkbox" id="grubhub" name="delivery_services" value="Grubhub">
-                    <label for="grubhub">Grubhub</label>
-                  </div>
-                  <div class="checkbox-option">
-                    <input type="checkbox" id="inhouse" name="delivery_services" value="In-house delivery">
-                    <label for="inhouse">In-house delivery</label>
-                  </div>
-                  <div class="checkbox-option">
-                    <input type="checkbox" id="other_delivery" name="delivery_services" value="Other">
-                    <label for="other_delivery">Other:</label>
-                    <input type="text" id="other_delivery_text" name="other_delivery_text" class="other-input" placeholder="Specify other service">
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Conditional Pickup Options -->
-            <div id="pickupOptions" class="conditional-section">
-              <div class="form-group">
-                <label>How does pickup work?</label>
-                <div class="radio-group">
-                  <div class="radio-option">
-                    <input type="radio" id="call_order" name="pickup_method" value="Call to order">
-                    <label for="call_order">Call to order</label>
-                  </div>
-                  <div class="radio-option">
-                    <input type="radio" id="app_link" name="pickup_method" value="App or link">
-                    <label for="app_link">App or link</label>
-                  </div>
-                  <div class="radio-option">
-                    <input type="radio" id="walkin" name="pickup_method" value="Walk-in only">
-                    <label for="walkin">Walk-in only</label>
-                  </div>
-                </div>
-                <input type="text" id="pickup_details" name="pickup_details" placeholder="Additional pickup details (optional)" style="margin-top: 1em;">
+                <label>
+                  <input type="radio" name="plan" value="Starter" required>
+                  💼 Starter Plan - $50 setup + $100/month
+                </label>
+                <label>
+                  <input type="radio" name="plan" value="Pro" required>
+                  🚀 Pro Plan - $50 setup + $150/month
+                </label>
               </div>
             </div>
           </div>
           
-          <!-- Menu Submission Section -->
+          <!-- Login Information -->
           <div class="form-section">
-            <h2 class="section-title">Menu Submission</h2>
-            
-            <div class="form-group file-upload-group">
-              <label for="menu_upload">Upload menu (photo or PDF)</label>
-              <input type="file" id="menu_upload" name="menu_upload" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
-              <label for="menu_upload" class="file-upload-label">Choose File</label>
-              <div class="file-info" id="menuFileInfo">No file selected</div>
-            </div>
+            <h2 class="section-title">🔐 Login Information</h2>
             
             <div class="form-group">
-              <label for="menu_text">Or paste your menu</label>
-              <textarea id="menu_text" name="menu_text" placeholder="Copy and paste your menu items here..."></textarea>
-            </div>
-            
-            <div class="form-group file-upload-group">
-              <label for="additional_docs">Upload additional docs/photos (optional)</label>
-              <input type="file" id="additional_docs" name="additional_docs" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display: none;">
-              <label for="additional_docs" class="file-upload-label">Choose Files</label>
-              <div class="file-info" id="additionalDocsInfo">No files selected</div>
-            </div>
-          </div>
-          
-          <!-- Plan Selection & Login Access Section -->
-          <div class="form-section">
-            <h2 class="section-title">Plan Selection & Login Access</h2>
-            
-            <div class="form-group">
-              <label>Which plan? *</label>
+              <label>How would you like to share your login credentials? *</label>
               <div class="radio-group">
-                <div class="radio-option">
-                  <input type="radio" id="starter_plan" name="plan" value="Starter" required>
-                  <label for="starter_plan">💼 Starter – $50 setup + $100/month</label>
-                </div>
-                <div class="radio-option">
-                  <input type="radio" id="pro_plan" name="plan" value="Pro" required>
-                  <label for="pro_plan">🚀 Pro – $50 setup + $150/month</label>
-                </div>
-              </div>
-            </div>
-            
-            <div class="form-group">
-              <label>How would you like to share your login info? *</label>
-              <div class="radio-group">
-                <div class="radio-option">
-                  <input type="radio" id="submit_here" name="submission_method" value="Submit through this page" required>
-                  <label for="submit_here">Submit here</label>
-                </div>
-                <div class="radio-option">
-                  <input type="radio" id="sendsecurely" name="submission_method" value="Use sendsecure.ly" required>
-                  <label for="sendsecurely">Use https://sendsecure.ly</label>
-                </div>
-                <div class="radio-option">
-                  <input type="radio" id="setup_call" name="submission_method" value="Request In-Person Setup" required>
-                  <label for="setup_call">Request a setup call</label>
-                </div>
+                <label>
+                  <input type="radio" name="submission_method" value="Submit through this page" required>
+                  Submit here (secure form)
+                </label>
+                <label>
+                  <input type="radio" name="submission_method" value="Use sendsecure.ly" required>
+                  Use SendSecure.ly (external secure service)
+                </label>
+                <label>
+                  <input type="radio" name="submission_method" value="Request In-Person Setup" required>
+                  Request setup call
+                </label>
               </div>
             </div>
             
@@ -600,425 +344,85 @@
               </div>
             </div>
             
-            <!-- Conditional Login Fields -->
+            <!-- Login fields (conditional) -->
             <div id="loginSection" class="conditional-section">
-              <div class="security-disclaimer">
-                <strong>🔒 Security Notice:</strong> Login info is encrypted and only used for one-time setup.
+              <div class="form-group">
+                <label for="instagram_email">Instagram Email *</label>
+                <input type="email" id="instagram_email" name="instagram_email" autocomplete="off">
               </div>
               
-              <div id="instagramLogin" style="margin-top: 1.5em;">
-                <h3 style="color: var(--clr-primary); margin-bottom: 1em;">Instagram Login</h3>
-                <div class="form-group">
-                  <label for="instagram_email">Instagram username *</label>
-                  <input type="text" id="instagram_email" name="instagram_email">
-                </div>
-                <div class="form-group">
-                  <label for="instagram_password">Instagram password *</label>
-                  <input type="password" id="instagram_password" name="instagram_password">
-                </div>
-              </div>
-              
-              <!-- Pro Plan Additional Logins -->
-              <div id="proLoginSection" class="conditional-section">
-                <h3 style="color: var(--clr-primary); margin-bottom: 1em; margin-top: 2em;">Additional Platform Logins</h3>
-                
-                <div style="margin-bottom: 2em;">
-                  <h4 style="color: var(--clr-light); margin-bottom: 1em;">Facebook</h4>
-                  <div class="form-group">
-                    <label for="facebook_email">Facebook username</label>
-                    <input type="text" id="facebook_email" name="facebook_email">
-                  </div>
-                  <div class="form-group">
-                    <label for="facebook_password">Facebook password</label>
-                    <input type="password" id="facebook_password" name="facebook_password">
-                  </div>
-                </div>
-                
-                <div style="margin-bottom: 2em;">
-                  <h4 style="color: var(--clr-light); margin-bottom: 1em;">TikTok</h4>
-                  <div class="form-group">
-                    <label for="tiktok_email">TikTok username</label>
-                    <input type="text" id="tiktok_email" name="tiktok_email">
-                  </div>
-                  <div class="form-group">
-                    <label for="tiktok_password">TikTok password</label>
-                    <input type="password" id="tiktok_password" name="tiktok_password">
-                  </div>
-                </div>
-                
-                <div style="margin-bottom: 2em;">
-                  <h4 style="color: var(--clr-light); margin-bottom: 1em;">WhatsApp</h4>
-                  <div class="form-group">
-                    <label for="whatsapp_number">WhatsApp number</label>
-                    <input type="text" id="whatsapp_number" name="whatsapp_number" placeholder="+1234567890">
-                  </div>
-                  <div class="form-group">
-                    <label for="whatsapp_password">WhatsApp password (if applicable)</label>
-                    <input type="password" id="whatsapp_password" name="whatsapp_password">
-                  </div>
-                </div>
-                
-                <div class="form-group">
-                  <label for="other_platforms_login">Other platforms</label>
-                  <textarea id="other_platforms_login" name="other_platforms_login" placeholder="Any other platform login details..."></textarea>
-                </div>
+              <div class="form-group">
+                <label for="instagram_password">Instagram Password *</label>
+                <input type="password" id="instagram_password" name="instagram_password" autocomplete="off">
               </div>
             </div>
           </div>
           
-          <!-- FAQs and Contact Section -->
+          <!-- Contact Information -->
           <div class="form-section">
-            <h2 class="section-title">FAQs and Contact</h2>
+            <h2 class="section-title">📧 Contact Information</h2>
             
-            <div class="form-group file-upload-group">
-              <label for="faq_upload">Upload FAQ doc (optional)</label>
-              <input type="file" id="faq_upload" name="faq_upload" accept=".pdf,.doc,.docx,.txt" style="display: none;">
-              <label for="faq_upload" class="file-upload-label">Choose File</label>
-              <div class="file-info" id="faqFileInfo">No file selected</div>
+            <div class="form-group">
+              <label for="contact_email">Contact Email *</label>
+              <input type="email" id="contact_email" name="contact_email" required maxlength="254">
+            </div>
+          </div>
+          
+          <!-- Confirmation -->
+          <div class="form-section">
+            <h2 class="section-title">✅ Confirmation</h2>
+            
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="consent_to_share" name="consent_to_share" required>
+                I agree to the <a href="/legal#privacy" target="_blank">Privacy Policy</a> and <a href="/legal#terms" target="_blank">Terms of Service</a> *
+              </label>
             </div>
             
             <div class="form-group">
-              <label for="contact_email">Contact email for updates *</label>
-              <input type="email" id="contact_email" name="contact_email" placeholder="your@email.com" required>
-            </div>
-          </div>
-          
-          <!-- Confirmation Section -->
-          <div class="form-section">
-            <h2 class="section-title">Confirmation</h2>
-            
-            <div class="checkbox-group">
-              <div class="checkbox-option">
+              <label>
                 <input type="checkbox" id="confirm_accurate" name="confirm_accurate" required>
-                <label for="confirm_accurate">I confirm my info is accurate</label>
-              </div>
-              <div class="checkbox-option">
-                <input type="checkbox" id="consent_automation" name="consent_automation" required>
-                <label for="consent_automation">I consent to automation setup</label>
-              </div>
-              <div class="checkbox-option">
-                <input type="checkbox" id="consent_to_share" name="consent_to_share" required>
-                <label for="consent_to_share">I agree to the <a href="/legal#privacy" target="_blank">Privacy Policy</a> and <a href="/legal#terms" target="_blank">Terms of Service</a></label>
-              </div>
-            </div>
-            
-            <div class="checklist">
-              <h4>✅ Final Checklist - Please confirm you have:</h4>
-              <ul>
-                <li>Uploaded your menu or provided menu details</li>
-                <li>Picked a plan (Starter or Pro)</li>
-                <li>Provided delivery/pickup information</li>
-                <li>Are ready to begin setup</li>
-              </ul>
+                I confirm that the information provided is accurate *
+              </label>
             </div>
           </div>
           
-          <button type="submit" class="submit-button" id="submitButton">Start My Setup</button>
+          <button type="submit" class="submit-button" id="submitButton">
+            🚀 Start My Setup
+          </button>
           
           <p class="privacy-text">
-            Your information is encrypted and secure. We take privacy seriously. 
-            Read our <a href="/legal#privacy">Privacy Policy</a> and <a href="/legal#terms">Terms of Service</a>.
+            🔒 Your information is encrypted and secure. We take your privacy seriously.<br>
+            <a href="/legal#privacy">Privacy Policy</a> | <a href="/legal#terms">Terms of Service</a>
           </p>
         </form>
-      </div>
-      
-      <div class="contact-section">
-        <p>Need help? Contact us at</p>
-        <a href="mailto:eliascolon23@gmail.com">eliascolon23@gmail.com</a>
       </div>
     </div>
   </div>
   
-  <!-- Footer -->
-  <footer id="contact" class="footer">
-    <div class="container">
-      <p>Ready to automate your customer chats? <a href="mailto:eliascolon23@gmail.com?subject=General Inquiry&body=Hi! I'm interested in learning more about AIChatFlows services. Please contact me." class="btn">Contact Us</a></p>
-      <div style="margin-top: 2em; padding-top: 2em; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-        <p style="font-size: 0.9em; color: rgba(255, 255, 255, 0.7); max-width: 800px; margin: 0 auto;">
-          🔐 We take your privacy seriously. All submitted information is secured and encrypted. We never store your passwords or login credentials permanently.
-        </p>
-        <p style="font-size: 0.8em; color: rgba(255, 255, 255, 0.5); text-align: center; margin-top: 1em;">
-          <a href="/legal#privacy" style="color: var(--clr-primary); text-decoration: none; margin-right: 1em;">Privacy Policy</a>
-          <a href="/legal#terms" style="color: var(--clr-primary); text-decoration: none;">Terms of Service</a>
-        </p>
-      </div>
-    </div>
-  </footer>
+  <!-- Security-hardened JavaScript -->
+  <script src="/static/js/secure-form.js"></script>
   
+  <!-- Security measures -->
   <script>
-    // Form handling and conditional logic
-    document.addEventListener('DOMContentLoaded', function() {
-      const form = document.getElementById('onboardingForm');
-      const errorMessage = document.getElementById('errorMessage');
-      const successMessage = document.getElementById('successMessage');
-      const loadingSpinner = document.getElementById('loadingSpinner');
-      const submitButton = document.getElementById('submitButton');
-      
-      // File upload handlers
-      const menuUpload = document.getElementById('menu_upload');
-      const menuFileInfo = document.getElementById('menuFileInfo');
-      menuUpload.addEventListener('change', function() {
-        if (this.files.length > 0) {
-          menuFileInfo.textContent = `Selected: ${this.files[0].name}`;
-        } else {
-          menuFileInfo.textContent = 'No file selected';
-        }
-      });
-      
-      const additionalDocs = document.getElementById('additional_docs');
-      const additionalDocsInfo = document.getElementById('additionalDocsInfo');
-      additionalDocs.addEventListener('change', function() {
-        if (this.files.length > 0) {
-          additionalDocsInfo.textContent = `Selected: ${this.files.length} file(s)`;
-        } else {
-          additionalDocsInfo.textContent = 'No files selected';
-        }
-      });
-      
-      const faqUpload = document.getElementById('faq_upload');
-      const faqFileInfo = document.getElementById('faqFileInfo');
-      faqUpload.addEventListener('change', function() {
-        if (this.files.length > 0) {
-          faqFileInfo.textContent = `Selected: ${this.files[0].name}`;
-        } else {
-          faqFileInfo.textContent = 'No file selected';
-        }
-      });
-      
-      // Delivery & Pickup conditional logic
-      const deliveryPickupRadios = document.querySelectorAll('input[name="delivery_pickup"]');
-      const deliveryServices = document.getElementById('deliveryServices');
-      const pickupOptions = document.getElementById('pickupOptions');
-      
-      deliveryPickupRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-          deliveryServices.classList.remove('show');
-          pickupOptions.classList.remove('show');
-          
-          if (this.value === 'Delivery' || this.value === 'Both') {
-            deliveryServices.classList.add('show');
-          }
-          if (this.value === 'Pickup' || this.value === 'Both') {
-            pickupOptions.classList.add('show');
-          }
-        });
-      });
-      
-      // Plan selection and login fields
-      const planRadios = document.querySelectorAll('input[name="plan"]');
-      const submissionMethodRadios = document.querySelectorAll('input[name="submission_method"]');
-      const loginSection = document.getElementById('loginSection');
-      const proLoginSection = document.getElementById('proLoginSection');
-      const sendSecurelyMessage = document.getElementById('sendSecurelyMessage');
-      
-      function updateLoginFields() {
-        const selectedPlan = document.querySelector('input[name="plan"]:checked');
-        const selectedMethod = document.querySelector('input[name="submission_method"]:checked');
-        
-        // Hide all conditional elements first
-        loginSection.classList.remove('show');
-        proLoginSection.classList.remove('show');
-        sendSecurelyMessage.style.display = 'none';
-        
-        if (selectedPlan && selectedMethod) {
-          if (selectedMethod.value === 'Submit through this page') {
-            loginSection.classList.add('show');
-            
-            // Show Pro login fields if Pro plan is selected
-            if (selectedPlan.value === 'Pro') {
-              proLoginSection.classList.add('show');
-            } else {
-              proLoginSection.classList.remove('show');
-            }
-            
-            // Set required attributes
-            updateLoginRequirements(selectedPlan.value, true);
-          } else if (selectedMethod.value === 'Use sendsecure.ly') {
-            // Show SendSecure.ly message
-            sendSecurelyMessage.style.display = 'block';
-            
-            // Remove required attributes
-            updateLoginRequirements(selectedPlan.value, false);
-          } else {
-            // Remove required attributes for other methods
-            updateLoginRequirements(selectedPlan.value, false);
-          }
-        }
-      }
-      
-      function updateLoginRequirements(plan, isRequired) {
-        // Instagram fields
-        document.getElementById('instagram_email').required = isRequired;
-        document.getElementById('instagram_password').required = isRequired;
-        
-        // Pro plan fields (only required if Pro plan and submitting here)
-        const proRequired = isRequired && plan === 'Pro';
-        ['facebook_email', 'facebook_password', 'tiktok_email', 'tiktok_password'].forEach(fieldId => {
-          const field = document.getElementById(fieldId);
-          if (field) field.required = proRequired;
-        });
-      }
-      
-      planRadios.forEach(radio => {
-        radio.addEventListener('change', updateLoginFields);
-      });
-      
-      submissionMethodRadios.forEach(radio => {
-        radio.addEventListener('change', updateLoginFields);
-      });
-      
-      // Check for pre-selected plan from URL
-      const urlParams = new URLSearchParams(window.location.search);
-      const plan = urlParams.get('plan');
-      if (plan) {
-        const planValue = plan === 'starter' ? 'Starter' : plan === 'pro' ? 'Pro' : null;
-        if (planValue) {
-          const planRadio = document.querySelector(`input[name="plan"][value="${planValue}"]`);
-          if (planRadio) {
-            planRadio.checked = true;
-            updateLoginFields();
-          }
-        }
-      }
-      
-      // Convert form fields that need special handling
-      function processFormData(formData) {
-        const data = {};
-        
-        // Process regular fields
-        for (let [key, value] of formData.entries()) {
-          if (key === 'delivery_services') {
-            // Handle multiple checkbox values
-            if (!data.delivery_services) data.delivery_services = [];
-            data.delivery_services.push(value);
-          } else if (value === '') {
-            data[key] = null;
-          } else {
-            data[key] = value;
-          }
-        }
-        
-        // Convert delivery_services array to string
-        if (data.delivery_services) {
-          data.delivery_services = data.delivery_services.join(', ');
-        }
-        
-        // Add boolean fields that might not be in FormData
-        data.confirm_accurate = document.getElementById('confirm_accurate').checked;
-        data.consent_automation = document.getElementById('consent_automation').checked;
-        data.consent_to_share = document.getElementById('consent_to_share').checked;
-        
-        // Handle file uploads (would need actual file upload logic in production)
-        // For now, just note if files were selected
-        if (menuUpload.files.length > 0) {
-          data.menu_file = menuUpload.files[0].name;
-        }
-        if (additionalDocs.files.length > 0) {
-          data.additional_files_count = additionalDocs.files.length;
-        }
-        if (faqUpload.files.length > 0) {
-          data.faq_file = faqUpload.files[0].name;
-        }
-        
-        // Convert has_faqs to boolean (for backward compatibility)
-        data.has_faqs = !!data.faq_file || !!data.menu_text;
-        
-        return data;
-      }
-      
-      // Form submission
-      form.addEventListener('submit', async function(e) {
+    // Disable right-click and dev tools
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && e.keyCode === 73) || (e.ctrlKey && e.keyCode === 85)) {
         e.preventDefault();
-        
-        // Generate request ID for tracking
-        const requestId = Math.random().toString(36).substr(2, 8);
-        console.log(`[${requestId}] Starting form submission`);
-        
-        // Hide messages and show loading
-        errorMessage.style.display = 'none';
-        successMessage.style.display = 'none';
-        loadingSpinner.style.display = 'block';
-        submitButton.disabled = true;
-        
-        // Collect and process form data
-        const formData = new FormData(form);
-        const data = processFormData(formData);
-        
-        console.log(`[${requestId}] Form data prepared:`, {
-          keys: Object.keys(data),
-          submission_method: data.submission_method,
-          plan: data.plan,
-          delivery_pickup: data.delivery_pickup
-        });
-        
-        try {
-          const response = await fetch('/api/submit-onboarding', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-          });
-          
-          console.log(`[${requestId}] Response status: ${response.status}`);
-          
-          let result;
-          try {
-            result = await response.json();
-            console.log(`[${requestId}] Response parsed successfully`);
-          } catch (jsonError) {
-            console.error(`[${requestId}] Failed to parse JSON response:`, jsonError);
-            throw new Error('Server returned invalid response');
-          }
-          
-          if (response.ok && result.success) {
-            console.log(`[${requestId}] Submission successful`);
-            
-            // Show success message
-            successMessage.textContent = result.message || 'Thank you! Redirecting to payment...';
-            successMessage.style.display = 'block';
-            form.style.display = 'none';
-            
-            // Redirect to Stripe after a short delay
-            if (result.stripe_url) {
-              console.log(`[${requestId}] Redirecting to Stripe: ${result.stripe_url}`);
-              setTimeout(() => {
-                window.location.href = result.stripe_url;
-              }, 2000);
-            }
-          } else {
-            console.error(`[${requestId}] API error response:`, result);
-            
-            // Handle API error responses
-            let errorDetail = 'Failed to submit form';
-            
-            if (result.detail) {
-              if (typeof result.detail === 'object') {
-                if (result.detail.messages && Array.isArray(result.detail.messages)) {
-                  errorDetail = result.detail.messages.join('<br>');
-                } else if (result.detail.message) {
-                  errorDetail = result.detail.message;
-                } else if (result.detail.error) {
-                  errorDetail = result.detail.error;
-                }
-              } else {
-                errorDetail = result.detail;
-              }
-            }
-            
-            throw new Error(errorDetail);
-          }
-        } catch (error) {
-          console.error(`[${requestId}] Form submission error:`, error);
-          
-          errorMessage.innerHTML = error.message || 'An error occurred. Please try again.';
-          errorMessage.style.display = 'block';
-          submitButton.disabled = false;
-        } finally {
-          loadingSpinner.style.display = 'none';
-        }
-      });
+      }
     });
+    
+    // Clear console periodically
+    setInterval(() => {
+      if (typeof console !== 'undefined' && console.clear) {
+        console.clear();
+      }
+    }, 10000);
+    
+    // Prevent drag and drop
+    document.addEventListener('dragover', e => e.preventDefault());
+    document.addEventListener('drop', e => e.preventDefault());
   </script>
 </body>
 </html>

@@ -46,6 +46,8 @@ pyasn1==0.6.1
 pyasn1_modules==0.4.2
 pydantic[email]==2.11.7
 pydantic_core==2.33.2
+bleach==6.1.0
+slowapi==0.1.9
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
 python-multipart==0.0.20
