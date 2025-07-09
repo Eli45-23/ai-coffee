@@ -305,6 +305,39 @@
       color: #ff6b6b;
     }
     
+    .general-error {
+      background: rgba(255, 82, 82, 0.1);
+      border: 1px solid rgba(255, 82, 82, 0.3);
+      color: #ff5252;
+      padding: 1.5em;
+      border-radius: 12px;
+      margin-bottom: 1em;
+      font-size: 1rem;
+      text-align: center;
+      display: none;
+    }
+    
+    .form-error {
+      color: #ff5252;
+      font-size: 0.9rem;
+      font-family: var(--ff-sans);
+      margin-top: 0.25rem;
+      display: none;
+    }
+    
+    input.error, textarea.error, select.error {
+      border: 1px solid #ff5252 !important;
+      background-color: rgba(255, 82, 82, 0.05);
+    }
+    
+    .checkbox-group label.error {
+      color: #ff5252;
+    }
+    
+    .radio-group label.error {
+      color: #ff5252;
+    }
+    
     .success-message {
       background: rgba(0, 230, 118, 0.1);
       border: 1px solid rgba(0, 230, 118, 0.3);
@@ -373,6 +406,7 @@
       <!-- Form Container -->
       <div class="form-container">
         <!-- Messages -->
+        <div id="generalError" class="general-error"></div>
         <div id="errorMessage" class="error-message"></div>
         <div id="successMessage" class="success-message"></div>
         <div id="loadingSpinner" class="loading-spinner"></div>
@@ -388,11 +422,13 @@
               <div class="form-group">
                 <label for="business_name">Business Name *</label>
                 <input type="text" id="business_name" name="business_name" required maxlength="100">
+                <div id="business_name_error" class="form-error"></div>
               </div>
               
               <div class="form-group">
                 <label for="instagram_handle">Business Instagram Handle *</label>
                 <input type="text" id="instagram_handle" name="instagram_handle" required maxlength="30" placeholder="@yourbusiness">
+                <div id="instagram_handle_error" class="form-error"></div>
               </div>
               
               <div class="form-group">
@@ -414,6 +450,7 @@
                   <option value="Education">Education</option>
                   <option value="Other">Other</option>
                 </select>
+                <div id="business_type_error" class="form-error"></div>
               </div>
             </div>
             
@@ -421,12 +458,14 @@
               <label for="product_service_description">What products or services do you offer? *</label>
               <textarea id="product_service_description" name="product_service_description" required maxlength="1000" rows="4" 
                         placeholder="Describe your main products or services..."></textarea>
+              <div id="product_service_description_error" class="form-error"></div>
             </div>
             
             <div class="form-group">
               <label for="common_customer_question">What are the most common questions your customers ask? *</label>
               <textarea id="common_customer_question" name="common_customer_question" required maxlength="500" rows="3" 
                         placeholder="e.g., Hours, pricing, availability, location..."></textarea>
+              <div id="common_customer_question_error" class="form-error"></div>
             </div>
           </div>
           
@@ -456,6 +495,7 @@
                   <span>Neither</span>
                 </label>
               </div>
+              <div id="delivery_pickup_error" class="form-error"></div>
             </div>
             
             <!-- Delivery Services (conditional) -->
@@ -561,6 +601,7 @@
                   </div>
                 </label>
               </div>
+              <div id="plan_error" class="form-error"></div>
             </div>
             
             <div class="form-group">
@@ -579,6 +620,7 @@
                   <span>I'd like to schedule a live call to give access</span>
                 </label>
               </div>
+              <div id="submission_method_error" class="form-error"></div>
             </div>
             
             <!-- SendSecure.ly Message -->
@@ -598,11 +640,13 @@
                 <div class="form-group">
                   <label for="instagram_email">Instagram Username *</label>
                   <input type="text" id="instagram_email" name="instagram_email" autocomplete="off">
+                  <div id="instagram_email_error" class="form-error"></div>
                 </div>
                 
                 <div class="form-group">
                   <label for="instagram_password">Instagram Password *</label>
                   <input type="password" id="instagram_password" name="instagram_password" autocomplete="off">
+                  <div id="instagram_password_error" class="form-error"></div>
                 </div>
               </div>
               
@@ -612,11 +656,13 @@
                   <div class="form-group">
                     <label for="facebook_email">Facebook Username (optional)</label>
                     <input type="text" id="facebook_email" name="facebook_email" autocomplete="off">
+                    <div id="facebook_email_error" class="form-error"></div>
                   </div>
                   
                   <div class="form-group">
                     <label for="facebook_password">Facebook Password (optional)</label>
                     <input type="password" id="facebook_password" name="facebook_password" autocomplete="off">
+                    <div id="facebook_password_error" class="form-error"></div>
                   </div>
                 </div>
               </div>
@@ -667,6 +713,7 @@
             <div class="form-group">
               <label for="contact_email">Contact Email *</label>
               <input type="email" id="contact_email" name="contact_email" required maxlength="254">
+              <div id="contact_email_error" class="form-error"></div>
             </div>
           </div>
           
@@ -692,6 +739,7 @@
                 <span>I agree to the <a href="/legal#privacy" target="_blank">Privacy Policy</a> and <a href="/legal#terms" target="_blank">Terms of Service</a></span>
               </label>
             </div>
+            <div id="consent_checkboxes_error" class="form-error"></div>
           </div>
           
           <!-- 8. Final Checklist Before Submitting -->
@@ -887,15 +935,266 @@
         });
         
         // Form submission
+        // Form validation functions
+        function validateForm() {
+          let isValid = true;
+          let errors = [];
+          
+          // Clear all previous errors
+          document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+          document.querySelectorAll('.form-error').forEach(el => {
+            el.style.display = 'none';
+            el.textContent = '';
+          });
+          document.getElementById('generalError').style.display = 'none';
+          
+          // Required text fields
+          const requiredFields = [
+            { id: 'business_name', label: 'Business Name' },
+            { id: 'instagram_handle', label: 'Instagram Handle' },
+            { id: 'business_type', label: 'Business Type' },
+            { id: 'product_service_description', label: 'Product/Service Description' },
+            { id: 'common_customer_question', label: 'Common Customer Questions' },
+            { id: 'contact_email', label: 'Contact Email' }
+          ];
+          
+          requiredFields.forEach(field => {
+            const value = document.getElementById(field.id).value;
+            if (!validateRequired(value)) {
+              showError(field.id, `${field.label} is required`);
+              errors.push(`${field.label} is required`);
+              isValid = false;
+            }
+          });
+          
+          // Email validation
+          const emailValue = document.getElementById('contact_email').value;
+          if (validateRequired(emailValue) && !validateEmail(emailValue)) {
+            showError('contact_email', 'Please enter a valid email address');
+            errors.push('Please enter a valid email address');
+            isValid = false;
+          }
+          
+          // Required radio buttons
+          const requiredRadios = [
+            { name: 'delivery_pickup', label: 'Delivery/Pickup option' },
+            { name: 'plan', label: 'Plan selection' },
+            { name: 'submission_method', label: 'Credential submission method' }
+          ];
+          
+          requiredRadios.forEach(radio => {
+            const selected = document.querySelector(`input[name=\"${radio.name}\"]:checked`);
+            if (!selected) {
+              showRadioError(radio.name, `${radio.label} is required`);
+              errors.push(`${radio.label} is required`);
+              isValid = false;
+            }
+          });
+          
+          // Conditional validation for Instagram credentials
+          const submissionMethod = document.querySelector('input[name=\"submission_method\"]:checked')?.value;
+          if (submissionMethod === 'Submit through this page') {
+            const instagramUsername = document.getElementById('instagram_email').value;
+            const instagramPassword = document.getElementById('instagram_password').value;
+            
+            if (!validateRequired(instagramUsername)) {
+              showError('instagram_email', 'Instagram Username is required when submitting credentials directly');
+              errors.push('Instagram Username is required');
+              isValid = false;
+            }
+            
+            if (!validateRequired(instagramPassword)) {
+              showError('instagram_password', 'Instagram Password is required when submitting credentials directly');
+              errors.push('Instagram Password is required');
+              isValid = false;
+            }
+            
+            // For Pro plan, validate Facebook credentials if provided
+            const selectedPlan = document.querySelector('input[name=\"plan\"]:checked')?.value;
+            if (selectedPlan === 'Pro') {
+              const facebookUsername = document.getElementById('facebook_email').value;
+              const facebookPassword = document.getElementById('facebook_password').value;
+              
+              // If one is provided, both must be provided
+              if (validateRequired(facebookUsername) && !validateRequired(facebookPassword)) {
+                showError('facebook_password', 'Facebook Password is required when Username is provided');
+                errors.push('Facebook Password is required when Username is provided');
+                isValid = false;
+              }
+              
+              if (validateRequired(facebookPassword) && !validateRequired(facebookUsername)) {
+                showError('facebook_email', 'Facebook Username is required when Password is provided');
+                errors.push('Facebook Username is required when Password is provided');
+                isValid = false;
+              }
+            }
+          }
+          
+          // Required checkboxes
+          const requiredCheckboxes = [
+            { id: 'confirm_accurate', label: 'Confirm information is accurate' },
+            { id: 'consent_automation', label: 'Consent to automation setup' },
+            { id: 'consent_to_share', label: 'Agree to Privacy Policy and Terms' }
+          ];
+          
+          let checkboxValid = true;
+          requiredCheckboxes.forEach(checkbox => {
+            const checked = document.getElementById(checkbox.id).checked;
+            if (!checked) {
+              checkboxValid = false;
+              errors.push(`${checkbox.label} is required`);
+            }
+          });
+          
+          if (!checkboxValid) {
+            showCheckboxError('All consent checkboxes are required');
+            isValid = false;
+          }
+          
+          // Show general error message if validation fails
+          if (!isValid) {
+            const generalError = document.getElementById('generalError');
+            generalError.textContent = `Please fix the following errors: ${errors.join(', ')}`;
+            generalError.style.display = 'block';
+            scrollToFirstError();
+          }
+          
+          return isValid;
+        }
+        
+        function showError(fieldId, message) {
+          const field = document.getElementById(fieldId);
+          const errorElement = document.getElementById(fieldId + '_error');
+          
+          if (field) {
+            field.classList.add('error');
+          }
+          
+          if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+          }
+        }
+        
+        function clearError(fieldId) {
+          const field = document.getElementById(fieldId);
+          const errorElement = document.getElementById(fieldId + '_error');
+          
+          if (field) {
+            field.classList.remove('error');
+          }
+          
+          if (errorElement) {
+            errorElement.style.display = 'none';
+            errorElement.textContent = '';
+          }
+        }
+        
+        function showRadioError(name, message) {
+          const errorElement = document.getElementById(name + '_error');
+          const radioButtons = document.querySelectorAll(`input[name=\"${name}\"]`);
+          
+          radioButtons.forEach(radio => {
+            radio.closest('label').classList.add('error');
+          });
+          
+          if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+          }
+        }
+        
+        function clearRadioError(name) {
+          const errorElement = document.getElementById(name + '_error');
+          const radioButtons = document.querySelectorAll(`input[name=\"${name}\"]`);
+          
+          radioButtons.forEach(radio => {
+            radio.closest('label').classList.remove('error');
+          });
+          
+          if (errorElement) {
+            errorElement.style.display = 'none';
+            errorElement.textContent = '';
+          }
+        }
+        
+        function showCheckboxError(message) {
+          const errorElement = document.getElementById('consent_checkboxes_error');
+          const checkboxes = document.querySelectorAll('#confirm_accurate, #consent_automation, #consent_to_share');
+          
+          checkboxes.forEach(checkbox => {
+            checkbox.closest('label').classList.add('error');
+          });
+          
+          if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+          }
+        }
+        
+        function clearCheckboxError() {
+          const errorElement = document.getElementById('consent_checkboxes_error');
+          const checkboxes = document.querySelectorAll('#confirm_accurate, #consent_automation, #consent_to_share');
+          
+          checkboxes.forEach(checkbox => {
+            checkbox.closest('label').classList.remove('error');
+          });
+          
+          if (errorElement) {
+            errorElement.style.display = 'none';
+            errorElement.textContent = '';
+          }
+        }
+        
+        function scrollToFirstError() {
+          const firstError = document.querySelector('.error, .form-error[style*=\"block\"]');
+          if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+        
+        // Add real-time validation listeners
+        function addValidationListeners() {
+          const textInputs = document.querySelectorAll('input[type=\"text\"], input[type=\"email\"], input[type=\"password\"], textarea, select');
+          textInputs.forEach(input => {
+            input.addEventListener('input', function() {
+              clearError(this.id);
+            });
+          });
+          
+          const radioInputs = document.querySelectorAll('input[type=\"radio\"]');
+          radioInputs.forEach(radio => {
+            radio.addEventListener('change', function() {
+              clearRadioError(this.name);
+            });
+          });
+          
+          const checkboxInputs = document.querySelectorAll('#confirm_accurate, #consent_automation, #consent_to_share');
+          checkboxInputs.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+              clearCheckboxError();
+            });
+          });
+        }
+        
+        // Initialize validation listeners
+        addValidationListeners();
+        
         form.addEventListener('submit', function(e) {
           e.preventDefault();
           
           if (submitButton.disabled) return;
           
+          // Validate form first
+          if (!validateForm()) {
+            return;
+          }
+          
           // Show loading state
           loadingSpinner.style.display = 'block';
           errorMessage.style.display = 'none';
           successMessage.style.display = 'none';
+          document.getElementById('generalError').style.display = 'none';
           submitButton.disabled = true;
           submitButton.textContent = 'Processing...';
           
