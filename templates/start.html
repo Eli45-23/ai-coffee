@@ -804,13 +804,13 @@
       // Input sanitization
       function sanitizeInput(input) {
         if (typeof input !== 'string') return input;
-        return input.replace(/[<>]/g, '').replace(/javascript:/gi, '').replace(/vbscript:/gi, '').replace(/on\\w+\\s*=/gi, '').trim();
+        return input.replace(/[<>]/g, '').replace(/javascript:/gi, '').replace(/vbscript:/gi, '').replace(/on\\w+\s*=/gi, '').trim();
       }
       
       // Form validation
       function validateEmail(email) {
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;
-        return emailRegex.test(email);
+        const emailRegex = /^[^\s@]+@[^\s@]+\\.[^\s@]+$/;
+        return email.includes('@') && email.includes('.') && email.length > 5;
       }
       
       function validateRequired(value) {
