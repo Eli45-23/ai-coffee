@@ -8,6 +8,7 @@ import json
 import html
 import logging
 import uuid
+import traceback
 from pathlib import Path
 from datetime import datetime
 from fastapi import FastAPI, Request, HTTPException
@@ -125,6 +126,17 @@ app.add_middleware(
 # Initialize email service
 email_service = EmailService()
 
+def mask_sensitive_data(data: dict) -> dict:
+    """Mask sensitive credential data for logging"""
+    masked_data = data.copy()
+    sensitive_fields = ['instagram_password', 'tiktok_password', 'facebook_password', 'whatsapp_password']
+    
+    for field in sensitive_fields:
+        if field in masked_data and masked_data[field]:
+            masked_data[field] = "***MASKED***"
+    
+    return masked_data
+
 # Onboarding form submission endpoint
 @app.post("/api/submit-onboarding", response_model=OnboardingResponse)
 async def submit_onboarding(request: Request):
@@ -145,6 +157,7 @@ async def submit_onboarding(request: Request):
             
         except Exception as e:
             logger.error(f"[{request_id}] Failed to parse request body: {str(e)}")
+            logger.error(f"[{request_id}] Full traceback: {traceback.format_exc()}")
             raise HTTPException(
                 status_code=400,
                 detail={
@@ -154,58 +167,76 @@ async def submit_onboarding(request: Request):
                 }
             )
         
-        # Convert boolean strings to actual booleans
-        def convert_boolean_fields(data):
-            boolean_fields = ['has_faqs', 'consent_to_share']
-            for field in boolean_fields:
-                if field in data:
-                    if isinstance(data[field], str):
-                        data[field] = data[field].lower() == 'true'
-                    elif isinstance(data[field], bool):
-                        pass  # Already boolean
+        # Enhanced data processing and cleaning
+        def process_form_data(data):
+            """Clean and process form data before validation"""
+            processed = {}
+            
+            # Handle all fields
+            for key, value in data.items():
+                # Convert empty strings and null values to None for optional fields
+                if value in ["", "null", "undefined", None]:
+                    processed[key] = None
+                # Handle boolean fields
+                elif key in ['has_faqs', 'consent_to_share']:
+                    if isinstance(value, str):
+                        processed[key] = value.lower() == 'true'
+                    elif isinstance(value, bool):
+                        processed[key] = value
                     else:
-                        data[field] = bool(data[field])
-            return data
+                        processed[key] = bool(value) if value is not None else False
+                else:
+                    processed[key] = value
+            
+            return processed
         
         # Process form data
-        processed_data = convert_boolean_fields(request_data.copy())
-        logger.info(f"[{request_id}] Processed data keys: {list(processed_data.keys())}")
+        processed_data = process_form_data(request_data)
+        
+        # Log submission details (with masked sensitive data)
+        masked_data = mask_sensitive_data(processed_data)
+        logger.info(f"[{request_id}] Processed data: {masked_data}")
         logger.info(f"[{request_id}] Submission method: {processed_data.get('submission_method', 'MISSING')}")
         logger.info(f"[{request_id}] Plan: {processed_data.get('plan', 'MISSING')}")
-        logger.info(f"[{request_id}] Has FAQs: {processed_data.get('has_faqs', 'MISSING')}")
-        logger.info(f"[{request_id}] Consent: {processed_data.get('consent_to_share', 'MISSING')}")
         
-        # Clear empty login fields for in-person setup
+        # Enhanced login field clearing for in-person setup
         if processed_data.get('submission_method') == 'Request In-Person Setup':
-            logger.info(f"[{request_id}] In-person setup detected, clearing login fields")
+            logger.info(f"[{request_id}] In-person setup detected, clearing all login fields")
             login_fields = [
                 'instagram_email', 'instagram_password', 'tiktok_email', 'tiktok_password',
                 'facebook_email', 'facebook_password', 'whatsapp_number', 'whatsapp_password'
             ]
             for field in login_fields:
-                if field in processed_data and not processed_data[field]:
-                    processed_data[field] = None
+                processed_data[field] = None
+            logger.info(f"[{request_id}] Login fields cleared for in-person setup")
         
-        # Validate with Pydantic
+        # Validate with Pydantic with enhanced error handling
         try:
             form_data = OnboardingForm(**processed_data)
             logger.info(f"[{request_id}] Pydantic validation successful")
-        except ValidationError as e:
-            logger.error(f"[{request_id}] Pydantic validation failed: {e}")
-            logger.error(f"[{request_id}] Validation errors: {e.errors()}")
             
-            # Create detailed error messages
+        except ValidationError as e:
+            logger.error(f"[{request_id}] Pydantic validation failed")
+            logger.error(f"[{request_id}] Validation errors: {e.errors()}")
+            logger.error(f"[{request_id}] Full traceback: {traceback.format_exc()}")
+            
+            # Create user-friendly error messages
             error_messages = []
             for error in e.errors():
                 field_name = error['loc'][-1] if error['loc'] else 'field'
                 error_msg = error['msg']
                 error_type = error['type']
                 
-                # Custom error messages for common issues
+                # Custom error messages for better UX
                 if error_type == 'missing':
                     error_messages.append(f"{field_name.replace('_', ' ').title()} is required")
                 elif error_type == 'value_error':
-                    error_messages.append(f"{field_name.replace('_', ' ').title()}: {error_msg}")
+                    if 'required' in error_msg.lower():
+                        error_messages.append(f"{field_name.replace('_', ' ').title()} is required")
+                    else:
+                        error_messages.append(f"{field_name.replace('_', ' ').title()}: {error_msg}")
+                elif 'email' in error_type.lower():
+                    error_messages.append(f"{field_name.replace('_', ' ').title()} must be a valid email address")
                 else:
                     error_messages.append(f"{field_name.replace('_', ' ').title()}: {error_msg}")
             
@@ -214,8 +245,7 @@ async def submit_onboarding(request: Request):
                 detail={
                     "error": "Validation failed",
                     "messages": error_messages,
-                    "request_id": request_id,
-                    "validation_errors": e.errors()
+                    "request_id": request_id
                 }
             )
         
@@ -243,6 +273,7 @@ async def submit_onboarding(request: Request):
                 logger.info(f"[{request_id}] Secure credentials email sent successfully")
             except Exception as e:
                 logger.error(f"[{request_id}] Failed to send secure credentials email: {str(e)}")
+                logger.error(f"[{request_id}] Email error traceback: {traceback.format_exc()}")
                 # Continue processing even if email fails
             
             # Remove sensitive fields from data that gets stored
@@ -265,40 +296,51 @@ async def submit_onboarding(request: Request):
         storage_data['request_id'] = request_id
         logger.info(f"[{request_id}] Storage data prepared")
         
-        # Save sanitized, non-sensitive data to file
+        # Save sanitized, non-sensitive data to file with enhanced error handling
         try:
             submissions_dir = BASE_DIR / "submissions"
             submissions_dir.mkdir(exist_ok=True)
-        except OSError as e:
-            logger.warning(f"[{request_id}] Could not create submissions directory: {e}")
-            # Fallback to current directory if submissions dir can't be created
-            submissions_dir = Path(".")
-        
-        timestamp = storage_data['submission_timestamp'].isoformat()
-        safe_business_name = "".join(c for c in storage_data['business_name'] if c.isalnum() or c in (' ', '-', '_')).rstrip()
-        filename = f"submission_{safe_business_name.replace(' ', '_')}_{timestamp}.json"
-        filepath = submissions_dir / filename
-        
-        try:
+            
+            timestamp = storage_data['submission_timestamp'].isoformat()
+            safe_business_name = "".join(c for c in storage_data['business_name'] if c.isalnum() or c in (' ', '-', '_')).rstrip()
+            filename = f"submission_{safe_business_name.replace(' ', '_')}_{timestamp}.json"
+            filepath = submissions_dir / filename
+            
             with open(filepath, 'w') as f:
                 json.dump(storage_data, f, indent=2, default=str)
             logger.info(f"[{request_id}] Submission saved to {filepath}")
+            
+        except OSError as e:
+            logger.error(f"[{request_id}] Failed to create submissions directory: {e}")
+            logger.error(f"[{request_id}] File error traceback: {traceback.format_exc()}")
+            # Try fallback directory
+            try:
+                fallback_path = Path(".") / f"submission_{request_id}.json"
+                with open(fallback_path, 'w') as f:
+                    json.dump(storage_data, f, indent=2, default=str)
+                logger.info(f"[{request_id}] Submission saved to fallback location: {fallback_path}")
+            except Exception as fallback_error:
+                logger.error(f"[{request_id}] Failed to save submission even to fallback: {fallback_error}")
+                
         except Exception as e:
             logger.error(f"[{request_id}] Failed to save submission: {str(e)}")
+            logger.error(f"[{request_id}] File save traceback: {traceback.format_exc()}")
         
-        # Send confirmation email to user
+        # Send confirmation email to user with enhanced error handling
         try:
             email_service.send_user_confirmation(form_data.contact_email, storage_data)
             logger.info(f"[{request_id}] User confirmation email sent successfully")
         except Exception as e:
             logger.error(f"[{request_id}] Failed to send user confirmation email: {str(e)}")
+            logger.error(f"[{request_id}] User email traceback: {traceback.format_exc()}")
         
-        # Send notification email to admin (without sensitive credentials)
+        # Send notification email to admin with enhanced error handling
         try:
             email_service.send_admin_notification(storage_data)
             logger.info(f"[{request_id}] Admin notification email sent successfully")
         except Exception as e:
             logger.error(f"[{request_id}] Failed to send admin notification email: {str(e)}")
+            logger.error(f"[{request_id}] Admin email traceback: {traceback.format_exc()}")
         
         # Determine Stripe URL based on plan with success_url redirect
         stripe_urls = {
@@ -320,18 +362,19 @@ async def submit_onboarding(request: Request):
         )
         
     except HTTPException:
-        # Re-raise HTTP exceptions
+        # Re-raise HTTP exceptions without modification
         raise
+        
     except Exception as e:
-        # Handle other unexpected errors
-        logger.error(f"[{request_id}] Unexpected error: {str(e)}", exc_info=True)
+        # Handle all other unexpected errors with full traceback logging
+        logger.error(f"[{request_id}] Unexpected error during form submission: {str(e)}")
+        logger.error(f"[{request_id}] Full traceback: {traceback.format_exc()}")
+        
         raise HTTPException(
             status_code=500,
             detail={
                 "error": "Internal server error",
-                "message": "An unexpected error occurred. Please try again.",
+                "message": "An unexpected error occurred. Please try again or contact support.",
                 "request_id": request_id
             }
         )
-
-

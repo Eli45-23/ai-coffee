@@ -58,6 +58,16 @@ class OnboardingForm(BaseModel):
             raise ValueError('You must consent to share information to proceed')
         return v
     
+    # Convert empty strings to None for optional login fields
+    @field_validator('instagram_email', 'instagram_password', 'tiktok_email', 'tiktok_password', 
+                     'facebook_email', 'facebook_password', 'whatsapp_number', 'whatsapp_password', 
+                     'other_platforms', 'faq_content', mode='before')
+    @classmethod
+    def convert_empty_strings_to_none(cls, v):
+        if v == "" or v == "null" or v == "undefined":
+            return None
+        return v
+    
     @model_validator(mode='after')
     def validate_conditional_fields(self):
         # Validate FAQ content
@@ -67,9 +77,9 @@ class OnboardingForm(BaseModel):
         # Only validate login fields if submitting through the page (not for in-person setup)
         if self.submission_method == 'Submit through this page':
             # Validate Instagram login fields (required for both plans when submitting online)
-            if self.plan and not self.instagram_email:
+            if not self.instagram_email:
                 raise ValueError('Instagram email is required for online setup')
-            if self.plan and not self.instagram_password:
+            if not self.instagram_password:
                 raise ValueError('Instagram password is required for online setup')
             
             # Validate Pro plan login fields
