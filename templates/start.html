@@ -1256,6 +1256,10 @@
             }
           }
           
+          // Log the business type fields for debugging
+          console.log('Business type:', data.business_type);
+          console.log('Other business type:', data.other_business_type);
+          
           // Handle arrays
           if (data.delivery_services) {
             data.delivery_services = data.delivery_services.join(', ');
@@ -1265,7 +1269,15 @@
           data.confirm_accurate = document.getElementById('confirm_accurate')?.checked || false;
           data.consent_automation = document.getElementById('consent_automation')?.checked || false;
           data.consent_to_share = document.getElementById('consent_to_share')?.checked || false;
-          data.has_faqs = document.querySelector('input[name="has_faqs"]:checked')?.value === 'true';
+          
+          // Handle has_faqs properly - ensure it's always a boolean
+          const hasFaqsRadio = document.querySelector('input[name="has_faqs"]:checked');
+          if (hasFaqsRadio) {
+            data.has_faqs = hasFaqsRadio.value === 'true';
+          } else {
+            // Default to false if no radio is selected
+            data.has_faqs = false;
+          }
                     
                     // Handle conditional field requirements to prevent 422 errors
                     if (!data.menu_upload && !data.menu_text) {
@@ -1280,11 +1292,52 @@
                       data.pickup_method = ''; // Provide empty string if no method selected
                     }
                     
+                    // Handle "Other" business type field
+                    if (data.business_type !== 'Other') {
+                      // Remove the field if business_type is not "Other"
+                      delete data.other_business_type;
+                    } else if (data.business_type === 'Other') {
+                      // Ensure the field has a value when required
+                      if (!data.other_business_type || data.other_business_type.trim() === '') {
+                        console.error('Other business type is required but not provided');
+                      }
+                    }
+                    
+                    // Handle FAQ upload field
+                    if (!data.has_faqs || data.has_faqs === false) {
+                      // If no FAQs, ensure faq_upload is null
+                      data.faq_upload = null;
+                    } else if (data.has_faqs === true && !data.faq_upload) {
+                      // This should be caught by validation, but log it
+                      console.error('FAQ upload is required when has_faqs is true');
+                    }
+                    
+                    // Clean up empty optional fields to prevent validation errors
+                    const optionalFields = ['other_platforms', 'delivery_other', 'pickup_details', 'other_platform_credentials', 'additional_docs'];
+                    optionalFields.forEach(field => {
+                      if (data[field] === '' || data[field] === undefined) {
+                        data[field] = null;
+                      }
+                    });
+                    
                     // Add timestamp
                     data.submission_timestamp = new Date().toISOString();
           
+          // Log all form data before submission for debugging
+          console.log('=== Form Submission Debug ===');
+          console.log('All form data:', JSON.stringify(data, null, 2));
+          console.log('Required fields check:');
+          console.log('  - business_name:', data.business_name);
+          console.log('  - instagram_handle:', data.instagram_handle);
+          console.log('  - business_type:', data.business_type);
+          console.log('  - contact_email:', data.contact_email);
+          console.log('  - plan:', data.plan);
+          console.log('  - submission_method:', data.submission_method);
+          console.log('  - has_faqs:', data.has_faqs);
+          console.log('  - menu_text:', data.menu_text);
+          console.log('  - menu_upload:', data.menu_upload);
+          
           // Submit form
-                    console.log('Submitting form data:', data);
           fetch('/api/submit-onboarding', {
             method: 'POST',
             headers: {
@@ -1297,6 +1350,18 @@
                       if (!response.ok) {
                         return response.text().then(text => {
                           console.error('Server response:', text);
+                          try {
+                            const errorData = JSON.parse(text);
+                            console.error('Validation errors:', errorData);
+                            if (errorData.detail && Array.isArray(errorData.detail)) {
+                              const fieldErrors = errorData.detail.map(err => 
+                                `${err.loc.join('.')}: ${err.msg}`
+                              ).join('\n');
+                              throw new Error(`Validation failed:\n${fieldErrors}`);
+                            }
+                          } catch (e) {
+                            // If not JSON, use the text as is
+                          }
                           throw new Error(`Server error (${response.status}): ${text}`);
                         });
                       }
