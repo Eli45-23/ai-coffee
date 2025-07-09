@@ -159,8 +159,33 @@ class EmailService:
         
         subject = f"🚀 New Signup Submitted on AIChatFlows - {form_data.get('business_name')}"
         
-        # Format form data for email
-        formatted_data = json.dumps(form_data, indent=2, default=str)
+        # Helper function to format timestamp
+        timestamp = form_data.get('submission_timestamp', '')
+        if timestamp:
+            try:
+                from datetime import datetime
+                if 'T' in timestamp:
+                    dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+                    formatted_timestamp = dt.strftime('%Y-%m-%d %H:%M:%S')
+                else:
+                    formatted_timestamp = timestamp
+            except:
+                formatted_timestamp = timestamp
+        else:
+            formatted_timestamp = 'N/A'
+        
+        # Helper function to format boolean values
+        def format_boolean(value):
+            if isinstance(value, bool):
+                return "Yes" if value else "No"
+            return value
+        
+        # Helper function to display non-empty values
+        def get_value(key, default="Not provided"):
+            value = form_data.get(key)
+            if value is None or value == "" or value == "null":
+                return default
+            return value
         
         html_content = f"""
         <!DOCTYPE html>
@@ -174,8 +199,13 @@ class EmailService:
                 .field {{ margin-bottom: 15px; }}
                 .field-label {{ font-weight: bold; color: #333; }}
                 .field-value {{ color: #666; margin-left: 10px; }}
-                pre {{ background-color: #f0f0f0; padding: 10px; border-radius: 5px; overflow-x: auto; }}
                 .highlight {{ background-color: #ffeb3b; padding: 2px 5px; }}
+                .section {{ margin-bottom: 30px; }}
+                .section h3 {{ color: #00e676; border-bottom: 2px solid #00e676; padding-bottom: 5px; margin-bottom: 15px; }}
+                .form-details {{ background-color: #f9f9f9; padding: 20px; border-radius: 5px; margin-top: 20px; }}
+                .form-details h3 {{ color: #333; margin-bottom: 15px; }}
+                .detail-item {{ margin-bottom: 8px; }}
+                .detail-item strong {{ color: #333; }}
             </style>
         </head>
         <body>
@@ -184,30 +214,112 @@ class EmailService:
                     <h1>New AIChatFlows Signup!</h1>
                 </div>
                 <div class="content">
-                    <h2>Business Information</h2>
-                    <div class="field">
-                        <span class="field-label">Business Name:</span>
-                        <span class="field-value">{form_data.get('business_name')}</span>
-                    </div>
-                    <div class="field">
-                        <span class="field-label">Instagram Handle:</span>
-                        <span class="field-value">{form_data.get('instagram_handle')}</span>
-                    </div>
-                    <div class="field">
-                        <span class="field-label">Plan Selected:</span>
-                        <span class="field-value highlight">{form_data.get('plan')} Plan</span>
-                    </div>
-                    <div class="field">
-                        <span class="field-label">Contact Email:</span>
-                        <span class="field-value">{form_data.get('contact_email')}</span>
-                    </div>
-                    <div class="field">
-                        <span class="field-label">Submission Time:</span>
-                        <span class="field-value">{form_data.get('submission_timestamp')}</span>
+                    <div class="section">
+                        <h2>Business Summary</h2>
+                        <div class="field">
+                            <span class="field-label">Business Name:</span>
+                            <span class="field-value">{form_data.get('business_name')}</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-label">Plan Selected:</span>
+                            <span class="field-value highlight">{form_data.get('plan')} Plan</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-label">Contact Email:</span>
+                            <span class="field-value">{form_data.get('contact_email')}</span>
+                        </div>
+                        <div class="field">
+                            <span class="field-label">Submission Time:</span>
+                            <span class="field-value">{formatted_timestamp}</span>
+                        </div>
                     </div>
                     
-                    <h2>Complete Form Data</h2>
-                    <pre>{formatted_data}</pre>
+                    <div class="form-details">
+                        <h3>📋 Full Form Submission</h3>
+                        
+                        <div class="section">
+                            <h3>Business Information</h3>
+                            <div class="detail-item"><strong>• Business Name:</strong> {get_value('business_name')}</div>
+                            <div class="detail-item"><strong>• Instagram Handle:</strong> {get_value('instagram_handle')}</div>
+                            <div class="detail-item"><strong>• Other Platforms:</strong> {get_value('other_platforms')}</div>
+                            <div class="detail-item"><strong>• Business Type:</strong> {get_value('business_type')}</div>"""
+        
+        # Add other business type if specified
+        if form_data.get('business_type') == 'Other' and form_data.get('other_business_type'):
+            html_content += f"""
+                            <div class="detail-item"><strong>• Specified Business Type:</strong> {get_value('other_business_type')}</div>"""
+        
+        html_content += f"""
+                            <div class="detail-item"><strong>• Product/Service Description:</strong> {get_value('product_service_description')}</div>
+                            <div class="detail-item"><strong>• Common Customer Questions:</strong> {get_value('common_customer_question')}</div>
+                        </div>
+                        
+                        <div class="section">
+                            <h3>Delivery & Pickup</h3>
+                            <div class="detail-item"><strong>• Delivery or Pickup:</strong> {get_value('delivery_pickup')}</div>"""
+        
+        # Show delivery services if applicable
+        if form_data.get('delivery_pickup') in ['Delivery', 'Both']:
+            if form_data.get('delivery_services'):
+                html_content += f"""
+                            <div class="detail-item"><strong>• Delivery Services:</strong> {get_value('delivery_services')}</div>"""
+            if form_data.get('delivery_other'):
+                html_content += f"""
+                            <div class="detail-item"><strong>• Other Delivery Service:</strong> {get_value('delivery_other')}</div>"""
+        
+        # Show pickup details if applicable
+        if form_data.get('delivery_pickup') in ['Pickup', 'Both']:
+            if form_data.get('pickup_method'):
+                html_content += f"""
+                            <div class="detail-item"><strong>• Pickup Method:</strong> {get_value('pickup_method')}</div>"""
+            if form_data.get('pickup_details'):
+                html_content += f"""
+                            <div class="detail-item"><strong>• Pickup Details:</strong> {get_value('pickup_details')}</div>"""
+        
+        html_content += f"""
+                        </div>
+                        
+                        <div class="section">
+                            <h3>Menu & Content</h3>
+                            <div class="detail-item"><strong>• Menu Text:</strong> {get_value('menu_text')}</div>
+                            <div class="detail-item"><strong>• Menu Upload:</strong> {"Yes" if form_data.get('menu_upload') else "No"}</div>
+                            <div class="detail-item"><strong>• Additional Documents:</strong> {"Yes" if form_data.get('additional_docs') else "No"}</div>
+                            <div class="detail-item"><strong>• Has FAQs:</strong> {format_boolean(form_data.get('has_faqs'))}</div>"""
+        
+        if form_data.get('has_faqs'):
+            html_content += f"""
+                            <div class="detail-item"><strong>• FAQ Upload:</strong> {"Yes" if form_data.get('faq_upload') else "No"}</div>"""
+        
+        html_content += f"""
+                        </div>
+                        
+                        <div class="section">
+                            <h3>Setup & Credentials</h3>
+                            <div class="detail-item"><strong>• Plan:</strong> {get_value('plan')}</div>
+                            <div class="detail-item"><strong>• Submission Method:</strong> {get_value('submission_method')}</div>
+                            <div class="detail-item"><strong>• Credential Handling:</strong> {get_value('credentials_handling', 'Standard processing')}</div>"""
+        
+        # Show login fields only if submitting through the page
+        if form_data.get('submission_method') == 'Submit through this page':
+            html_content += f"""
+                            <div class="detail-item"><strong>• Instagram Username:</strong> {get_value('instagram_email')}</div>
+                            <div class="detail-item"><strong>• Instagram Password:</strong> {"Provided" if form_data.get('instagram_password') else "Not provided"}</div>"""
+            
+            if form_data.get('plan') == 'Pro':
+                html_content += f"""
+                            <div class="detail-item"><strong>• Facebook Username:</strong> {get_value('facebook_email')}</div>
+                            <div class="detail-item"><strong>• Facebook Password:</strong> {"Provided" if form_data.get('facebook_password') else "Not provided"}</div>"""
+        
+        html_content += f"""
+                        </div>
+                        
+                        <div class="section">
+                            <h3>Legal Confirmations</h3>
+                            <div class="detail-item"><strong>• Consent to Share:</strong> {format_boolean(form_data.get('consent_to_share'))}</div>
+                            <div class="detail-item"><strong>• Confirm Accurate:</strong> {format_boolean(form_data.get('confirm_accurate'))}</div>
+                            <div class="detail-item"><strong>• Consent Automation:</strong> {format_boolean(form_data.get('consent_automation'))}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </body>
@@ -217,14 +329,86 @@ class EmailService:
         text_content = f"""
         New AIChatFlows Signup!
         
+        Business Summary:
         Business Name: {form_data.get('business_name')}
-        Instagram Handle: {form_data.get('instagram_handle')}
         Plan Selected: {form_data.get('plan')} Plan
         Contact Email: {form_data.get('contact_email')}
-        Submission Time: {form_data.get('submission_timestamp')}
+        Submission Time: {formatted_timestamp}
         
-        Complete Form Data:
-        {formatted_data}
+        📋 Full Form Submission:
+        
+        Business Information:
+        • Business Name: {get_value('business_name')}
+        • Instagram Handle: {get_value('instagram_handle')}
+        • Other Platforms: {get_value('other_platforms')}
+        • Business Type: {get_value('business_type')}"""
+        
+        # Add other business type if specified
+        if form_data.get('business_type') == 'Other' and form_data.get('other_business_type'):
+            text_content += f"""
+        • Specified Business Type: {get_value('other_business_type')}"""
+        
+        text_content += f"""
+        • Product/Service Description: {get_value('product_service_description')}
+        • Common Customer Questions: {get_value('common_customer_question')}
+        
+        Delivery & Pickup:
+        • Delivery or Pickup: {get_value('delivery_pickup')}"""
+        
+        # Show delivery services if applicable
+        if form_data.get('delivery_pickup') in ['Delivery', 'Both']:
+            if form_data.get('delivery_services'):
+                text_content += f"""
+        • Delivery Services: {get_value('delivery_services')}"""
+            if form_data.get('delivery_other'):
+                text_content += f"""
+        • Other Delivery Service: {get_value('delivery_other')}"""
+        
+        # Show pickup details if applicable
+        if form_data.get('delivery_pickup') in ['Pickup', 'Both']:
+            if form_data.get('pickup_method'):
+                text_content += f"""
+        • Pickup Method: {get_value('pickup_method')}"""
+            if form_data.get('pickup_details'):
+                text_content += f"""
+        • Pickup Details: {get_value('pickup_details')}"""
+        
+        text_content += f"""
+        
+        Menu & Content:
+        • Menu Text: {get_value('menu_text')}
+        • Menu Upload: {"Yes" if form_data.get('menu_upload') else "No"}
+        • Additional Documents: {"Yes" if form_data.get('additional_docs') else "No"}
+        • Has FAQs: {format_boolean(form_data.get('has_faqs'))}"""
+        
+        if form_data.get('has_faqs'):
+            text_content += f"""
+        • FAQ Upload: {"Yes" if form_data.get('faq_upload') else "No"}"""
+        
+        text_content += f"""
+        
+        Setup & Credentials:
+        • Plan: {get_value('plan')}
+        • Submission Method: {get_value('submission_method')}
+        • Credential Handling: {get_value('credentials_handling', 'Standard processing')}"""
+        
+        # Show login fields only if submitting through the page
+        if form_data.get('submission_method') == 'Submit through this page':
+            text_content += f"""
+        • Instagram Username: {get_value('instagram_email')}
+        • Instagram Password: {"Provided" if form_data.get('instagram_password') else "Not provided"}"""
+            
+            if form_data.get('plan') == 'Pro':
+                text_content += f"""
+        • Facebook Username: {get_value('facebook_email')}
+        • Facebook Password: {"Provided" if form_data.get('facebook_password') else "Not provided"}"""
+        
+        text_content += f"""
+        
+        Legal Confirmations:
+        • Consent to Share: {format_boolean(form_data.get('consent_to_share'))}
+        • Confirm Accurate: {format_boolean(form_data.get('confirm_accurate'))}
+        • Consent Automation: {format_boolean(form_data.get('consent_automation'))}
         """
         
         return self.send_email(self.admin_email, subject, html_content, text_content)
