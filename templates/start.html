@@ -49,26 +49,29 @@
       background: var(--clr-secondary);
       padding: 3em;
       border-radius: 16px;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(0, 230, 118, 0.2);
-      margin-bottom: 2em;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .form-section {
       margin-bottom: 3em;
+      padding-bottom: 2em;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    .form-section:last-child {
-      margin-bottom: 0;
+    .form-section:last-of-type {
+      border-bottom: none;
+      margin-bottom: 2em;
     }
     
     .section-title {
       font-family: var(--ff-heading);
-      font-size: 1.5rem;
+      font-size: 1.75rem;
       color: var(--clr-primary);
       margin-bottom: 1.5em;
-      padding-bottom: 0.5em;
-      border-bottom: 1px solid rgba(0, 230, 118, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
     }
     
     .form-group {
@@ -77,34 +80,35 @@
     
     .form-group label {
       display: block;
-      font-weight: 600;
       color: var(--clr-light);
+      font-weight: 600;
       margin-bottom: 0.5em;
-      font-size: 0.95rem;
+      font-size: 1rem;
     }
     
     .form-group input[type="text"],
     .form-group input[type="email"],
     .form-group input[type="password"],
+    .form-group input[type="file"],
     .form-group textarea,
     .form-group select {
       width: 100%;
       padding: 0.75em 1em;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--clr-dark);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 8px;
       color: var(--clr-light);
       font-size: 1rem;
-      transition: all 0.3s ease;
+      transition: border-color 0.3s ease;
     }
     
-    .form-group input:focus,
+    .form-group input[type="text"]:focus,
+    .form-group input[type="email"]:focus,
+    .form-group input[type="password"]:focus,
     .form-group textarea:focus,
     .form-group select:focus {
       outline: none;
       border-color: var(--clr-primary);
-      background: rgba(255, 255, 255, 0.08);
-      box-shadow: 0 0 0 2px rgba(0, 230, 118, 0.2);
     }
     
     .form-group textarea {
@@ -115,52 +119,46 @@
     .radio-group,
     .checkbox-group {
       display: flex;
-      flex-direction: column;
-      gap: 0.75em;
+      flex-wrap: wrap;
+      gap: 1em;
+      margin-top: 0.5em;
     }
     
     .radio-option,
     .checkbox-option {
       display: flex;
       align-items: center;
-      padding: 0.5em;
-      border-radius: 8px;
-      transition: background 0.3s ease;
-    }
-    
-    .radio-option:hover,
-    .checkbox-option:hover {
-      background: rgba(255, 255, 255, 0.05);
+      gap: 0.5em;
     }
     
     .radio-option input[type="radio"],
     .checkbox-option input[type="checkbox"] {
-      margin-right: 0.75em;
-      width: 18px;
-      height: 18px;
-      accent-color: var(--clr-primary);
+      width: auto;
+      margin: 0;
     }
     
     .radio-option label,
     .checkbox-option label {
-      cursor: pointer;
-      flex: 1;
       font-weight: normal;
       margin-bottom: 0;
+      cursor: pointer;
+    }
+    
+    .checkbox-group {
+      flex-direction: column;
+      gap: 0.75em;
     }
     
     .conditional-section {
+      margin-top: 1em;
+      padding-left: 1.5em;
+      border-left: 3px solid var(--clr-primary);
       display: none;
-      margin-top: 2em;
-      padding: 1.5em;
-      background: rgba(0, 230, 118, 0.05);
-      border-radius: 8px;
-      border: 1px solid rgba(0, 230, 118, 0.15);
     }
     
     .conditional-section.show {
       display: block;
-      animation: fadeIn 0.3s ease;
+      animation: fadeIn 0.3s ease-in-out;
     }
     
     @keyframes fadeIn {
@@ -168,16 +166,94 @@
       to { opacity: 1; transform: translateY(0); }
     }
     
+    .other-input {
+      margin-top: 0.5em;
+    }
+    
+    .file-upload-group {
+      position: relative;
+    }
+    
+    .file-upload-label {
+      display: inline-block;
+      padding: 0.75em 1.5em;
+      background: linear-gradient(45deg, var(--clr-primary), var(--clr-accent-blue));
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+    
+    .file-upload-label:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 230, 118, 0.3);
+    }
+    
+    .file-info {
+      margin-top: 0.5em;
+      font-size: 0.9rem;
+      color: var(--clr-light);
+      opacity: 0.8;
+    }
+    
+    .security-disclaimer {
+      background: rgba(0, 230, 118, 0.1);
+      border: 1px solid rgba(0, 230, 118, 0.3);
+      padding: 1em;
+      border-radius: 8px;
+      margin-top: 1em;
+      font-size: 0.9rem;
+      color: var(--clr-light);
+    }
+    
+    .security-disclaimer strong {
+      color: var(--clr-primary);
+    }
+    
+    .checklist {
+      background: var(--clr-dark);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 1.5em;
+      margin-top: 2em;
+    }
+    
+    .checklist h4 {
+      color: var(--clr-primary);
+      margin-bottom: 1em;
+    }
+    
+    .checklist ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .checklist li {
+      padding-left: 1.5em;
+      margin-bottom: 0.5em;
+      position: relative;
+      color: var(--clr-light);
+    }
+    
+    .checklist li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--clr-primary);
+      font-weight: bold;
+    }
+    
     .submit-button {
-      display: block;
       width: 100%;
-      padding: 1em 2.5em;
+      padding: 1.25em 2em;
       background: linear-gradient(45deg, var(--clr-primary), var(--clr-accent-blue));
       color: #fff;
       border: none;
       border-radius: 50px;
+      font-size: 1.2rem;
       font-weight: 700;
-      font-size: 1.1rem;
       text-transform: uppercase;
       letter-spacing: 1px;
       cursor: pointer;
@@ -186,15 +262,15 @@
       margin-top: 2em;
     }
     
-    .submit-button:hover:not(:disabled) {
+    .submit-button:hover {
       transform: translateY(-3px);
       box-shadow: 0 8px 20px rgba(0, 230, 118, 0.4);
-      background: linear-gradient(45deg, var(--clr-accent-blue), var(--clr-primary));
     }
     
     .submit-button:disabled {
       opacity: 0.6;
       cursor: not-allowed;
+      transform: none;
     }
     
     .privacy-text {
@@ -204,6 +280,15 @@
       margin-top: 2em;
       text-align: center;
       line-height: 1.5;
+    }
+    
+    .privacy-text a {
+      color: var(--clr-primary);
+      text-decoration: none;
+    }
+    
+    .privacy-text a:hover {
+      text-decoration: underline;
     }
     
     .error-message {
@@ -292,6 +377,10 @@
       .submit-button {
         font-size: 1rem;
       }
+      
+      .radio-group {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -303,7 +392,7 @@
       </div>
       
       <p class="welcome-text">
-        Thank you for joining AIChatFlows! This short onboarding step will help us connect your social platforms and personalize your automation setup.
+        Thank you for joining AIChatFlows! This onboarding will help us set up your AI-powered chatbot and automate your social media interactions.
       </p>
       
       <div class="form-container">
@@ -314,7 +403,7 @@
           
           <!-- Business Info Section -->
           <div class="form-section">
-            <h2 class="section-title">Business Information</h2>
+            <h2 class="section-title">Business Info</h2>
             
             <div class="form-group">
               <label for="business_name">Business Name *</label>
@@ -327,8 +416,8 @@
             </div>
             
             <div class="form-group">
-              <label for="other_platforms">Other Platforms to Integrate (Optional)</label>
-              <textarea id="other_platforms" name="other_platforms" placeholder="List any other platforms you'd like to integrate..."></textarea>
+              <label for="other_platforms">Other Platforms (Optional)</label>
+              <input type="text" id="other_platforms" name="other_platforms" placeholder="TikTok, Facebook, WhatsApp handles...">
             </div>
             
             <div class="form-group">
@@ -337,175 +426,273 @@
             </div>
             
             <div class="form-group">
-              <label for="common_customer_question">Most Common Customer Question *</label>
-              <input type="text" id="common_customer_question" name="common_customer_question" placeholder="What do customers ask most often?" required>
-            </div>
-          </div>
-          
-          <!-- Service Details Section -->
-          <div class="form-section">
-            <h2 class="section-title">Service Details</h2>
-            
-            <div class="form-group">
-              <label>Do You Offer Delivery or Pickup? *</label>
-              <div class="radio-group">
-                <div class="radio-option">
-                  <input type="radio" id="delivery" name="delivery_pickup" value="Delivery" required>
-                  <label for="delivery">Delivery</label>
-                </div>
-                <div class="radio-option">
-                  <input type="radio" id="pickup" name="delivery_pickup" value="Pickup" required>
-                  <label for="pickup">Pickup</label>
-                </div>
-                <div class="radio-option">
-                  <input type="radio" id="both" name="delivery_pickup" value="Both" required>
-                  <label for="both">Both</label>
-                </div>
-                <div class="radio-option">
-                  <input type="radio" id="none" name="delivery_pickup" value="None" required>
-                  <label for="none">None</label>
-                </div>
-              </div>
-            </div>
-            
-            <div class="form-group">
-              <label for="product_service_description">What Product or Service Do You Offer? *</label>
+              <label for="product_service_description">What do you offer? *</label>
               <textarea id="product_service_description" name="product_service_description" placeholder="Describe your main products or services..." required></textarea>
             </div>
             
             <div class="form-group">
-              <label>Do You Have FAQs? *</label>
+              <label for="common_customer_question">Most common customer questions *</label>
+              <textarea id="common_customer_question" name="common_customer_question" placeholder="What do customers typically ask about? (e.g., hours, pricing, delivery options...)" required></textarea>
+            </div>
+          </div>
+          
+          <!-- Delivery & Pickup Section -->
+          <div class="form-section">
+            <h2 class="section-title">Delivery & Pickup</h2>
+            
+            <div class="form-group">
+              <label>Do you offer delivery or pickup? *</label>
               <div class="radio-group">
                 <div class="radio-option">
-                  <input type="radio" id="has_faqs_yes" name="has_faqs" value="true" required>
-                  <label for="has_faqs_yes">Yes</label>
+                  <input type="radio" id="delivery_only" name="delivery_pickup" value="Delivery" required>
+                  <label for="delivery_only">Delivery only</label>
                 </div>
                 <div class="radio-option">
-                  <input type="radio" id="has_faqs_no" name="has_faqs" value="false" required>
-                  <label for="has_faqs_no">No</label>
+                  <input type="radio" id="pickup_only" name="delivery_pickup" value="Pickup" required>
+                  <label for="pickup_only">Pickup only</label>
+                </div>
+                <div class="radio-option">
+                  <input type="radio" id="both_delivery_pickup" name="delivery_pickup" value="Both" required>
+                  <label for="both_delivery_pickup">Both</label>
+                </div>
+                <div class="radio-option">
+                  <input type="radio" id="neither_delivery_pickup" name="delivery_pickup" value="None" required>
+                  <label for="neither_delivery_pickup">Neither</label>
                 </div>
               </div>
             </div>
             
-            <div id="faqSection" class="conditional-section">
+            <!-- Conditional Delivery Services -->
+            <div id="deliveryServices" class="conditional-section">
               <div class="form-group">
-                <label for="faq_content">Please provide your FAQs</label>
-                <textarea id="faq_content" name="faq_content" placeholder="List your frequently asked questions and answers..."></textarea>
+                <label>What service(s) do you use?</label>
+                <div class="checkbox-group">
+                  <div class="checkbox-option">
+                    <input type="checkbox" id="uber_eats" name="delivery_services" value="Uber Eats">
+                    <label for="uber_eats">Uber Eats</label>
+                  </div>
+                  <div class="checkbox-option">
+                    <input type="checkbox" id="doordash" name="delivery_services" value="DoorDash">
+                    <label for="doordash">DoorDash</label>
+                  </div>
+                  <div class="checkbox-option">
+                    <input type="checkbox" id="grubhub" name="delivery_services" value="Grubhub">
+                    <label for="grubhub">Grubhub</label>
+                  </div>
+                  <div class="checkbox-option">
+                    <input type="checkbox" id="inhouse" name="delivery_services" value="In-house delivery">
+                    <label for="inhouse">In-house delivery</label>
+                  </div>
+                  <div class="checkbox-option">
+                    <input type="checkbox" id="other_delivery" name="delivery_services" value="Other">
+                    <label for="other_delivery">Other:</label>
+                    <input type="text" id="other_delivery_text" name="other_delivery_text" class="other-input" placeholder="Specify other service">
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Conditional Pickup Options -->
+            <div id="pickupOptions" class="conditional-section">
+              <div class="form-group">
+                <label>How does pickup work?</label>
+                <div class="radio-group">
+                  <div class="radio-option">
+                    <input type="radio" id="call_order" name="pickup_method" value="Call to order">
+                    <label for="call_order">Call to order</label>
+                  </div>
+                  <div class="radio-option">
+                    <input type="radio" id="app_link" name="pickup_method" value="App or link">
+                    <label for="app_link">App or link</label>
+                  </div>
+                  <div class="radio-option">
+                    <input type="radio" id="walkin" name="pickup_method" value="Walk-in only">
+                    <label for="walkin">Walk-in only</label>
+                  </div>
+                </div>
+                <input type="text" id="pickup_details" name="pickup_details" placeholder="Additional pickup details (optional)" style="margin-top: 1em;">
               </div>
             </div>
           </div>
           
-          <!-- Plan Selection Section -->
+          <!-- Menu Submission Section -->
           <div class="form-section">
-            <h2 class="section-title">Plan Selection</h2>
+            <h2 class="section-title">Menu Submission</h2>
+            
+            <div class="form-group file-upload-group">
+              <label for="menu_upload">Upload menu (photo or PDF)</label>
+              <input type="file" id="menu_upload" name="menu_upload" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+              <label for="menu_upload" class="file-upload-label">Choose File</label>
+              <div class="file-info" id="menuFileInfo">No file selected</div>
+            </div>
             
             <div class="form-group">
-              <label>Which Plan Are You Signing Up For? *</label>
+              <label for="menu_text">Or paste your menu</label>
+              <textarea id="menu_text" name="menu_text" placeholder="Copy and paste your menu items here..."></textarea>
+            </div>
+            
+            <div class="form-group file-upload-group">
+              <label for="additional_docs">Upload additional docs/photos (optional)</label>
+              <input type="file" id="additional_docs" name="additional_docs" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display: none;">
+              <label for="additional_docs" class="file-upload-label">Choose Files</label>
+              <div class="file-info" id="additionalDocsInfo">No files selected</div>
+            </div>
+          </div>
+          
+          <!-- Plan Selection & Login Access Section -->
+          <div class="form-section">
+            <h2 class="section-title">Plan Selection & Login Access</h2>
+            
+            <div class="form-group">
+              <label>Which plan? *</label>
               <div class="radio-group">
                 <div class="radio-option">
                   <input type="radio" id="starter_plan" name="plan" value="Starter" required>
-                  <label for="starter_plan">Starter Plan - Instagram Only</label>
+                  <label for="starter_plan">💼 Starter – $50 setup + $100/month</label>
                 </div>
                 <div class="radio-option">
                   <input type="radio" id="pro_plan" name="plan" value="Pro" required>
-                  <label for="pro_plan">Pro Plan - Instagram, TikTok, Facebook & WhatsApp</label>
+                  <label for="pro_plan">🚀 Pro – $50 setup + $150/month</label>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>How would you like to share your login info? *</label>
+              <div class="radio-group">
+                <div class="radio-option">
+                  <input type="radio" id="submit_here" name="submission_method" value="Submit through this page" required>
+                  <label for="submit_here">Submit here</label>
+                </div>
+                <div class="radio-option">
+                  <input type="radio" id="sendsecurely" name="submission_method" value="Use sendsecure.ly" required>
+                  <label for="sendsecurely">Use https://sendsecure.ly</label>
+                </div>
+                <div class="radio-option">
+                  <input type="radio" id="setup_call" name="submission_method" value="Request In-Person Setup" required>
+                  <label for="setup_call">Request a setup call</label>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Conditional Login Fields -->
+            <div id="loginSection" class="conditional-section">
+              <div class="security-disclaimer">
+                <strong>🔒 Security Notice:</strong> Login info is encrypted and only used for one-time setup.
+              </div>
+              
+              <div id="instagramLogin" style="margin-top: 1.5em;">
+                <h3 style="color: var(--clr-primary); margin-bottom: 1em;">Instagram Login</h3>
+                <div class="form-group">
+                  <label for="instagram_email">Instagram username *</label>
+                  <input type="text" id="instagram_email" name="instagram_email">
+                </div>
+                <div class="form-group">
+                  <label for="instagram_password">Instagram password *</label>
+                  <input type="password" id="instagram_password" name="instagram_password">
+                </div>
+              </div>
+              
+              <!-- Pro Plan Additional Logins -->
+              <div id="proLoginSection" class="conditional-section">
+                <h3 style="color: var(--clr-primary); margin-bottom: 1em; margin-top: 2em;">Additional Platform Logins</h3>
+                
+                <div style="margin-bottom: 2em;">
+                  <h4 style="color: var(--clr-light); margin-bottom: 1em;">Facebook</h4>
+                  <div class="form-group">
+                    <label for="facebook_email">Facebook username</label>
+                    <input type="text" id="facebook_email" name="facebook_email">
+                  </div>
+                  <div class="form-group">
+                    <label for="facebook_password">Facebook password</label>
+                    <input type="password" id="facebook_password" name="facebook_password">
+                  </div>
+                </div>
+                
+                <div style="margin-bottom: 2em;">
+                  <h4 style="color: var(--clr-light); margin-bottom: 1em;">TikTok</h4>
+                  <div class="form-group">
+                    <label for="tiktok_email">TikTok username</label>
+                    <input type="text" id="tiktok_email" name="tiktok_email">
+                  </div>
+                  <div class="form-group">
+                    <label for="tiktok_password">TikTok password</label>
+                    <input type="password" id="tiktok_password" name="tiktok_password">
+                  </div>
+                </div>
+                
+                <div style="margin-bottom: 2em;">
+                  <h4 style="color: var(--clr-light); margin-bottom: 1em;">WhatsApp</h4>
+                  <div class="form-group">
+                    <label for="whatsapp_number">WhatsApp number</label>
+                    <input type="text" id="whatsapp_number" name="whatsapp_number" placeholder="+1234567890">
+                  </div>
+                  <div class="form-group">
+                    <label for="whatsapp_password">WhatsApp password (if applicable)</label>
+                    <input type="password" id="whatsapp_password" name="whatsapp_password">
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="other_platforms_login">Other platforms</label>
+                  <textarea id="other_platforms_login" name="other_platforms_login" placeholder="Any other platform login details..."></textarea>
                 </div>
               </div>
             </div>
           </div>
           
-          <!-- Social Media Login Section (Conditional) -->
-          <div id="loginSection" class="form-section" style="display: none;">
-            <h2 class="section-title">Social Media Login Information</h2>
-            
-            <!-- Instagram Login (Always shown when plan selected) -->
-            <div id="instagramLogin" class="conditional-section">
-              <h3 style="color: var(--clr-primary); margin-bottom: 1em;">Instagram Login</h3>
-              <div class="form-group">
-                <label for="instagram_email">Instagram Login Email *</label>
-                <input type="email" id="instagram_email" name="instagram_email">
-              </div>
-              <div class="form-group">
-                <label for="instagram_password">Instagram Password *</label>
-                <input type="password" id="instagram_password" name="instagram_password">
-              </div>
-            </div>
-            
-            <!-- Pro Plan Additional Logins -->
-            <div id="proLoginSection" class="conditional-section">
-              <h3 style="color: var(--clr-primary); margin-bottom: 1em; margin-top: 2em;">Additional Platform Logins</h3>
-              
-              <div style="margin-bottom: 2em;">
-                <h4 style="color: var(--clr-light); margin-bottom: 1em;">TikTok</h4>
-                <div class="form-group">
-                  <label for="tiktok_email">TikTok Login Email</label>
-                  <input type="email" id="tiktok_email" name="tiktok_email">
-                </div>
-                <div class="form-group">
-                  <label for="tiktok_password">TikTok Password</label>
-                  <input type="password" id="tiktok_password" name="tiktok_password">
-                </div>
-              </div>
-              
-              <div style="margin-bottom: 2em;">
-                <h4 style="color: var(--clr-light); margin-bottom: 1em;">Facebook</h4>
-                <div class="form-group">
-                  <label for="facebook_email">Facebook Login Email</label>
-                  <input type="email" id="facebook_email" name="facebook_email">
-                </div>
-                <div class="form-group">
-                  <label for="facebook_password">Facebook Password</label>
-                  <input type="password" id="facebook_password" name="facebook_password">
-                </div>
-              </div>
-              
-              <div>
-                <h4 style="color: var(--clr-light); margin-bottom: 1em;">WhatsApp (if applicable)</h4>
-                <div class="form-group">
-                  <label for="whatsapp_number">WhatsApp Number</label>
-                  <input type="text" id="whatsapp_number" name="whatsapp_number" placeholder="+1234567890">
-                </div>
-                <div class="form-group">
-                  <label for="whatsapp_password">WhatsApp Password</label>
-                  <input type="password" id="whatsapp_password" name="whatsapp_password">
-                </div>
-              </div>
-            </div>
-            
-            <!-- Secure Submission Method -->
-            <div id="submissionMethodSection" class="form-group" style="margin-top: 2em;">
-              <label for="submission_method">How would you like to securely share your login info? *</label>
-              <select id="submission_method" name="submission_method">
-                <option value="Submit through this page">Submit through this page</option>
-                <option value="Request In-Person Setup">Request In-Person Setup</option>
-              </select>
-            </div>
-            
-            <!-- Security Message -->
-            <div id="securityMessage"></div>
-          </div>
-          
-          <!-- Legal & Contact Section -->
+          <!-- FAQs and Contact Section -->
           <div class="form-section">
-            <h2 class="section-title">Legal & Contact Information</h2>
+            <h2 class="section-title">FAQs and Contact</h2>
             
-            <div class="form-group">
-              <div class="checkbox-option">
-                <input type="checkbox" id="consent_to_share" name="consent_to_share" required>
-                <label for="consent_to_share">I consent to share this information for setting up my AI automation system *</label>
-              </div>
+            <div class="form-group file-upload-group">
+              <label for="faq_upload">Upload FAQ doc (optional)</label>
+              <input type="file" id="faq_upload" name="faq_upload" accept=".pdf,.doc,.docx,.txt" style="display: none;">
+              <label for="faq_upload" class="file-upload-label">Choose File</label>
+              <div class="file-info" id="faqFileInfo">No file selected</div>
             </div>
             
             <div class="form-group">
-              <label for="contact_email">Email for Updates and Support *</label>
+              <label for="contact_email">Contact email for updates *</label>
               <input type="email" id="contact_email" name="contact_email" placeholder="your@email.com" required>
             </div>
           </div>
           
-          <button type="submit" class="submit-button" id="submitButton">Complete Setup & Continue to Payment</button>
+          <!-- Confirmation Section -->
+          <div class="form-section">
+            <h2 class="section-title">Confirmation</h2>
+            
+            <div class="checkbox-group">
+              <div class="checkbox-option">
+                <input type="checkbox" id="confirm_accurate" name="confirm_accurate" required>
+                <label for="confirm_accurate">I confirm my info is accurate</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="consent_automation" name="consent_automation" required>
+                <label for="consent_automation">I consent to automation setup</label>
+              </div>
+              <div class="checkbox-option">
+                <input type="checkbox" id="consent_to_share" name="consent_to_share" required>
+                <label for="consent_to_share">I agree to the <a href="/legal#privacy" target="_blank">Privacy Policy</a> and <a href="/legal#terms" target="_blank">Terms of Service</a></label>
+              </div>
+            </div>
+            
+            <div class="checklist">
+              <h4>✅ Final Checklist - Please confirm you have:</h4>
+              <ul>
+                <li>Uploaded your menu or provided menu details</li>
+                <li>Picked a plan (Starter or Pro)</li>
+                <li>Provided delivery/pickup information</li>
+                <li>Are ready to begin setup</li>
+              </ul>
+            </div>
+          </div>
+          
+          <button type="submit" class="submit-button" id="submitButton">Start My Setup</button>
           
           <p class="privacy-text">
-            Your information is encrypted and only used to securely onboard your AI system. We do not store login credentials. All platform logins are handled via Meta's official authorization.
+            Your information is encrypted and secure. We take privacy seriously. 
+            Read our <a href="/legal#privacy">Privacy Policy</a> and <a href="/legal#terms">Terms of Service</a>.
           </p>
         </form>
       </div>
@@ -517,16 +704,17 @@
     </div>
   </div>
   
-  <!-- Footer / Contact -->
+  <!-- Footer -->
   <footer id="contact" class="footer">
     <div class="container">
-      <p>Ready to automate your customer chats? <a href="mailto:hello@aichatflows.com?subject=General Inquiry&body=Hi! I'm interested in learning more about AIChatFlows services. Please contact me." class="btn">Contact Us</a></p>
+      <p>Ready to automate your customer chats? <a href="mailto:eliascolon23@gmail.com?subject=General Inquiry&body=Hi! I'm interested in learning more about AIChatFlows services. Please contact me." class="btn">Contact Us</a></p>
       <div style="margin-top: 2em; padding-top: 2em; border-top: 1px solid rgba(255, 255, 255, 0.1);">
         <p style="font-size: 0.9em; color: rgba(255, 255, 255, 0.7); max-width: 800px; margin: 0 auto;">
-          🔐 We take your privacy seriously. All submitted information is secured and encrypted. We never store your passwords or login credentials. All social media integrations are handled through Meta's official platform.
+          🔐 We take your privacy seriously. All submitted information is secured and encrypted. We never store your passwords or login credentials permanently.
         </p>
         <p style="font-size: 0.8em; color: rgba(255, 255, 255, 0.5); text-align: center; margin-top: 1em;">
-          <a href="/legal" style="color: var(--clr-primary); text-decoration: none;">Terms of Service & Privacy Policy</a>
+          <a href="/legal#privacy" style="color: var(--clr-primary); text-decoration: none; margin-right: 1em;">Privacy Policy</a>
+          <a href="/legal#terms" style="color: var(--clr-primary); text-decoration: none;">Terms of Service</a>
         </p>
       </div>
     </div>
@@ -541,133 +729,109 @@
       const loadingSpinner = document.getElementById('loadingSpinner');
       const submitButton = document.getElementById('submitButton');
       
-      // FAQ conditional display
-      const hasFaqsRadios = document.querySelectorAll('input[name="has_faqs"]');
-      const faqSection = document.getElementById('faqSection');
+      // File upload handlers
+      const menuUpload = document.getElementById('menu_upload');
+      const menuFileInfo = document.getElementById('menuFileInfo');
+      menuUpload.addEventListener('change', function() {
+        if (this.files.length > 0) {
+          menuFileInfo.textContent = `Selected: ${this.files[0].name}`;
+        } else {
+          menuFileInfo.textContent = 'No file selected';
+        }
+      });
       
-      hasFaqsRadios.forEach(radio => {
+      const additionalDocs = document.getElementById('additional_docs');
+      const additionalDocsInfo = document.getElementById('additionalDocsInfo');
+      additionalDocs.addEventListener('change', function() {
+        if (this.files.length > 0) {
+          additionalDocsInfo.textContent = `Selected: ${this.files.length} file(s)`;
+        } else {
+          additionalDocsInfo.textContent = 'No files selected';
+        }
+      });
+      
+      const faqUpload = document.getElementById('faq_upload');
+      const faqFileInfo = document.getElementById('faqFileInfo');
+      faqUpload.addEventListener('change', function() {
+        if (this.files.length > 0) {
+          faqFileInfo.textContent = `Selected: ${this.files[0].name}`;
+        } else {
+          faqFileInfo.textContent = 'No file selected';
+        }
+      });
+      
+      // Delivery & Pickup conditional logic
+      const deliveryPickupRadios = document.querySelectorAll('input[name="delivery_pickup"]');
+      const deliveryServices = document.getElementById('deliveryServices');
+      const pickupOptions = document.getElementById('pickupOptions');
+      
+      deliveryPickupRadios.forEach(radio => {
         radio.addEventListener('change', function() {
-          if (this.value === 'true') {
-            faqSection.classList.add('show');
-          } else {
-            faqSection.classList.remove('show');
-            document.getElementById('faq_content').value = '';
+          deliveryServices.classList.remove('show');
+          pickupOptions.classList.remove('show');
+          
+          if (this.value === 'Delivery' || this.value === 'Both') {
+            deliveryServices.classList.add('show');
+          }
+          if (this.value === 'Pickup' || this.value === 'Both') {
+            pickupOptions.classList.add('show');
           }
         });
       });
       
       // Plan selection and login fields
       const planRadios = document.querySelectorAll('input[name="plan"]');
+      const submissionMethodRadios = document.querySelectorAll('input[name="submission_method"]');
       const loginSection = document.getElementById('loginSection');
-      const instagramLogin = document.getElementById('instagramLogin');
       const proLoginSection = document.getElementById('proLoginSection');
       
-      planRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-          if (this.value) {
-            loginSection.style.display = 'block';
-            instagramLogin.classList.add('show');
+      function updateLoginFields() {
+        const selectedPlan = document.querySelector('input[name="plan"]:checked');
+        const selectedMethod = document.querySelector('input[name="submission_method"]:checked');
+        
+        if (selectedPlan && selectedMethod) {
+          if (selectedMethod.value === 'Submit through this page') {
+            loginSection.classList.add('show');
             
-            // Update required fields based on plan
-            const instagramFields = ['instagram_email', 'instagram_password'];
-            instagramFields.forEach(fieldId => {
-              document.getElementById(fieldId).required = true;
-            });
-            
-            if (this.value === 'Pro') {
+            // Show Pro login fields if Pro plan is selected
+            if (selectedPlan.value === 'Pro') {
               proLoginSection.classList.add('show');
-              // Pro plan fields are required when submission method is "Submit through this page"
-              updateProFieldRequirements();
             } else {
               proLoginSection.classList.remove('show');
-              // Clear Pro plan fields
-              ['tiktok_email', 'tiktok_password', 'facebook_email', 'facebook_password', 
-               'whatsapp_number', 'whatsapp_password'].forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                field.required = false;
-                field.value = '';
-              });
-              updateProFieldRequirements();
             }
+            
+            // Set required attributes
+            updateLoginRequirements(selectedPlan.value, true);
+          } else {
+            loginSection.classList.remove('show');
+            proLoginSection.classList.remove('show');
+            
+            // Remove required attributes
+            updateLoginRequirements(selectedPlan.value, false);
           }
+        }
+      }
+      
+      function updateLoginRequirements(plan, isRequired) {
+        // Instagram fields
+        document.getElementById('instagram_email').required = isRequired;
+        document.getElementById('instagram_password').required = isRequired;
+        
+        // Pro plan fields (only required if Pro plan and submitting here)
+        const proRequired = isRequired && plan === 'Pro';
+        ['facebook_email', 'facebook_password', 'tiktok_email', 'tiktok_password'].forEach(fieldId => {
+          const field = document.getElementById(fieldId);
+          if (field) field.required = proRequired;
         });
+      }
+      
+      planRadios.forEach(radio => {
+        radio.addEventListener('change', updateLoginFields);
       });
       
-      // Update Pro field requirements and visibility based on submission method
-      const submissionMethod = document.getElementById('submission_method');
-      submissionMethod.addEventListener('change', updateProFieldRequirements);
-      
-      function updateProFieldRequirements() {
-        const selectedPlan = document.querySelector('input[name="plan"]:checked');
-        const isProPlan = selectedPlan && selectedPlan.value === 'Pro';
-        const isPageSubmission = submissionMethod.value === 'Submit through this page';
-        
-        // Show/hide login fields based on submission method
-        const instagramLogin = document.getElementById('instagramLogin');
-        const proLoginSection = document.getElementById('proLoginSection');
-        
-        if (isPageSubmission) {
-          // Show login fields for online submission
-          instagramLogin.style.opacity = '1';
-          instagramLogin.style.pointerEvents = 'auto';
-          if (isProPlan) {
-            proLoginSection.style.opacity = '1';
-            proLoginSection.style.pointerEvents = 'auto';
-          }
-          
-          // Update field requirements
-          ['instagram_email', 'instagram_password'].forEach(fieldId => {
-            document.getElementById(fieldId).required = true;
-          });
-          
-          if (isProPlan) {
-            ['tiktok_email', 'tiktok_password', 'facebook_email', 'facebook_password'].forEach(fieldId => {
-              document.getElementById(fieldId).required = true;
-            });
-          }
-        } else {
-          // Hide login fields for in-person setup
-          instagramLogin.style.opacity = '0.5';
-          instagramLogin.style.pointerEvents = 'none';
-          proLoginSection.style.opacity = '0.5';
-          proLoginSection.style.pointerEvents = 'none';
-          
-          // Make all login fields optional
-          ['instagram_email', 'instagram_password', 'tiktok_email', 'tiktok_password', 
-           'facebook_email', 'facebook_password', 'whatsapp_number', 'whatsapp_password'].forEach(fieldId => {
-            document.getElementById(fieldId).required = false;
-          });
-        }
-        
-        // Update security message
-        updateSecurityMessage(isPageSubmission);
-      }
-      
-      function updateSecurityMessage(isPageSubmission) {
-        const securityMessage = document.getElementById('securityMessage');
-        if (isPageSubmission) {
-          securityMessage.innerHTML = `
-            <div style="background: rgba(0, 230, 118, 0.1); border: 1px solid rgba(0, 230, 118, 0.3); padding: 15px; border-radius: 8px; margin-top: 20px;">
-              <h4 style="color: var(--clr-primary); margin: 0 0 10px 0;">🔒 Security & Privacy</h4>
-              <ul style="margin: 0; padding-left: 20px; color: var(--clr-light);">
-                <li>Your login credentials are sent via encrypted email immediately</li>
-                <li>No passwords are stored permanently on our servers</li>
-                <li>All data is handled according to our <a href="/legal" style="color: var(--clr-primary);">Privacy Policy</a></li>
-                <li>We recommend changing passwords after setup is complete</li>
-              </ul>
-            </div>
-          `;
-        } else {
-          securityMessage.innerHTML = `
-            <div style="background: rgba(0, 176, 255, 0.1); border: 1px solid rgba(0, 176, 255, 0.3); padding: 15px; border-radius: 8px; margin-top: 20px;">
-              <h4 style="color: var(--clr-accent-blue); margin: 0 0 10px 0;">👥 In-Person Setup</h4>
-              <p style="margin: 0; color: var(--clr-light);">
-                Our team will contact you to schedule a secure setup session. No login credentials needed online.
-              </p>
-            </div>
-          `;
-        }
-      }
+      submissionMethodRadios.forEach(radio => {
+        radio.addEventListener('change', updateLoginFields);
+      });
       
       // Check for pre-selected plan from URL
       const urlParams = new URLSearchParams(window.location.search);
@@ -678,13 +842,55 @@
           const planRadio = document.querySelector(`input[name="plan"][value="${planValue}"]`);
           if (planRadio) {
             planRadio.checked = true;
-            planRadio.dispatchEvent(new Event('change'));
+            updateLoginFields();
           }
         }
       }
       
-      // Initialize security message
-      updateSecurityMessage(submissionMethod.value === 'Submit through this page');
+      // Convert form fields that need special handling
+      function processFormData(formData) {
+        const data = {};
+        
+        // Process regular fields
+        for (let [key, value] of formData.entries()) {
+          if (key === 'delivery_services') {
+            // Handle multiple checkbox values
+            if (!data.delivery_services) data.delivery_services = [];
+            data.delivery_services.push(value);
+          } else if (value === '') {
+            data[key] = null;
+          } else {
+            data[key] = value;
+          }
+        }
+        
+        // Convert delivery_services array to string
+        if (data.delivery_services) {
+          data.delivery_services = data.delivery_services.join(', ');
+        }
+        
+        // Add boolean fields that might not be in FormData
+        data.confirm_accurate = document.getElementById('confirm_accurate').checked;
+        data.consent_automation = document.getElementById('consent_automation').checked;
+        data.consent_to_share = document.getElementById('consent_to_share').checked;
+        
+        // Handle file uploads (would need actual file upload logic in production)
+        // For now, just note if files were selected
+        if (menuUpload.files.length > 0) {
+          data.menu_file = menuUpload.files[0].name;
+        }
+        if (additionalDocs.files.length > 0) {
+          data.additional_files_count = additionalDocs.files.length;
+        }
+        if (faqUpload.files.length > 0) {
+          data.faq_file = faqUpload.files[0].name;
+        }
+        
+        // Convert has_faqs to boolean (for backward compatibility)
+        data.has_faqs = !!data.faq_file || !!data.menu_text;
+        
+        return data;
+      }
       
       // Form submission
       form.addEventListener('submit', async function(e) {
@@ -700,50 +906,15 @@
         loadingSpinner.style.display = 'block';
         submitButton.disabled = true;
         
-        // Collect form data with improved serialization
+        // Collect and process form data
         const formData = new FormData(form);
-        const data = {};
-        
-        // Process all form fields
-        for (let [key, value] of formData.entries()) {
-          // Handle empty values
-          if (value === '') {
-            data[key] = null;
-          } else if (key === 'consent_to_share') {
-            data[key] = true; // Checkbox is only in formData if checked
-          } else if (key === 'has_faqs') {
-            data[key] = value === 'true';
-          } else {
-            data[key] = value;
-          }
-        }
-        
-        // Add consent_to_share if not present (unchecked)
-        if (!data.hasOwnProperty('consent_to_share')) {
-          data['consent_to_share'] = false;
-        }
-        
-        // For in-person setup, clear empty login fields
-        if (data.submission_method === 'Request In-Person Setup') {
-          console.log(`[${requestId}] In-person setup detected, clearing login fields`);
-          const loginFields = [
-            'instagram_email', 'instagram_password', 'tiktok_email', 'tiktok_password',
-            'facebook_email', 'facebook_password', 'whatsapp_number', 'whatsapp_password'
-          ];
-          
-          loginFields.forEach(field => {
-            if (!data[field] || data[field] === '') {
-              data[field] = null;
-            }
-          });
-        }
+        const data = processFormData(formData);
         
         console.log(`[${requestId}] Form data prepared:`, {
           keys: Object.keys(data),
           submission_method: data.submission_method,
           plan: data.plan,
-          has_faqs: data.has_faqs,
-          consent_to_share: data.consent_to_share
+          delivery_pickup: data.delivery_pickup
         });
         
         try {
@@ -770,7 +941,7 @@
             console.log(`[${requestId}] Submission successful`);
             
             // Show success message
-            successMessage.textContent = result.message;
+            successMessage.textContent = result.message || 'Thank you! Redirecting to payment...';
             successMessage.style.display = 'block';
             form.style.display = 'none';
             
@@ -791,17 +962,10 @@
               if (typeof result.detail === 'object') {
                 if (result.detail.messages && Array.isArray(result.detail.messages)) {
                   errorDetail = result.detail.messages.join('<br>');
-                  console.log(`[${requestId}] Validation errors:`, result.detail.messages);
                 } else if (result.detail.message) {
                   errorDetail = result.detail.message;
                 } else if (result.detail.error) {
                   errorDetail = result.detail.error;
-                }
-                
-                // Log request ID if available
-                if (result.detail.request_id) {
-                  console.log(`[${requestId}] Server request ID: ${result.detail.request_id}`);
-                  errorDetail += `<br><small>Request ID: ${result.detail.request_id}</small>`;
                 }
               } else {
                 errorDetail = result.detail;
@@ -813,22 +977,7 @@
         } catch (error) {
           console.error(`[${requestId}] Form submission error:`, error);
           
-          // Handle different types of errors
-          let errorText = 'An error occurred. Please try again.';
-          
-          if (error.message) {
-            // Check if it's a network error
-            if (error.message.includes('fetch')) {
-              errorText = 'Network error. Please check your connection and try again.';
-            } else {
-              errorText = error.message;
-            }
-          }
-          
-          // Add request ID for debugging
-          errorText += `<br><small>Request ID: ${requestId}</small>`;
-          
-          errorMessage.innerHTML = errorText;
+          errorMessage.innerHTML = error.message || 'An error occurred. Please try again.';
           errorMessage.style.display = 'block';
           submitButton.disabled = false;
         } finally {
