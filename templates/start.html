@@ -702,6 +702,7 @@
                   <span>No — I'll let the bot learn from customer questions</span>
                 </label>
               </div>
+              <div id="has_faqs_error" class="form-error"></div>
             </div>
             
             <div id="faqUploadSection" class="conditional-section">
@@ -813,12 +814,12 @@
       // Input sanitization
       function sanitizeInput(input) {
         if (typeof input !== 'string') return input;
-        return input.replace(/[<>]/g, '').replace(/javascript:/gi, '').replace(/vbscript:/gi, '').replace(/on\\w+\s*=/gi, '').trim();
+        return input.replace(/[<>]/g, '').replace(/javascript:/gi, '').replace(/vbscript:/gi, '').replace(/on\w+\s*=/gi, '').trim();
       }
       
       // Form validation
       function validateEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\\.[^\s@]+$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return email.includes('@') && email.includes('.') && email.length > 5;
       }
       
@@ -1019,7 +1020,8 @@
           const requiredRadios = [
             { name: 'delivery_pickup', label: 'Delivery/Pickup option' },
             { name: 'plan', label: 'Plan selection' },
-            { name: 'submission_method', label: 'Credential submission method' }
+            { name: 'submission_method', label: 'Credential submission method' },
+            { name: 'has_faqs', label: 'FAQ preference' }
           ];
           
           requiredRadios.forEach(radio => {
@@ -1294,16 +1296,16 @@
           }
                     
                     // Handle conditional field requirements to prevent 422 errors
-                    if (!data.menu_upload && !data.menu_text) {
-                      data.menu_text = ''; // Backend expects either menu_upload or menu_text
+                    if (!data.menu_upload && (!data.menu_text || data.menu_text.trim() === '')) {
+                      data.menu_text = 'Menu will be provided separately'; // Backend expects either menu_upload or menu_text
                     }
                     
                     if ((data.delivery_pickup === 'Delivery' || data.delivery_pickup === 'Both') && !data.delivery_services && !data.delivery_other) {
-                      data.delivery_services = ''; // Provide empty string if no services selected
+                      data.delivery_services = 'Standard delivery'; // Provide default if no services selected
                     }
                     
                     if ((data.delivery_pickup === 'Pickup' || data.delivery_pickup === 'Both') && !data.pickup_method) {
-                      data.pickup_method = ''; // Provide empty string if no method selected
+                      data.pickup_method = 'In-store pickup'; // Provide default if no method selected
                     }
                     
                     // Handle "Other" business type field
