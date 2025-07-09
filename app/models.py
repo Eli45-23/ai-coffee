@@ -11,6 +11,7 @@ class OnboardingForm(BaseModel):
     instagram_handle: str
     other_platforms: Optional[str] = None
     business_type: str
+    other_business_type: Optional[str] = None
     common_customer_question: str
     product_service_description: str
     
@@ -72,7 +73,7 @@ class OnboardingForm(BaseModel):
     @field_validator('instagram_email', 'instagram_password', 'facebook_email', 'facebook_password', 
                      'other_platforms', 'other_platform_credentials', 'delivery_services', 'delivery_other',
                      'pickup_method', 'pickup_details', 'menu_upload', 'menu_text', 'additional_docs', 
-                     'faq_upload', mode='before')
+                     'faq_upload', 'other_business_type', mode='before')
     @classmethod
     def convert_empty_strings_to_none(cls, v):
         if v == "" or v == "null" or v == "undefined":
@@ -113,6 +114,10 @@ class OnboardingForm(BaseModel):
                     raise ValueError('Facebook password is required when Facebook username is provided')
                 if self.facebook_password and not self.facebook_email:
                     raise ValueError('Facebook username is required when Facebook password is provided')
+        
+        # Validate other_business_type when business_type is "Other"
+        if self.business_type == 'Other' and not self.other_business_type:
+            raise ValueError('Please specify your business type when "Other" is selected')
         
         return self
 

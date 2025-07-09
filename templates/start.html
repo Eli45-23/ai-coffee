@@ -441,6 +441,8 @@
                 <select id="business_type" name="business_type" required>
                   <option value="">Select your business type</option>
                   <option value="Restaurant">Restaurant</option>
+                                    <option value="Coffee Shop">Coffee Shop</option>
+                                    <option value="Deli">Deli</option>
                   <option value="Retail">Retail</option>
                   <option value="Service">Service</option>
                   <option value="E-commerce">E-commerce</option>
@@ -451,6 +453,13 @@
                   <option value="Other">Other</option>
                 </select>
                 <div id="business_type_error" class="form-error"></div>
+              </div>
+              
+              <!-- Other Business Type (conditional) -->
+              <div id="otherBusinessTypeSection" class="form-group" style="display: none;">
+                <label for="other_business_type">Please specify your business type *</label>
+                <input type="text" id="other_business_type" name="other_business_type" maxlength="100" placeholder="Enter your business type...">
+                <div id="other_business_type_error" class="form-error"></div>
               </div>
             </div>
             
@@ -917,6 +926,24 @@
           }
         }
         
+        function updateBusinessTypeSection() {
+          const businessType = document.getElementById('business_type').value;
+          const otherBusinessTypeSection = document.getElementById('otherBusinessTypeSection');
+          const otherBusinessTypeInput = document.getElementById('other_business_type');
+          
+          if (businessType === 'Other') {
+            otherBusinessTypeSection.style.display = 'block';
+            otherBusinessTypeInput.required = true;
+          } else {
+            otherBusinessTypeSection.style.display = 'none';
+            otherBusinessTypeInput.required = false;
+            otherBusinessTypeInput.value = '';
+            // Clear any error state
+            otherBusinessTypeInput.classList.remove('error');
+            document.getElementById('other_business_type_error').style.display = 'none';
+          }
+        }
+        
         // Event listeners
         document.querySelectorAll('input[name="delivery_pickup"]').forEach(radio => {
           radio.addEventListener('change', updateDeliveryPickupFields);
@@ -933,6 +960,8 @@
         document.querySelectorAll('input[name="has_faqs"]').forEach(radio => {
           radio.addEventListener('change', updateFaqSection);
         });
+        
+        document.getElementById('business_type').addEventListener('change', updateBusinessTypeSection);
         
         // Form submission
         // Form validation functions
@@ -973,6 +1002,17 @@
             showError('contact_email', 'Please enter a valid email address');
             errors.push('Please enter a valid email address');
             isValid = false;
+          }
+          
+          // Conditional validation for "Other" business type
+          const businessType = document.getElementById('business_type').value;
+          if (businessType === 'Other') {
+            const otherBusinessType = document.getElementById('other_business_type').value;
+            if (!validateRequired(otherBusinessType)) {
+              showError('other_business_type', 'Please specify your business type');
+              errors.push('Business type specification is required');
+              isValid = false;
+            }
           }
           
           // Required radio buttons
@@ -1286,10 +1326,19 @@
           submitButton.textContent = '🎉 Start My Setup';
         }
         
+        // Real-time validation for "Other" business type field
+        document.getElementById('other_business_type').addEventListener('input', function() {
+          if (this.value.trim() !== '') {
+            this.classList.remove('error');
+            document.getElementById('other_business_type_error').style.display = 'none';
+          }
+        });
+        
         // Initialize conditional fields
         updateDeliveryPickupFields();
         updateLoginFields();
         updateFaqSection();
+        updateBusinessTypeSection();
       });
     })();
   </script>
