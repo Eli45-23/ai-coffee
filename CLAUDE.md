@@ -13,10 +13,24 @@ The following environment variables are required for email functionality:
 - `SMTP_SERVER` - SMTP server (defaults to smtp.gmail.com)
 - `SMTP_PORT` - SMTP port (defaults to 587)
 - `FROM_EMAIL` - Email address shown as sender (defaults to noreply@aichatflows.com)
+- `BASE_URL` - Base URL for file links in emails (defaults to https://aichatflows.com)
+
+## File Upload Configuration
+
+File uploads are stored in the `/uploads/` directory organized by business name. Supported file types:
+
+### Supported File Types
+- **Images**: JPG, JPEG, PNG, GIF, WEBP (display as previews in emails)
+- **Documents**: PDF, DOC, DOCX, TXT, RTF (display as download links)
+
+### File Upload Limits
+- Maximum file size: 10MB per file
+- Files are stored with UUID-based names for security
+- Automatic file type validation based on MIME type and extension
 
 ## Email Flow
 
-1. **After form submission**: User receives confirmation email, admin receives notification email
+1. **After form submission**: User receives confirmation email, admin receives notification email with file previews
 2. **After payment completion**: User receives payment confirmation email, admin receives payment notification email
 
 ## Stripe Configuration

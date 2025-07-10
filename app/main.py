@@ -46,6 +46,9 @@ BASE_DIR = Path(__file__).parent.parent
 UPLOADS_DIR = BASE_DIR / "uploads"
 UPLOADS_DIR.mkdir(exist_ok=True)
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+
+# Base URL for generating absolute file URLs
+BASE_URL = os.getenv('BASE_URL', 'https://aichatflows.com')
 ALLOWED_EXTENSIONS = {
     'image': {'.jpg', '.jpeg', '.png', '.gif', '.webp'},
     'document': {'.pdf', '.doc', '.docx', '.txt', '.rtf'},
@@ -627,8 +630,8 @@ def save_uploaded_file(file: UploadFile, business_name: str, file_type: str) -> 
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     
-    # Return relative URL
-    return f"/api/files/{business_name.replace(' ', '_').lower()}/{unique_filename}"
+    # Return absolute URL for email compatibility
+    return f"{BASE_URL}/api/files/{business_name.replace(' ', '_').lower()}/{unique_filename}"
 
 # File upload endpoint
 @app.post("/api/upload-file")
@@ -684,12 +687,23 @@ async def serve_file(business_name: str, filename: str):
         
         # Get MIME type
         mime_type, _ = mimetypes.guess_type(str(file_path))
+        if not mime_type:
+            mime_type = 'application/octet-stream'
         
-        return FileResponse(
+        # Create response with proper headers for email client compatibility
+        response = FileResponse(
             path=str(file_path),
             media_type=mime_type,
             filename=filename
         )
+        
+        # Add headers for better email client compatibility
+        response.headers["Cache-Control"] = "public, max-age=3600"
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET"
+        response.headers["Content-Disposition"] = f'inline; filename="{filename}"'
+        
+        return response
         
     except HTTPException:
         raise

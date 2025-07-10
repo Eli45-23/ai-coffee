@@ -212,8 +212,11 @@ class EmailService:
                     <div class="detail-item">
                         <strong>• {file_label}:</strong><br>
                         <div style="margin-top: 10px;">
-                            <img src="{file_url}" alt="{filename}" style="max-width: 200px; max-height: 150px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 5px; display: block;">
-                            <a href="{file_url}" target="_blank" style="color: #00e676; text-decoration: none; font-size: 0.9em;">📎 {filename}</a>
+                            <img src="{file_url}" alt="Preview of {filename}" style="max-width: 200px; max-height: 150px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 5px; display: block;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div style="display: none; padding: 10px; background-color: #f0f0f0; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 5px; color: #666; font-size: 0.9em;">
+                                📷 Image preview unavailable - click link below to view
+                            </div>
+                            <a href="{file_url}" target="_blank" style="color: #00e676; text-decoration: none; font-size: 0.9em; font-weight: bold;">📎 View {filename}</a>
                         </div>
                     </div>"""
             else:
@@ -221,7 +224,7 @@ class EmailService:
                     <div class="detail-item">
                         <strong>• {file_label}:</strong><br>
                         <div style="margin-top: 5px;">
-                            <a href="{file_url}" target="_blank" style="color: #00e676; text-decoration: none; padding: 5px 10px; background-color: #f0f0f0; border-radius: 4px; display: inline-block;">
+                            <a href="{file_url}" target="_blank" style="color: #ffffff; text-decoration: none; padding: 8px 15px; background-color: #00e676; border-radius: 4px; display: inline-block; font-weight: bold; font-size: 0.9em;">
                                 📄 View File: {filename}
                             </a>
                         </div>
